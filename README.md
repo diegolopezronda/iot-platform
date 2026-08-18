@@ -14,7 +14,7 @@ The instructions in this manual are sequential; users must follow the instructio
 ### 1.6 Conventions ###
 (not applicable)
 ### 1.7 Problem reporting instructions ###
-Please, write an e-mail to diego@IoT.co.nz, if a problem installing IoT Platform appears. 
+(not applicable)
 ## 2 IoT Platform Overview ##
 (TBD)
 ## 3 Installation instructions ##
