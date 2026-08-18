@@ -1,17 +1,12 @@
-# SENSUM PLATFORM #
+# IoT Plaform #
 ## 1 Introduction ##
 ### 1.1 Intended readership ###
-The character of this document is FOR INTERNAL USE ONLY OF SENSUM EMPLOYEES. 
-Sharing this document or the source code mentioned on it, complete or partially, 
-with third-parties would result in a security issue. Sensum team is working now in 
-making this document available to public in future.
-
 This document should be read by analyst programmers, 
 or people acquainted with DBMS installation and Node JS enviroments.
 ### 1.2 Applicability statement ###
-This manual applies to version 1 or later of Sensum Platform.
+This manual applies to version 1 or later of IoT Platform.
 ### 1.3 Purpose ###
-This manual contents the directions to install Sensum Platform in a server.
+This manual contents the directions to install IoT Platform in a server.
 ### 1.4 How to use this document ###
 The instructions in this manual are sequential; users must follow the instructions in order.
 ### 1.5 Related documents ###
@@ -19,8 +14,8 @@ The instructions in this manual are sequential; users must follow the instructio
 ### 1.6 Conventions ###
 (not applicable)
 ### 1.7 Problem reporting instructions ###
-Please, write an e-mail to diego@sensum.co.nz, if a problem installing Sensum Platform appears. 
-## 2 Sensum Platform Overview ##
+Please, write an e-mail to diego@IoT.co.nz, if a problem installing IoT Platform appears. 
+## 2 IoT Platform Overview ##
 (TBD)
 ## 3 Installation instructions ##
 ### 3.1 Cloning the device ###
@@ -43,7 +38,7 @@ Try to execute the following command:
 and then, clonning again the repository.
 
 ### 3.2 Installing system dependencies ###
-To run Sensum Platform on your server you will need to install the following third-party software:
+To run IoT Platform on your server you will need to install the following third-party software:
 
 * MongoDB >= 3.2
 * MySQL >= 5.6
@@ -59,7 +54,7 @@ After install NPM, use it to install ***globally*** the following dependencies:
 
 #### 3.2.1 Cautions and warnings ####
 * When installing MySQL, remember type a strong password and save it in a safe place. 
-* Instead working with root, we recommend create an MySQL user able to read and write Sensum Platform database.
+* Instead working with root, we recommend create an MySQL user able to read and write IoT Platform database.
 
 #### 3.2.2 Procedure ####
 In Ubuntu 16.04 you can execute `sudo ./system-config.sh` to install system dependencies.
@@ -77,7 +72,7 @@ API defines data format and restrictions for the incoming device data.
 1. Enter to `web` folder.
 2. Execute `sudo npm ./config/scripts/install-database.sh`. 
 3. When asked, type the root password of MySQL.
-4. You can test the configuration running `npm run mysql`, using the password `sensum.s`
+4. You can test the configuration running `npm run mysql`, using the password `IoT.s`
 5. Type `show tables;show triggers;` and press enter, you should see 36 tables and views and 7 triggers.
 
 #### 3.3.3 Probable errors and possible causes ####
@@ -94,8 +89,8 @@ We encourage to setup the user and password for the administrator user as soon y
 1. On `web` folder run `npm run update-admin <email> <password>` replacing `<email>` for a real e-mail you have access and `<password>` for a password and press enter.
 
 #### 3.4.3 Probable errors and possible causes ####
-##### 3.4.3.1 ERROR 1045 (28000): Access denied for user 'sensum'@'localhost' (using password: YES) #####
-You need to type the sensum password properly.
+##### 3.4.3.1 ERROR 1045 (28000): Access denied for user 'IoT'@'localhost' (using password: YES) #####
+You need to type the IoT password properly.
 
 ### 3.5 Running dashboard ###
 Dashboard is the utility to deploy the data received in a human-readable way.
@@ -107,13 +102,13 @@ The default TCP port for dashboard is 1989. Your server must have this port open
 1. On `web` folder, run `npm run update-domain <domain>`, replacing `<domain>` for the domain name of your server.
 2. Run `npm run start`.
 3. Open your browser using the domain of first step.
-4. Login as `sensum`, the password is the one you setup in 3.4.
+4. Login as `IoT`, the password is the one you setup in 3.4.
 
 #### 3.5.3 Probable errors and possible causes ####
 (TBD)
 
 ### 3.6 Running other modules ###
-Sensum Platform breakdowns tasks in Node JS services. 
+IoT Platform breakdowns tasks in Node JS services. 
 You can deploy them using `npm run start` on the main directory of each module, 
 with exception of monitor.
 
@@ -134,11 +129,11 @@ These are the main folders, and the order you should start modules. If a module 
 	  The user decides which alert channel use on dashboard.   
 	* **reporter:** Generates and sends reports to an e-mail address or ftp server. 
 	  The report format, data source and destiny of information is configured on dashboard by user.
-	* **monitor:** Monitors all the running services both on PM2 and System related to sensum platform. 
+	* **monitor:** Monitors all the running services both on PM2 and System related to IoT platform. 
 	  It also monitor the disk space and generates a system report in a defined time interval. 
 	  It requires an special way to run it that will be explained later. 
 * **drivers:** These services works as brokers between carriers and listener.
-	* **receiver:** Receives data from sensum, lora, and sigfox servers.
+	* **receiver:** Receives data from IoT, lora, and sigfox servers.
 * **listener:** Receives, validates, and store data from devices. Triggers alerts and daily reports. 
 
 #### 3.6.1 Cautions and warnings ####
