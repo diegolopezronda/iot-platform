@@ -1,0 +1,76 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="box no-border">
+      <div class="box-header with-border">
+        <h3 class="box-title text-capitalize">
+					<i class="fa fa-table fa-fw"></i>&nbsp;
+					{{ 'ENTITY_LIST' | translate}}</h3>
+        <div class="pull-right">
+          <a href="/dashboard/members/invite" class=
+          "btn btn-sm btn-success">
+						<i class="fa fa-plus fa-fw"></i>&nbsp;
+						New Member
+					</a>
+        </div>
+      </div>
+
+      <div class="box-body bg-gray flat">
+        <form>
+          <div class="form-group no-margin">
+            <div class="input-group">
+              <div class="input-group-addon">
+								<i class="fa fa-search fa-fw"></i>
+							</div><input type="text" class=
+              "form-control" ng-model="entity.search" placeholder=
+              "{{ 'ENTITY_FILTER' | translate}}">
+            </div>
+          </div>
+        </form><input type="hidden" value="{{entity.CONFIG.display_field}}"
+        ng-model="entity.sortType"> <input type="hidden" value="false"
+        ng-model="entity.sortReverse">
+			</div>
+      <div class="box-body no-padding">
+        <div class="x-overflow-container">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>
+									User
+								</th>
+                <th width="100">{{ 'ENTITY_ACTIONS' | translate}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="row in entity.ROWS | filter:entity.search ">
+								<td>
+									<img 
+										class="img-circle"
+										style="max-width:25px;max-height:25px;"
+										ng-src="https://backend.sensum.co.nz/img/database/user/{{row.id_user}}.jpg"
+									/>&nbsp;
+									{{row['user.account_user']}}
+								</td>
+                <td class="text-center"><a ng-href=
+                "/dashboard/members/roles/{{row[entity.PRIMARY]}}"
+                class="btn btn-primary">
+								<i class="fa fa-key fa-fw"></i>&nbsp;
+								{{ 'MEMBERSHIP_EDIT' | translate}}</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+			<div class="text-center box-footer">
+				<button
+					type="button"
+					class="btn btn-block btn-primary"
+					ng-click="entity.getNextPage()"
+					ng-disabled="entity.more === false"
+				>
+					<i class="fa fa-fw fa-arrow-down"></i>
+					More
+				</button>
+			</div>
+    </div>
+  </div>
+</div>

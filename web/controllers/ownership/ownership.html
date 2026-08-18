@@ -1,0 +1,259 @@
+<form name="ownership_form">
+<div class="row hidden-xs hidden-sm" ng-show="ownership.components.length >0">		
+	<div class="col-md-12">		
+		<div class="box">		
+			<div class="box-header with-border">
+				<h3 class="box-title">
+					<i class="fa fa-fw fa-handshake-o"></i>
+					{{'OWNERSHIP_HEADER' | translate}}&nbsp;
+					{{'OWNERSHIP_'+ownership.PARAMS.entity.toUpperCase() | translate:"{n:'one'}" }}
+				</h3>
+				<div class="pull-right box-tools">
+				</div>
+			</div>		
+			<div class="box-body no-padding">
+				<table class="table">
+					<tbody>
+						<tr>
+							<td width="30%">
+								<div class="form-group text-center">
+									<img 
+										class="profile-user-img img-responsive img-circle" 
+										ng-src="/img/database/user/{{ownership.component.id_user}}.jpg?{{key}}" 
+										alt="{{ownership.component.account_user}}"
+									>
+								</div>
+								<div class="form-group no-margin">
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="fa fa-user"></i>
+										</span>
+										<input							
+											class="form-control"
+											type="text"
+											value="{{ownership.component.account_user}}"
+											readonly
+										/>
+									</div>
+								</div>
+							</td>
+							<td style="vertical-align:middle" class="text-center">
+								<i class="fa fa-arrow-right fa-2x"></i>
+							</td>
+							<td width="30%">
+								<div class="form-group text-center">
+									<img 
+										class="profile-user-img img-responsive img-circle" 
+										ng-src="/img/{{ownership.params.entity}}.svg?{{key}}" 
+										alt="{{ownership.singular_entity}}"
+									>
+								</div>
+								<div class="form-group">
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="fa fa-cube"></i>
+										</span>
+										<select 
+											class="form-control"
+											ng-options="c['id_'+ownership.params.entity] as c['name_'+ownership.params.entity] for c in ownership.components"
+											ng-change="ownership.updateCurrentOwner()"
+											ng-model="ownership.ID"
+											ng-required="true"
+											novalidate
+											required
+										></select>
+									</div>
+								</div>
+							</td>
+							<td style="vertical-align:middle" class="text-center">
+								<i class="fa fa-arrow-right fa-2x"></i>
+							</td>
+							<td width="30%">
+								<div class="form-group text-center">
+									<img 
+										class="profile-user-img img-responsive img-circle" 
+										ng-src="/img/database/user/{{ownership.member.id_user}}.jpg?{{key}}" 
+										alt="{{user.account_user}}"
+									>
+								</div>
+								<div class="form-group no-margin" ng-show="user.is_system_user === true">
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="fa fa-globe"></i>
+										</span>
+										<select 
+											class="form-control"
+											ng-options="p.id_project as p.name_project for p in ownership.projects"
+											ng-model="ownership.project"
+											ng-change="ownership.getMembers()"
+											ng-required="true"
+											novalidate
+											required
+										></select>
+									</div>
+								</div>
+								<div class="form-group no-margin">
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="fa fa-user"></i>
+										</span>
+										<select 
+											class="form-control"
+											ng-options="member.account_user for member in ownership.available_members"
+											ng-model="ownership.member"
+											ng-required="true"
+											novalidate
+											required
+										></select>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="box-footer">
+				<button
+					type="button"
+					class="btn btn-primary pull-right"
+					ng-disabled="ownership_form.$invalid"
+					data-toggle="modal"
+					data-target="#ownership-modal"
+				>
+					<i class="fa fa-handshake-o"></i>
+					{{'OWNERSHIP_SUBMIT' | translate}}&nbsp;
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row hidden-md hidden-lg">		
+	<div class="col-md-12">		
+		<div class="box">		
+			<div class="box-body">
+				<div class="form-group">
+					<label>
+						{{'OWNERSHIP_'+ownership.PARAMS.entity.toUpperCase() | translate:"{QUANTITY:'one'}" }}
+					</label>
+					<div class="input-group">
+						<span class="input-group-addon">
+							<i class="fa fa-cube"></i>
+						</span>
+						<input							
+							class="form-control"
+							type="text"
+							value="{{ownership.component['name_'+ownership.params.entity]}}"
+							readonly
+						/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label>
+						{{'OWNERSHIP_FROM' | translate}}
+					</label>
+					<div class="input-group">
+						<span class="input-group-addon">
+							<i class="fa fa-user"></i>
+						</span>
+						<input							
+							class="form-control"
+							type="text"
+							value="{{user.account_user}}"
+							readonly
+						/>
+					</div>
+				</div>
+				<div class="form-group" ng-show="user.is_system_user === true">
+					<label>
+						{{'OWNERSHIP_PROJECT' | translate }}
+					</label>
+					<div class="input-group">
+						<span class="input-group-addon">
+							<i class="fa fa-cubes"></i>
+						</span>
+						<select 
+							class="form-control"
+							ng-options="c['id_'+ownership.params.entity] as c['name_'+ownership.params.entity] for c in ownership.components"
+							ng-change="ownership.updateCurrentOwner()"
+							ng-model="ownership.ID"
+							ng-required="true"
+							novalidate
+							required
+						></select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label>
+						{{'OWNERSHIP_TO' | translate}}
+					</label>
+					<div class="input-group">
+						<span class="input-group-addon">
+							<i class="fa fa-user"></i>
+						</span>
+						<select 
+							class="form-control"
+							ng-options="c['id_'+ownership.params.entity] as c['name_'+ownership.params.entity] for c in ownership.components"
+							ng-model="ownership.ID"
+							ng-required="true"
+							novalidate
+							required
+						></select>
+					</div>
+				</div>
+			</div>
+			<div class="box-footer">
+				<button
+					type="button"
+					ng-disabled="ownership_form.$invalid"
+					data-toggle="modal"
+					data-target="#ownership-modal"
+					class="btn btn-primary btn-block"
+				>
+					<i class="fa fa-handshake-o"></i>
+					{{'OWNERSHIP_SUBMIT' | translate}}&nbsp;
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+</form>
+    <div id="ownership-modal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content bg-red">
+          <div class="modal-header">
+            <h4 class="modal-title">
+							<i class="fa fa-handshake-o fa-fw"></i>&nbsp;
+							{{ 'OWNERSHIP_TRANSFER' | translate}}
+						</h4>
+          </div>
+
+          <div class="modal-body text-center">
+            <p><b>{{ 'OWNERSHIP_ARE_YOU_SURE' | translate}}</b></p>
+
+            <p>{{ 'OWNERSHIP_MODAL_MESSAGE' | translate}}</p>
+          </div>
+
+          <div class="modal-footer">
+            <button 
+							type="button" 
+							class="btn btn-default pull-left"
+            	data-dismiss="modal"
+						>
+							<i class="fa fa-times fa-fw"></i>&nbsp;
+							{{ 'OWNERSHIP_CANCEL' | translate}}
+						</button>
+						<button 
+							type="button" 
+							class="btn btn-default text-uppercase"
+            	data-dismiss="modal" 
+							ng-click="ownership.submit()"
+						>
+							<i class="fa fa-handshake-o fa-fw"></i>&nbsp;
+							{{'OWNERSHIP_TRANSFER' | translate}}
+						</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+

@@ -1,0 +1,427 @@
+const moment = require("moment");
+
+function FrameParser() {
+	this.LOGICAL = "logical";
+	this.SWITCH = "switch";
+	this.MESSAGE = "message";
+	this.TEXT = "text";
+	this.MULTITIME = "multitime";
+	this.DECIMAL = "decimal";
+	this.MAX_DELAY = 15;
+	this.BUFFERS = {};
+}
+
+FrameParser.prototype = {
+	processQuery: function(
+		mac,
+		data,
+		carrier,
+		asset,
+		query_date,
+		snr,
+		rssi,
+		sf,
+		ack
+	) {
+		var _this = this;
+		if (!this.exists(mac)) {
+			console.error("NO_MAC");
+			return null;
+		}
+		if (!this.exists(data)) {
+			console.error("NO_DATA");
+			return null;
+		}
+		if (!this.exists(asset)) {
+			console.error("ASSET.NULL | " + id_asset);
+			return null;
+		}
+		var m = mac.toString();
+		var _carrier = "_" + carrier;
+		var insert = {};
+		insert[_carrier] = data;
+		var bits = this.hex2bin(data, asset.schema_asset.endianess);
+		var bit_offset = 0;
+		//Find Package number.
+		var index = -1;
+		for (p in asset.schema_asset.attributes) {
+			var prop = asset.schema_asset.attributes[p];
+			var q = prop.bits;
+			if (prop.package_number === true) {
+				index = Number(
+					this.parse(
+						bits.substring(bit_offset, bit_offset + q),
+						prop.type,
+						prop.signed
+					)
+				);
+				break;
+			}
+			bit_offset += q;
+		}
+		var is_binded = asset.schema_asset.bind_packages;
+		if (!this.exists(is_binded)) is_binded = false;
+		//Buffer related actions
+		if (index === 0 || index === -1) {
+			_this.BUFFERS[m] = {
+				insert: {
+					snr: snr,
+					rssi: rssi,
+					sf: sf
+				}
+			};
+			_this.BUFFERS[m].insert[_carrier] = "";
+			index = 0;
+			console.log("BUFFER.OVERRIDE");
+		} else if (this.exists(_this.BUFFERS[m])) {
+			var time_diff = query_date - _this.BUFFERS[m]._time;
+			var is_next = index - _this.BUFFERS[m]._index === 1;
+			console.log("CLOCK:" + time_diff);
+			if (time_diff > 15000) {
+				if (is_binded) {
+					delete _this.BUFFERS[m];
+					console.error("BUFFER.TIME | " + mac);
+					return null;
+				} else {
+					var delayed = JSON.stringify(_this.BUFFERS[m].insert);
+					delete _this.BUFFERS[m];
+					_this.BUFFERS[m] = {
+						insert: {},
+						delayed: delayed
+					};
+					_this.BUFFERS[m].insert[_carrier] = "";
+					console.log("BUFFER.TIME");
+				}
+			} else if (!is_next) {
+				if (is_binded) {
+					delete _this.BUFFERS[m];
+					console.error("BUFFER.BROKEN | " + mac);
+					return null;
+				} else {
+					var delayed = JSON.stringify(_this.BUFFERS[m].insert);
+					delete _this.BUFFERS[m];
+					_this.BUFFERS[m] = {
+						insert: {},
+						delayed: delayed
+					};
+					_this.BUFFERS[m].insert[_carrier] = "";
+					console.log("BUFFER.BROKEN");
+				}
+			}
+		} else {
+			delete _this.BUFFERS[m];
+			console.error("BUFFER.EMPTY | " + mac);
+			return null;
+		}
+		_this.BUFFERS[m].insert[_carrier] += data;
+		//Parsing
+		if (
+			undefined === _this.BUFFERS[m]._bits ||
+			_this.BUFFERS[m]._bits === null
+		) {
+			_this.BUFFERS[m]._bits = 0;
+		}
+		bit_offset = -_this.BUFFERS[m]._bits;
+		var multi_time = null;
+		var attributes = this.getAttributes(asset.schema_asset, bits);
+		for (p in attributes) {
+			var prop = attributes[p];
+			var type = prop.type;
+			var q = Number(prop.bits);
+			if (!this.exists(q) || q === 0) continue;
+			if (bit_offset < 0) {
+				bit_offset += q;
+				continue;
+			} else if (bit_offset >= bits.length) {
+				_this.BUFFERS[m]._index = index;
+				_this.BUFFERS[m]._time = query_date;
+				_this.BUFFERS[m]._bits = bits.length;
+				console.log("FRAME.SAVED | " + mac);
+				return null;
+			}
+			var current_bits = bits.substring(bit_offset, bit_offset + q);
+			_this.BUFFERS[m].insert[p] = this.parse(
+				current_bits,
+				type,
+				prop.signed,
+				prop.prescript,
+				prop.postscript
+			);
+			if (type === "multitime") multi_time = p;
+			bit_offset += q;
+		}
+		/***
+		 * When we finish to process all data of asset, we don't need the buffer anymome.
+		 ***/
+		_this.BUFFERS[m].insert.snr = _this.BUFFERS[m].insert.snr
+			? Math.min(_this.BUFFERS[m].insert.snr, snr)
+			: _this.BUFFERS[m].insert.snr;
+		_this.BUFFERS[m].insert.rssi = _this.BUFFERS[m].insert.rssi
+			? Math.min(_this.BUFFERS[m].insert.rssi, rssi)
+			: _this.BUFFERS[m].insert.rssi;
+		_this.BUFFERS[m].insert.sf = _this.BUFFERS[m].insert.sf
+			? Math.min(_this.BUFFERS[m].insert.sf, sf)
+			: _this.BUFFERS[m].insert.sf;
+		switch (carrier) {
+			case "lora":
+				_this.BUFFERS[m].insert.lqi = _this.BUFFERS[m].insert.snr;
+				break;
+			case "sigfox":
+				_this.BUFFERS[m].insert.sf = 0;
+				_this.BUFFERS[m].insert.lqi = _this.BUFFERS[m].insert.rssi;
+				break;
+		}
+		_this.BUFFERS[m].insert._date = query_date;
+		console.log("QUERY DATE");
+		console.log(query_date);
+		/***
+			MULTI TIME TREATMENT
+		***/
+		try {
+			if (_this.exists(multi_time) === true) {
+				var next_frame =
+					asset.schema_asset.frames[attributes[multi_time].next_frame];
+				var rows = attributes[multi_time].rows;
+				var frame_length = Math.round(attributes[multi_time].bits / rows);
+				var timespan = attributes[multi_time].timespan;
+				var row_order = attributes[multi_time].row_order;
+				var inserts = [];
+				for (var r = 0; r < rows; r++) {
+					inserts.push(JSON.parse(JSON.stringify(_this.BUFFERS[m].insert)));
+					var subframe = inserts[r][multi_time].substring(
+						r * frame_length,
+						(r + 1) * frame_length
+					);
+					var bit_offset = 0;
+					next_frame.attributes.forEach(function(a, i) {
+						if (i === next_frame.header) {
+							inserts[r][a] = next_frame.value;
+							return;
+						}
+						var attr = asset.schema_asset.attributes[a];
+						var current_bits = subframe.substring(bit_offset, bit_offset + q);
+						bit_offset += attr.bits;
+						inserts[r][a] = _this.parse(
+							current_bits,
+							attr.type,
+							attr.signed,
+							null,
+							null
+						);
+					});
+					if (row_order === false) {
+						inserts[r]._date = query_date - (rows - r) * timespan;
+					} else {
+						inserts[r]._date = query_date - r * timespan;
+					}
+					inserts[r].subframe = subframe;
+				}
+				console.log(inserts);
+				console.log("MULTI_TIME");
+			}
+		} catch (e) {
+			console.error(
+				"MULTI TIME ALGORITHM HAS SOMETHING WRONG, BUT IT DOESN'T MATTER"
+			);
+			console.error(e);
+		}
+
+		var resources = {
+			multi: multi_time,
+			insert: JSON.parse(JSON.stringify(_this.BUFFERS[m].insert)),
+			delayed: _this.BUFFERS[m].delayed
+		};
+
+		resources.inserts = inserts;
+
+		var output = { ok: 1 };
+		if (ack === "true") {
+			output[query.id] = {};
+			output[query.id].downlinkData = asset[_carrier + "_downlink"];
+			delete asset[_carrier + "_downlink"];
+		}
+		delete _this.BUFFERS[m];
+		resources.downlink = output;
+		return resources;
+	},
+
+	getAttributes: function(schema, frame) {
+		if (
+			undefined === schema.frames ||
+			schema.frames === null ||
+			schema.frames.length === 0
+		) {
+			return JSON.parse(JSON.stringify(schema.attributes));
+		}
+		var flen = schema.frames.length;
+		var found = false;
+		for (var f = 0; f < flen; f++) {
+			var schema_frame = schema.frames[f];
+			if (undefined === schema_frame.direction) schema_frame.direction = true;
+			if (schema_frame.direction != true) {
+				continue;
+			}
+			var frame_bits = 0;
+			var attributes = {};
+			var value = schema_frame.value;
+			console.log(value);
+			var alen = schema_frame.attributes.length;
+			for (var a = 0; a < alen; a++) {
+				var attr = schema_frame.attributes[a];
+				if (a === schema_frame.header) {
+					var nibbles = Math.floor(frame_bits / 4);
+					if (
+						parseInt(
+							frame.substring(
+								frame_bits,
+								frame_bits + schema.attributes[attr].bits
+							),
+							2
+						) === Number(value)
+					) {
+						found = true;
+					}
+				}
+				attributes[attr] = JSON.parse(JSON.stringify(schema.attributes[attr]));
+				frame_bits += schema.attributes[attr].bits;
+			}
+			if (found === true) return attributes;
+		}
+		return null;
+	},
+	hex2bin: function(data, endianess) {
+		var bits = "";
+		var hex_array = data.split("");
+		hex_array.forEach(function(h) {
+			var nibble = parseInt(h, 16).toString(2);
+			while (nibble.length < 4) nibble = "0" + nibble;
+			bits += nibble;
+		});
+		return this.applyEndianess(bits, endianess);
+	},
+
+	getSign: function(signed) {
+		if (signed === true || signed === false) return signed;
+		return false;
+	},
+
+	applyEndianess: function(input, endianess) {
+		if (undefined === endianess || endianess === null || endianess === false) {
+			return input;
+		}
+		var bits = input.length;
+		var byte_size = Math.ceil(bits / 8);
+		var byte_array = new Array(byte_size);
+		for (a = 0; a < byte_size; a++) {
+			var b = input.substring(a * 8, (a + 1) * 8);
+			byte_array[byte_size - 1 - a] = b;
+		}
+		return byte_array.join("");
+	},
+
+	getFactor: function(factor) {
+		if (undefined === factor || factor === null || isNaN(factor)) {
+			return 1;
+		}
+		return factor;
+	},
+
+	getOffset: function(offset) {
+		if (undefined === offset || offset === null || isNaN(offset)) {
+			return 0;
+		}
+		return offset;
+	},
+
+	parse: function(input, type, sign, pre, post) {
+		var output = null;
+		switch (type) {
+			case this.LOGICAL:
+			case this.SWITCH:
+				output = Boolean(parseInt(input, 2));
+				break;
+			case this.MESSAGE:
+			case this.TEXT:
+				output = parseInt(input, 2).toString(16);
+				break;
+			case this.DECIMAL:
+				output = this.toIEEE754(input);
+				break;
+			case "sensum_nmea_lat":
+				var side = parseInt(input.charAt(0));
+				var integer = parseInt(input.substring(1, 15), 2);
+				var decimal = parseInt(input.substring(15), 2);
+				output = this.nmeaToDecimal([integer, decimal].join("."), side);
+				break;
+			case "sensum_nmea_lng":
+				var side = parseInt(input.charAt(0));
+				var integer = parseInt(input.substring(1, 16), 2);
+				var decimal = parseInt(input.substring(16), 2);
+				output = this.nmeaToDecimal([integer, decimal].join("."), side);
+				break;
+			case this.MULTITIME:
+				output = input;
+				break;
+			//Everything else is an integer,
+			default:
+				output = parseInt(input, 2);
+				if (sign === true) {
+					var l = input.length;
+					var h = Math.pow(2, l - 1);
+					output = output - Math.pow(2, l) * Math.floor(output / h);
+				}
+		}
+		return output;
+	},
+
+	evaluate: function($INPUT, fx) {
+		if (
+			undefined === fx ||
+			fx === null ||
+			fx.length === 0 ||
+			fx === "undefined"
+		)
+			return $INPUT;
+		var $OUTPUT = null;
+		try {
+			eval(decodeURI(fx));
+			console.log("FX");
+			console.log($INPUT);
+			console.log($OUTPUT);
+			return $OUTPUT;
+		} catch (e) {
+			return $INPUT;
+		}
+	},
+
+	toIEEE754: function(b) {
+		try {
+			var s = parseInt(b.substring(0, 1), 2);
+			var m = parseInt(b.substring(9, 32), 2);
+			var x = parseInt(b.substring(1, 9), 2);
+			return (
+				Math.pow(-1, s) * (1 + m * Math.pow(2, -23)) * Math.pow(2, x - 127)
+			);
+		} catch (e) {
+			return null;
+		}
+	},
+	exists: function(value) {
+		return !(undefined === value || value === null);
+	},
+
+	nmeaToDecimal: function(nmea, side) {
+		var split = nmea.toString().split(".");
+		var index = split[0].length - 2;
+		var degrees = split[0].substring(0, index);
+		var minutes =
+			split[0].substring(index) +
+			"." +
+			"0000".substring(0, 4 - split[1].length) +
+			split[1];
+		var factor = side === "N" || side === "E" || side === 1 ? 1 : -1;
+		return factor * (Number(degrees) + Number(minutes) / 60);
+	}
+};
+
+module.exports = new FrameParser();

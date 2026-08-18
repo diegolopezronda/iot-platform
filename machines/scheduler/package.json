@@ -1,0 +1,22 @@
+{
+  "name": "sensum-ma-scheduler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm install;pm2 start app.js --name ma-scheduler --merge-logs -o ./logs/out.log -e .logs/error.log",
+    "restart": "pm2 restart ma-scheduler;pm2 logs ma-scheduler",
+    "log": "pm2 logs ma-scheduler",
+		"prettier": "prettier --use-tabs --write --trailing-comma=none app.js",
+    "start-test": "npm install;pm2 start app.js --no-autorestart --name ma-scheduler-test --merge-logs -o ./logs/out.log -e .logs/error.log",
+    "restart-test": "pm2 restart ma-scheduler-test;pm2 logs ma-scheduler-test",
+    "log-test": "pm2 logs ma-scheduler-test"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "moment-timezone": "^0.5.13",
+    "mongodb": "^2.2.31",
+    "mqtt": "^2.11.0"
+  }
+}

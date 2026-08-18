@@ -1,0 +1,16 @@
+{
+  "name": "sensum-dr-tracktor",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "npm install;pm2 start app.js --name dr-tracktor --merge-logs -o logs/out.log -e logs/error.log",
+    "restart": "pm2 restart dr-tracktor;",
+    "log": "pm2 logs dr-tracktor",
+    "errors": "pm2 logs dr-tracktor --err",
+    "ban": "sudo iptables -A INPUT -j DROP -s"
+  },
+  "dependencies": {
+    "md5": "^2.2.1",
+    "mqtt": "^2.11.0"
+  }
+}

@@ -1,0 +1,111 @@
+<div class="row no-print">
+	<div class="col-md-4 no-print" id="tracktor-device-info" style="margin-top:15px!important">
+		<div class="box no-border">
+			<div class="box-header no-padding">
+				<div class="input-group">
+					<div class="input-group-btn">
+						<button 
+							type="button"
+							class="btn btn-default" 
+							ng-click="tracktor.toggleZoom(false)"
+						>
+							<i class="fa fa-fw fa-search-minus"></i>
+						</button>
+						<button 
+							type="button"
+							class="btn btn-default" 
+							ng-click="tracktor.toggleZoom(true)"
+						>
+							<i class="fa fa-fw fa-search-plus"></i>
+						</button>
+						<button 
+							type="button"
+							class="btn btn-default" 
+							ng-click="tracktor.toggleMap()"
+						>
+							<i class="fa fa-fw fa-map"></i>
+						</button>
+						<button 
+							type="button"
+							class="btn bg-primary" 
+							onclick="$('#date-scope').focus()"
+						>
+							<i class="fa fa-calendar"></i>
+						</button>
+					</div>
+					<input type="text" class="form-control" id="date-scope" readonly novalidate>
+					<div class="input-group-btn">
+						<button 
+							id="date-submit" 
+							class="btn btn-primary"
+							ng-click="tracktor.getPositions()"
+						>
+							<i class="fa fa-map-marker fa-fw"></i>{{ 'TRACKTOR_GO' | translate}}
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--MAP-->
+<div class="row no-print">
+	<div class="col-md-12">
+		<div class="box no-border">
+			<div class="box-body no-padding">
+				<div id="map"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--TIMELINE-->
+<div class="row no-print">
+	<div class="col-md-12 no-padding" id="tracktor-timeline" ng-show="tracktor.markers.length > 0">
+		<div class="box no-margin no-border hidden">
+			<div class="box-body" style="padding:35px;padding-right:10px;">
+				<div class="btn-group" style="width:100%;border-radius:0px;">
+					<button
+						ng-mouseover="tracktor.trigger(m,'mouseover')"
+						ng-mouseout="tracktor.trigger(m,'mouseout')"
+						ng-click="tracktor.trigger(m,'click')"
+						ng-repeat="m in tracktor.markers track by $index"
+						type="button"
+						style="padding:0px!important;height:10px;position:relative!important;width:{{tracktor.button_width}}"
+						class="btn bg-{{$last ? tracktor.markers[$index-1].log_data.color : m.log_data.color}}-gradient"
+					>
+									<img 
+										title="
+											Path #{{m.log_data.zone}}: 
+											{{tracktor.PAIRS[m.log_data.zone-1].distance}}Km @ 
+											{{tracktor.PAIRS[m.log_data.zone-1].duration}}Hr
+										"
+										style="height:24px!important;{{$last ? 'right' : 'left'}}:-8px!important;top:-24px!important;position:absolute!important;"
+										ng-src="{{m.icon.url}}"
+										ng-show="m.log_data.is_on || m.log_data.is_main"
+									>
+							<span>&nbsp;</span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+.tracktor-timeline-bar{
+	height:5px;
+	width:100%;
+}
+.tracktor-timeline-icon-container{
+	height:24px;
+}
+.tracktor-timeline-div{
+	width:100%;	
+	margin-left:-50%;
+	text-align:center;
+}
+#map{
+	height:calc(100vh - 255px);
+	width:100%;
+}
+</style>

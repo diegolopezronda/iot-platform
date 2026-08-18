@@ -1,0 +1,26 @@
+{
+  "name": "forecaster",
+  "version": "1.0.0",
+  "description": "Request weather information from a web service, between interval of time and store them.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prettier": "prettier --use-tabs --trailing-comma none --write --single-quote false app.js",
+    "start": "npm install;pm2 start app.js --name dr-darksky -e logs/error.log -o logs/out.log",
+    "log": "pm2 logs dr-darksky",
+    "restart": "pm2 restart dr-darksky",
+    "stop": "pm2 restart dr-darksky"
+  },
+  "keywords": [
+    "weather",
+    "forecast",
+    "service"
+  ],
+  "author": "Diego Lopez Ronda",
+  "license": "ISC",
+  "dependencies": {
+    "forecast": "^0.3.2",
+    "mqtt": "^2.15.2",
+    "mysql2": "^1.5.2"
+  }
+}

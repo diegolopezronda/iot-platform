@@ -1,0 +1,170 @@
+<div class="row">
+	<div class="col-md-12" ng-switch="control.item.code_carrier">
+		<div class="box no-border" ng-switch-when="sensum">
+			<div class="box-header">
+				<h3 class="box-title">
+					<i class="fa fa-dashboard fa-fw"></i>&nbsp;
+					{{ 'CONTROL_CURRENT_STATUS' | translate }}
+				</h3>
+				<div class="box-tools pull-right">
+					<a 
+						class="btn btn-sm btn-primary"
+						href="/dashboard/schedule/{{control.item.id_item}}"
+					>
+						<i class="fa fa-clock-o fa-fw"></i>{{'CONTROL_SCHEDULE' | translate }}
+					</a>
+					<a 
+						class="btn btn-sm btn-warning"
+						href="/dashboard/events/{{control.item.id_item}}"
+					>
+						<i class="fa fa-list fa-fw"></i>{{'CONTROL_LOGS' | translate }}
+					</a>
+				</div>
+			</div>
+			<div class="box-body no-padding">
+				<table class="table table-striped">
+					<tbody>
+						<tr
+							ng-repeat="(key,val) in control.item.schema_asset.attributes track by $index"
+						>
+							<td style="vertical-align:middle;width:25px;">
+								<i
+									class="fa fa-fw fa-question-circle"
+									data-toggle="tooltip"
+									title="{{val.description}}"
+								></i>
+							</td>
+							<th
+								class="bg-{{val.color}}"
+								style="vertical-align:middle"
+							>
+								{{val.label}}
+							</th>
+							<td ng-switch="val.type" style="vertical-align:middle">
+								<div ng-switch-when="number">
+									{{control.mqtt_status[key]}}&nbsp;{{val.unit}}
+								</div>
+								<div ng-switch-when="message">
+									{{control.mqtt_status[key]}}
+								</div>
+								<div ng-switch-when="logical">
+									<span 
+										class="label label-default text-uppercase" 
+										ng-show="control.mqtt_status[key] === false"
+									>									
+										{{ 'CONTROL_NO' | translate }}
+									</span>
+									<span 
+										class="label label-primary text-uppercase" 
+										ng-show="control.mqtt_status[key] === true"
+									>
+										{{ 'CONTROL_YES' | translate }}
+									</span>
+								</div>
+								<div ng-switch-when="switch" class="text-center">
+									<div
+										ng-show="control.mqtt_status[key] === false"
+									>
+										<span 
+											class="label label-default text-uppercase hidden" 
+										>									
+											{{ 'CONTROL_OFF' | translate }}
+										</span>
+											<i 
+												class="fa fa-toggle-off fa-2x text-gray"
+												ng-click="control.triggerMQTT(key,val.type,true)" 
+											></i>
+									</div>
+									<div
+										ng-show="control.mqtt_status[key] === true"							
+									>
+										<span 
+											class="label label-success text-uppercase hidden" 
+										>									
+											{{ 'CONTROL_ON' | translate }}
+										</span>
+											<i 
+												class="fa fa-toggle-on text-green fa-2x"
+												ng-click="control.triggerMQTT(key,val.type,false)"
+											></i>
+									</div>
+								</div>
+								<div ng-switch-default>
+									{{control.mqtt_status[key]}}
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="box no-border" ng-switch-default>
+			<form name="downlink_form">
+			<div class="box-header">
+				<h3 class="box-title">
+					<i class="fa fa-arrow-down fa-fw"></i>&nbsp;
+					{{ 'CONTROL_AVAILABLE_DOWNLINKS' | translate }}
+				</h3>
+				<div class="box-tools pull-right">
+					<a 
+						class="btn btn-sm btn-warning"
+						href="/dashboard/events/{{control.item.id_item}}"
+					>
+						<i class="fa fa-list fa-fw"></i>{{'CONTROL_LOGS' | translate }}
+					</a>
+				</div>
+			</div>
+			<div class="box-body">
+					<h4>
+						<i class="fa fa-fw fa-arrow-down"></i>
+						{{'CONTROL_DOWNLINK' | translate}}
+					</h4>
+					<div class="form-group">
+						<label>
+							{{'CONTROL_SELECT_DOWNLINK' | translate}}
+						</label>
+						<sensum-select
+							ng-model="control.selected_downlink_frame"
+							data-options="control.DOWNLINK_FRAMES"
+							data-value="index"
+							data-label="label"
+						></select-select>
+					</div>
+					<h4>
+						<i class="fa fa-fw fa-list"></i>
+						{{'CONTROL_DOWNLINK_FIELDS' | translate}}
+					</h4>
+					<div
+						ng-repeat="a in control.DOWNLINK_FRAMES[control.selected_downlink_frame].attributes"
+						class="form-group"
+					>
+						<label>
+							{{control.item.schema_asset.attributes[a].label}}
+						</label>
+						<input
+							type="number"
+							ng-readonly="{{$index === control.DOWNLINK_FRAMES[control.selected_downlink_frame].header}}"
+							class="form-control"
+							name="{{a}}-{{$index}}"
+							ng-min="control.DOWNLINK_FRAMES[control.selected_downlink_frame].limits[a].min"
+							ng-max="control.DOWNLINK_FRAMES[control.selected_downlink_frame].limits[a].max"
+							ng-model="control.DOWNLINK_FRAMES[control.selected_downlink_frame].values[a]"
+							required
+						/>
+					</div>
+			</div>
+			<div class="box-footer">	
+				<button
+					type="button"
+					class="btn btn-primary pull-right"
+					ng-click="control.queueDownlink()"
+					ng-disabled="downlink_form.$invalid"
+				>
+					<i class="fa fa-fw fa-hourglass-end"></i>
+					Queue
+				</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>

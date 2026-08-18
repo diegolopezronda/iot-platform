@@ -1,0 +1,124 @@
+<form name="users_form">
+			<div class="box-body">
+				<p class="callout callout-default" ng-show="success === null && error === null && warning === null">
+					<i class="fa fa-info fa-fw"></i>
+					{{'USERS_STEP_ONE'|translate}}
+				</p>
+				<p class="callout callout-success" ng-show="success">
+					<i class="fa fa-check fa-fw"></i>
+					{{success|translate}}
+				</p>
+				<p class="callout callout-warning" ng-show="warning">
+					<i class="fa fa-warning fa-fw"></i>
+					{{warning|translate}}
+				</p>
+				<p class="callout callout-danger" ng-show="error">
+					<i class="fa fa-times fa-fw"></i>
+					{{error|translate}}
+				</p>
+				<a
+					class="btn btn-primary btn-block"
+					href="/login"
+					ng-show="success"
+				>
+					<i class="fa fa-user fa-fw"></i>
+					{{'USERS_LOGIN'|translate}}
+				</a>	
+				<div
+					class="
+						form-group 
+						{{
+							users_form[k].$pristine ? 
+							'' : 
+							'has-'+
+							(
+								users_form[k].$invalid ? 
+								'error' : 
+								'success'
+							)
+						}}
+					"
+					ng-repeat="(k,v) in users.FIELDS"
+					ng-show="success === null && error === null"
+				>
+					<label ng-show="v.type != 'hidden'">
+						{{'USERS_'+k.toUpperCase() | translate}}<br/>
+					</label>
+					<input 					
+						class="form-control"
+						type="{{v.type}}"
+						ng-pattern="v.pattern"
+						inputmode="{{v.inputmode}}"
+						name="{{k}}"
+						autocomplete="off" 
+						autocorrect="off"
+						autocapitalize="off" 
+						spellcheck="false"
+						ng-model="users.data[k]"
+						ng-required="true"
+						ng-minlength="{{v.min}}"
+						ng-maxlength="{{v.max}}"
+						novalidate
+					/>
+					<p 
+						class="help-block text-right"
+						ng-show="(users_form[k].$error.pattern || users_form[k].$error.required) && !users_form[k].$pristine"
+					>
+						{{'USERS_'+k.toUpperCase()+'_PLACEHOLDER' | translate}}			
+					</p>
+					<p 
+						class="help-block text-right"
+						ng-show="users_form[k].$error.minlength && !users_form[k].$pristine"
+					>
+						Min {{v.min}}.
+					</p>
+					<p 
+						class="help-block text-right"
+						ng-show="users_form[k].$error.maxlength && !users_form[k].$pristine"
+					>
+						Max {{v.max}}.
+					</p>
+				</div>
+				<div class="form-group" ng-show="success === null && error === null">
+					<div
+						vc-recaptcha
+						key="users.CAPTCHA"
+						theme="'light'"
+						on-success="users.setResponse(response)"
+						on-expire="users.setResponse(null)"
+					></div>
+					<input name="captcha" type="hidden" ng-required="true" ng-model="users.captcha">
+				</div>
+			</div>
+			<div class="box-footer">
+				<button
+					type="button"
+					class="btn bg-purple btn-block"
+					ng-click="users.submit()"
+					ng-disabled="users_form.$invalid"
+				>
+					<i class="fa fa-check fa-fw"></i>
+					{{'USERS_SUBMIT_NEW'|translate}}
+				</button>	
+				<a
+					class="btn btn-default btn-block"
+					href="/login"
+				>
+					<i class="fa fa-arrow-left fa-fw"></i>
+					{{'USERS_BACK'|translate}}
+				</a>	
+			</div>	
+			</div>	
+			<div 
+				class="overlay"
+				ng-show="
+					users.transaction === true"
+			>
+				<i 
+					class="fa fa-spin fa-cog fa-4x"
+					ng-show="users.transaction === true"
+				></i>
+			</div>
+</div>
+<script>
+</script>

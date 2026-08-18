@@ -1,0 +1,149 @@
+<div class="row">
+	<div class="col-md-12">
+		<div class="box">
+			<div class="box-header with-border">
+				<h3 class="box-title text-capitalize">
+					<i class="fa fa-pencil fa-fw"></i>&nbsp;
+					<span>{{entity.ACTION_LABEL | translate}}&nbsp;</span>
+					<span ng-show="entity.ACTION === entity.EDIT">
+						<b 
+							ng-show="entity.FIELDS[entity.CONFIG.display_field].type !== 'i18n'"
+						>
+							{{entity.ROW[entity.CONFIG.display_field]}}
+						</b>
+						<b 
+							ng-show="entity.FIELDS[entity.CONFIG.display_field].type === 'i18n'"
+						>
+							{{entity.ROW[entity.CONFIG.display_field][sensum.language]}}
+						</b>
+					</span>
+				</h3>
+			</div>
+			<div class="box-body">
+				<form>
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-addon">
+								<i class="fa fa-search fa-fw"></i>
+							</div>
+							<input 
+								type="text"
+								class="form-control"
+								ng-model="entity.search"
+								placeholder="{{ 'ENTITY_FILTER' | translate}}"
+							>
+						</div>
+					</div>
+				</form>
+				<input 
+					type="hidden" 
+					value="{{entity.CONFIG.display_field}}"
+					ng-model="entity.sortType"
+				/> 
+				<input 
+					type="hidden" 
+					value="false" 
+					ng-model="entity.sortReverse"
+				/>
+				<form id="entity-form" name="entity_form" novalidate>
+					<table class="table table-bordered table-striped">
+						<tbody>
+						</tbody>
+						<tbody>
+							<tr >
+								<th style="max-width:34%!important;" class="hidden-sm hidden-xs" >
+									<i 
+										class="fa fa-question-circle fa-fw" 
+										title="{{entity.FIELDS.name_item.comment}}"
+										data-toggle="tooltip"
+									></i>
+									{{
+										entity.CONFIG.aliases.name_item ?
+										entity.CONFIG.aliases.name_item :
+										entity.humanize('name_item') 
+									}}
+									</span>
+								</th>
+								<td>
+									<div 
+										class="form-group {{entity_form.name_item.$invalid ? 'has-error' : 'has-success'}}"
+									>
+										<label class="hidden-md hidden-lg">
+											<i 
+												class="fa fa-question-circle fa-fw" 
+												title="{{entity.FIELDS.name_item.comment}}"
+												data-toggle="tooltip"
+											></i>
+											{{
+												entity.CONFIG.aliases.name_item ?
+												entity.CONFIG.aliases.name_item :
+												entity.humanize('name_item') 
+											}}
+										</label>
+										<div class="input-group">
+											<span class="input-group-addon">
+												<i 
+													class="fa fa-fw fa-{{entity.TYPES[entity.FIELDS.name_item.type].icon}}"
+												></i>
+											</span>
+													<input 
+														class="form-control" 
+														name="name_item" 
+														type="text"
+														ng-model="entity.ROW.name_item" 
+														ng-required="true" 
+													/>
+										</div>
+										<span 
+											ng-show="entity_form.name_item.$error.unique" 
+											class="help-block pull-right"
+										>
+											{{ 'ENTITY_DUPLICATE_WARNING' | translate}}
+										</span>
+										<span 
+											ng-show="entity_form.name_item.$error.required" 
+											class="help-block pull-right"
+										>
+											{{ 'ENTITY_REQUIRED_WARNING' | translate}}
+										</span>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="100">
+									<span class="pull-left">
+										<i class="fa fa-circle fa-fw"></i>&nbsp;
+										{{'ENTITY_REQUIRED' | translate}}
+									</span> 
+									<span class="pull-right">
+										<i class="fa fa-hand-peace-o fa-fw"></i>&nbsp;
+										{{ 'ENTITY_ACCEPTS_DUPLICATES' | translate}}
+									</span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</form>
+			</div>
+			<div class="box-footer">
+				<a class="btn btn-default pull-left" onclick="window.history.back()">
+					<i class="fa fa-arrow-left fa-fw"></i>&nbsp;
+					{{ 'ENTITY_GO_BACK' | translate}}
+				</a>
+				<button 
+					ng-disabled="entity_form.$invalid" 
+					ng-click="entity.submit()" 
+					class="btn btn-primary pull-right"
+				>
+					<i class="fa fa-refresh fa-fw"></i>&nbsp;
+					{{ 'ENTITY_APPLY' | translate}}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<style>
+	div.jsoneditor-tree{
+		min-height:300px!important;
+	}
+</style>

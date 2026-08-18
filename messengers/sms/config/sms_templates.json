@@ -1,0 +1,3 @@
+{
+	"alert":"Dear @FIRST_NAME_USER, the device @NAME_ITEM (@MAC_ITEM) requires attention. @KPI_CONTENT. More information in @URL."
+}

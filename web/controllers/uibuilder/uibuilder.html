@@ -1,0 +1,359 @@
+<div class="hidden">
+	<button 
+		type="button" 
+		ng-click="uibuilder.selectElement('sensum-uibuilder-layer',$event)"
+		class="btn btn-green"
+	>
+		<i class="fa fa-plus"></i>
+	</button>
+</div>
+<div 
+	compile="uibuilder.html"
+>
+</div>
+
+<div class="row no-print">
+	<div class="col-md-12">
+		<div class="box no-border">
+			<div class="box-body">
+				<div class="form-group no-margin">
+					<div class="input-group">
+						<span class="input-group-addon">
+							<label>Template name</label>
+						</span>
+						<input
+							class="form-control"
+							type="text"
+							ng-model="uibuilder.template.name_template"
+							ng-disabled="uibuilder.template.id_user != user.id_user"
+						/>
+						<span class="input-group-btn">
+							<button
+								data-dismiss="modal"
+								onclick="window.print()"
+								type="button"
+								class="btn btn-default"
+							>
+								<i class="fa fa-print fa-fw"></i>
+								{{'UIBUILDER_PRINT' | translate }}
+							</button>
+						</span>
+						<span class="input-group-btn">
+							<button
+								data-toggle="modal"
+								data-target="#sensum-uibuilder-schedule-modal"
+								type="button"
+								class="btn btn-default"
+							>
+								<i class="fa fa-calendar fa-fw"></i>
+								{{'UIBUILDER_SCHEDULE' | translate }}
+							</button>
+						</span>
+						<span 
+							class="input-group-btn"
+						>
+							<button
+								ng-click="uibuilder.submit()"
+								type="button"
+								class="btn btn-primary"
+								ng-disabled="uibuilder.template.id_user != user.id_user"
+							>
+								<i class="fa fa-save fa-fw"></i>
+								{{'UIBUILDER_SAVE' | translate }}
+							</button>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="sensum-uibuilder-element-modal" class="no-print modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header box-header">
+				<h4 class="modal-title">
+					<i class="fa fa-cubes fa-fw"></i>
+					{{uibuilder.current_block.block.label}}&nbsp;
+					<span class="hidden">
+						{{uibuilder.current_block.id}}
+					</span>
+				</h4>
+				<div class="box-tools pull-right">
+					<div class="btn-group">
+						<button
+							type="button"
+							class="btn btn-sm btn-default"
+							ng-show="uibuilder.current_block.unit._parent"
+							ng-click="uibuilder.selectElement(uibuilder.current_block.unit._parent,$event)"
+						>
+							<i class="fa fa-arrow-up fa-fw"></i>
+							Parent element
+						</button>
+					</div>
+				</div>
+			</div>
+			<div 
+				class="modal-body no-padding"
+			>
+				<h4 
+					style="padding: 15px;"
+					ng-show="uibuilder.current_block.unit.datatable"
+				>
+					<i class="fa fa-fw fa-table"></i>
+			    Datatable
+			    <button 
+						type="button"
+						class="btn btn-success btn-xs pull-right"
+						ng-click="uibuilder.addDataTableRow()"
+					>
+							<i class="fa fa-plus fa-fw"></i>
+			        Add Row
+					</button>
+				</h4>
+				<table class="table table-striped no-margin">
+					<thead>
+						<tr>
+							<th
+								ng-repeat="c in uibuilder.current_block.unit.datatable.columns track by $index"
+							>
+								{{c.label}}
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr
+							ng-repeat="d in uibuilder.current_block.unit.datatable.data track by $index"
+						>
+							<td
+								class="text-center"
+								ng-switch="c.type"
+								ng-repeat="c in uibuilder.current_block.unit.datatable.columns track by $index"
+							>
+								<input
+									class="form-control"
+									type="{{c.type}}"
+									ng-switch-when-separator="|"
+									ng-switch-when="number|text"
+									ng-model="uibuilder.template.schema_template[uibuilder.current_block.id].datatable.data[$parent.$parent.$index][$index]"
+									ng-change="uibuilder.deploy()"
+								>
+								<div ng-switch-when="data">
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="fa fa-fw fa-wifi"></i>
+										</span>
+										<select
+											class="form-control"
+											ng-options="k as v.value.name_item for (k,v) in uibuilder.COLLECTIONS.items"
+											ng-model="uibuilder.template.schema_template[uibuilder.current_block.id].datatable.data[$parent.$parent.$index][$index].item"
+											ng-change="uibuilder.deploy()"
+										></select>
+									</div>
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="fa fa-fw fa-thermometer-half"></i>
+										</span>
+										<select
+											class="form-control"
+											ng-options="k as v.label for (k,v) in uibuilder.COLLECTIONS.items[d[$index].item].value.schema_asset.attributes"
+											ng-model="uibuilder.template.schema_template[uibuilder.current_block.id].datatable.data[$parent.$parent.$index][$index].attribute"
+											ng-change="uibuilder.deploy()"
+										></select>
+									</div>
+								</div>
+									<i 
+										ng-switch-default
+										class="fa fa-calculator text-blue"
+									></i>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<table class="table table-striped no-margin">
+						<tbody>
+							<tr
+								ng-repeat="(p,q) in uibuilder.current_block.block.fields track by $index"
+							>
+								<th colspan="3">	
+									<div 
+										class="form-group"
+										ng-switch="q.collection"
+									>
+										<label>{{q.label}}</label>
+										<div style="width:100%" class="input-group">
+											<select
+												ng-switch-when="constant"
+												class="form-control"
+											>
+												<option>Hello</option>
+											</select>
+											<select
+												class="form-control"
+												ng-switch-default
+												ng-model="uibuilder.template.schema_template[uibuilder.current_block.id].fields[p]"
+												ng-options="b.value as b.key for b in q.options"
+												ng-required="q.required"
+												ng-change="uibuilder.updateField(p)"
+											></select>
+										</div>
+									</div>
+								</th>
+							</tr>
+							<tr>
+								<th colspan="3" ng-switch="uibuilder.current_block.block.children">
+											<div class="form-group" ng-switch-when="text">
+												<label>Text</label>
+												<input 
+													class="form-control"
+													type="text"
+													ng-model="uibuilder.template.schema_template[uibuilder.current_block.id].text"
+													ng-change="uibuilder.updateText()"
+												/>
+											</div>		
+											<div 
+												class="form-group" 
+												ng-show="uibuilder.current_block.block.children.length != 0"
+												ng-switch-default
+											>
+												<label>Add Element</label>
+												<div style="width:100%" class="input-group">
+													<select
+														class="form-control"
+														ng-model="uibuilder.selected_block"
+														ng-options="sensum.constants.SENSUM_CORE_UI_BLOCKS[ch].label for ch in uibuilder.current_block.block.children"
+													></select>
+													<span class="input-group-btn">
+														<button
+															type="button"
+															class="btn btn-success"
+															ng-click="uibuilder.addElement()"
+														>
+															<i class="fa fa-plus"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</th>
+									</tr>
+									<tr 
+										ng-repeat="q in uibuilder.current_block.content track by $index"
+									>
+										<th>
+											{{sensum.constants.SENSUM_CORE_UI_BLOCKS[uibuilder.template.schema_template[q].type].label}}
+											<span class="hidden">
+											{{q}}
+											</span>
+										</th>
+										<th class="text-center" style="width:100px;">
+											<div class="btn-group">
+												<button
+													ng-click="uibuilder.selectElement(q,$event)"
+													type="button"
+													class="btn btn-xs btn-default"
+												>
+													<i class="fa fa-eye"></i>
+												</button>
+												<button
+													ng-click="uibuilder.removeElement(q)"
+													type="button"
+													class="btn btn-xs btn-danger"
+												>
+													<i class="fa fa-trash"></i>
+												</button>
+											</div>
+										</th>
+									</tr>
+								</tbody>
+							</table>
+			</div>
+			<div class="modal-footer">
+				<button
+					type="button"
+					class="btn pull-right btn-success"
+				>
+					<i class="fa fa-check fa-fw"></i>
+					{{'UIBUILDER_OK' | translate }}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="sensum-uibuilder-schedule-modal" class="no-print modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header box-header">
+				<h4 class="modal-title">
+					<i class="fa fa-calendar fa-fw"></i>
+					{{'UIBUILDER_SCHEDULE' | translate}}
+				</h4>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<label>{{'UIBUILDER_TIME_MAGNITUDE' | translate}}</label>
+					<sensum-interval
+						data-min="0"
+						ng-model="uibuilder.event.interval_event"
+					></sensum-interval>
+				</div>
+				<sensum-date
+					label="{{'UIBUILDER_FROM' | translate}}"
+					format="date"
+					ng-model="uibuilder.event.start_date_event"
+				></sensum-date>
+			</div>
+			<div class="modal-footer">
+				<button
+					type="button"
+					class="btn btn-success pull-right"
+					ng-click="uibuilder.addSchedule()"
+				>
+					<i class="fa fa-plus fa-fw"></i>
+					{{'UIBUILDER_ADD' | translate}}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<style>
+#sensum-uibuilder-layer{
+	height:calc(100vh - 200px);
+	width:100%;
+	position:relative;
+	background:white;
+}
+#sensum-uibuilder-layer:before{
+	width:100%;
+	height:24pt;
+	font-size:24pt;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	font-weight:bold;
+	position:absolute;
+	text-align:center;
+	content:"Click elements to edit them.";
+	margin:auto;
+	color:rgba(0,0,0,0.3);
+}
+@media print{
+	#sensum-uibuilder-layer:before{                                                    
+		display:none!important;
+		position:relative!important;
+		border:none;
+		content:"";
+	} 
+}
+h1,h2,h3,h4,h5,h6{
+	font-family:'FreeSans';
+	font-weight:bold;
+}
+.sensum-uibuilder-element table:hover,
+span.sensum-uibuilder-element:hover,
+b.sensum-uibuilder-element:hover
+{
+	background:rgba(0,0,255,0.1);
+}
+</style>

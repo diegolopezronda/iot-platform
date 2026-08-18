@@ -1,0 +1,1143 @@
+<div class="row">
+	<div class="col-md-12">
+		<form>
+			<div class="box no-border">
+				<div class="box-header">
+					<h4 class="box-title">
+						<div style="margin-bottom:-10px;">
+							<small>
+								<span class="label label-default">
+									{{assets.asset.manufacturer_asset}}&nbsp;
+									{{assets.asset.model_asset}}
+								</span>
+								<span class="label label-primary text-uppercase">
+									{{assets.asset.schema_asset.driver}}
+								</span>
+							</small>
+						</div>
+						<br/>
+						<img 
+							class="pull-left"
+							ng-src="/img/markers/{{assets.asset.schema_asset.icon}}.png"
+						>
+						<div class="pull-left" style="margin-top:7px;">
+							{{assets.asset.name_asset}}	
+							<br class="hidden-md hidden-lg">
+							<small>
+								<span 
+									class="badge bg-gray"
+									ng-show="assets.asset.is_public_asset === false"
+								>
+									<i 
+										class="fa fa-lock"
+									></i>
+								</span>
+								<span 
+									class="badge bg-gray"
+									ng-show="assets.asset.schema_asset.human === true"
+								>
+									<i 
+										class="fa fa-male"
+									></i>
+								</span>
+								<span 
+									class="badge bg-gray"
+									ng-show="assets.asset.schema_asset.endianess === true"
+								>
+             			<i class="fa fa-sort"></i> 
+								</span>
+								<span 
+									class="badge bg-gray"
+									ng-show="assets.asset.schema_asset.bind_packages === true"
+								>
+									<i 
+										class="fa fa-chain"
+									></i>
+								</span>
+							</small>
+							<button
+								type="button"
+								class="btn btn-warning btn-xs"
+								data-toggle="modal"
+								data-target="#sensum-assets-info-modal"
+							>
+								<i class="fa fa-pencil"></i>
+							</button>
+							<button
+								type="button"
+								class="btn btn-primary btn-xs"
+								data-toggle="modal"
+								data-target="#sensum-assets-json-modal"
+							>
+								<i class="fa fa-code fa-fw"></i>JSON
+							</button>
+						</div>
+					</h4>
+					<div class="box-tools pull-right">
+						<div class="btn-group">
+							<button
+								type="button"
+								class="btn btn-sm btn-success"
+								ng-click="assets.addAttribute()"
+							>
+								<i class="fa fa-plus fa-fw"></i>
+								<span class="hidden-xs hidden-sm">
+									{{'ASSETS_ADD_FIELD' | translate}}
+								</span>
+							</button>
+							<button
+								type="button"
+								class="btn btn-sm btn-primary"
+								data-toggle="modal"
+								data-target="#sensum-assets-frames-modal"
+							>
+								<i class="fa fa-hand-scissors-o fa-fw"></i>
+								<span class="hidden-xs hidden-sm">
+									{{'ASSETS_FRAMES' | translate}}
+								</span>
+							</button>
+							<button
+								type="button"
+								class="btn btn-sm btn-default hidden"
+								ng-click="assets.editor_mode = false;"
+								ng-show="assets.editor_mode === true"
+							>
+								<span class="hidden-xs hidden-sm">
+									{{'ASSETS_SCIENTIFIC_MODE' | translate}}
+								</span>
+								<i class="fa fa-arrow-right "></i>
+							</button>
+							<button
+								type="button"
+								class="btn btn-sm btn-default hidden"
+								ng-click="assets.editor_mode = true;"
+								ng-show="assets.editor_mode === false"
+							>
+								<i class="fa fa-arrow-left fa-fw "></i>
+								<span class="hidden-xs hidden-sm">
+									{{'ASSETS_DEVELOPER_MODE' | translate}}
+								</span>
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="box-body no-padding" ng-show="assets.editor_mode === false">
+					<table class="table no-margin table-bordered table-striped">
+						<thead>
+							<tr>
+								<th>
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="(k,v) in assets.asset.schema_asset.attributes">
+								<td>
+									<div class="form-group">
+										<div 
+											class="btn-group"
+											ng-repeat="m in sensum.constants.SENSUM_CORE_MATH"
+										>
+											<button 
+												type="button" 
+												class="btn btn-default"
+											>
+												{{m.key}}
+											</button>
+											<button 
+												type="button" 
+												class="btn btn-default dropdown-toggle" 
+												data-toggle="dropdown" 
+												aria-expanded="false"
+											>
+												<span class="caret"></span>
+												<span class="sr-only">Toggle Dropdown</span>
+											</button>
+											<ul class="dropdown-menu" role="menu">
+												<li
+													ng-repeat="a in m.value"
+													ng-click="assets.insertMathExpression(k,a.value)"
+												>
+													<a 
+														href="#"
+														ng-bind-html="a.key"
+													></a>
+												</li>
+											</ul>
+										</div>
+										<span mathquill="{{k}}" id="sensum-assets-mathquill-{{k}}" class="form-control" style="height:auto;"></span>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="box-body no-padding" ng-show="assets.editor_mode === true">
+					<table class="table no-margin table-bordered table-striped">
+						<thead>
+							<tr>
+								<th>
+									{{'ASSETS_NAME' | translate}}
+								</th>
+								<th class="hidden">
+									{{'ASSETS_FUNCTION' | translate}}
+								</th>
+								<th>
+									{{'ASSETS_ACTIONS' | translate}}
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="(k,v) in assets.asset.schema_asset.attributes">
+								<td>
+									<i 
+										class="fa fa-circle fa-fw"
+										style="color:{{v.color}}"
+									></i>
+									<i class="fa fa-{{assets.CONSTANTS.ORIGINS[v.origin].icon}} fa-fw"></i>
+									<span ng-switch="v.private">
+										<i ng-switch-when="true" class="fa fa-lock fa-fw"></i>
+										<i ng-switch-when="false" class="fa fa-eye fa-fw"></i>
+									</span>
+									<br class="hidden-md hidden-lg">
+									<b>
+										{{v.label}}
+										<sub>
+											{{v.bits}}
+										</sub>
+									</b>
+									</br>
+									<small>
+										{{v.description}}
+									</small>
+								</td>
+								<td class="hidden" ng-switch="v.type">
+									<span 
+										class="badge bg-gray" 
+										ng-switch-when="text|message" 
+										ng-switch-when-separator="|"
+									>
+										<span class="badge bg-gray">
+											<b>TEXT</b>
+										</span>
+										<span class="badge bg-light-blue">
+											VALUE
+										</span>
+									</span> 
+									<span 
+										class="badge bg-gray" 
+										ng-switch-when="logical|switch" 
+										ng-switch-when-separator="|"
+									>
+										<span class="badge bg-gray">
+											<b>BOOLEAN</b>
+										</span>
+										<span class="badge bg-light-blue">
+											VALUE
+										</span>
+									</span> 
+									<span 
+										class="badge bg-gray" 
+										ng-switch-when="number|decimal" 
+										ng-switch-when-separator="|"
+									>
+										<b>CONCAT</b>
+										<span class="badge bg-light-blue">
+											<b>TRUNCATE</b>
+											<span class="badge bg-gray">
+												<span 
+													ng-switch="v.origin"
+													class="badge bg-light-blue"
+												>
+													<b ng-switch-when="virtual">
+														FX
+														<sub>({{assets.filters[k].fxparams.params}})</sub>
+													</b>
+													<b ng-switch-default>
+														VALUE
+													</b>
+												</span>
+												<span class="badge bg-gray">
+													<i class="fa fa-times fa-fw"></i>
+													{{v.factor}}
+													<i class="fa fa-plus fa-fw"></i>
+													{{v.offset}}
+												</span>
+											</span>
+											<b>,</b>
+											<span class="badge bg-gray">
+												<span class="badge bg-gray">
+													{{v.decimals}}
+												</span>
+											</span>
+										</span>
+										<b>,</b>
+										<span class="badge bg-light-blue">
+											<span class="badge bg-light-blue">
+												<span class="badge bg-light-blue">
+													{{v.unit}}
+												</span>
+											</span>
+										</span>
+									</span>
+								</td>
+								<td>
+									<div class="btn-group">
+										<button
+											type="button"
+											class="btn btn-default"
+											ng-click="assets.sortAttribute(k,true)"
+											ng-disabled="assets.filters[k].name.first === true"
+										>
+											<i class="fa fa-arrow-up"></i>
+										</button>
+										<button
+											type="button"
+											class="btn btn-default"
+											ng-click="assets.sortAttribute(k,false)"
+											ng-disabled="assets.filters[k].name.last === true"
+										>
+											<i class="fa fa-arrow-down"></i>
+										</button>
+										<button
+											type="button"
+											class="btn btn-primary"
+											ng-click="assets.cloneAttribute(k)"
+										>
+											<i class="fa fa-clone"></i>
+										</button>
+										<button
+											type="button"
+											class="btn btn-warning"
+											ng-click="assets.editAttribute(k)"
+											data-toggle="modal"
+											data-target="#sensum-assets-attribute-modal"
+										>
+											<i class="fa fa-pencil"></i>
+										</button>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="box-footer">
+					<div class="btn-group pull-left">
+						<button
+							type="button"
+							class="btn btn-danger"
+							data-toggle="modal"
+							data-target="#sensum-assets-delete-modal"
+							ng-show="assets.ID"
+							ng-disabled="!assets.ID"
+						>
+							<i class="fa fa-fw fa-trash"></i>
+							{{'ASSETS_DELETE' | translate}}
+						</button>
+					</div>
+					<div class="btn-group pull-right">
+						<button
+							type="button"
+							class="btn btn-default"
+							data-toggle="modal"
+							data-target="#sensum-assets-test-modal"
+						>
+							<i class="fa fa-fw fa-bolt"></i>
+							<span class="hidden-xs hidden-sm">
+								{{'ASSETS_TEST_ASSET' | translate}}
+							</span>
+						</button>
+						<button
+							class="btn btn-primary"
+							ng-disabled="assets_form.$invalid"
+							ng-click="assets.submit(false)"
+						>
+							<i class="fa fa-fw fa-save"></i>
+							<span class="hidden-xs hidden-sm">
+								{{'ASSETS_SAVE' | translate}}
+							</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<!--FRAMES MODAL-->
+<div id="sensum-assets-frames-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">
+					<i class="fa fa-hand-scissors-o fa-fw"></i>
+					{{ 'ASSETS_FRAMES' | translate }}&nbsp;
+					<div class="pull-right">
+						<button
+							type="button"
+							class="btn btn-success btn-xs"
+							ng-click="assets.addFrameFormat()"
+						>
+							<i class="fa fa-plus fa-fw"></i>
+							{{'ASSETS_FRAMES_ADD_FRAME' | translate}}
+						</button>
+					</div>
+				</h4>
+      </div>
+      <div 
+				class="modal-body"
+			>
+				<form name="assets_frames_form">
+					<div ng-repeat="f in assets.asset.schema_asset.frames track by $index">
+								<h4>Frame #{{$index+1}}</h4>
+						<div class="form-group">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button
+											type="button"
+											class="btn btn-{{assets.asset.schema_asset.frames[$index].direction ? 'success' : 'primary'}}"
+											ng-click="assets.asset.schema_asset.frames[$index].direction = !assets.asset.schema_asset.frames[$index].direction"
+										>								
+											<i class="fa fa-arrow-{{assets.asset.schema_asset.frames[$index].direction ? 'up' : 'down'}}"></i>
+										</button>
+									</div>
+									<input 
+										type="text"
+										class="form-control"
+										ng-model="assets.asset.schema_asset.frames[$index].label"
+									>
+									<div class="input-group-btn">
+										<button
+											type="button"
+											class="btn btn-success"
+											ng-click="assets.addFrameFormatField($index)"
+										>
+											<i class="fa fa-plus"></i>
+										</button>
+									</div>
+									<div class="input-group-btn">
+										<button
+											type="button"
+											class="btn btn-primary"
+											ng-click="assets.cloneFrameFormat($index)"
+										>
+											<i class="fa fa-clone"></i>
+										</button>
+									</div>
+									<div class="input-group-btn">
+										<button
+											type="button"
+											class="btn btn-danger"
+											ng-click="assets.removeFrameFormat($index)"
+										>
+											<i class="fa fa-trash"></i>
+										</button>
+									</div>
+								</div>
+						</div>
+						<input 
+							name="frame_{{$index}}_header" 
+							type="hidden" 
+							ng-required="true" 
+							ng-model="assets.asset.schema_asset.frames[$index].header" 
+							novalidate
+							readonly
+						>
+						<div class="form-group">
+							<label>
+								Header value
+							</label>
+							<input
+								name=frame_{{$index}}_value" 
+								class="form-control"
+								type="text"
+								ng-pattern="assets.FRAME_HEADER_PATTERN"
+								ng-model="assets.asset.schema_asset.frames[$index].value"
+								ng-required="true"
+							>
+						</div>
+						<div
+							class="form-group {{$last ? '' : 'no-margin'}}" 
+							ng-repeat="ff in f.attributes track by $index"
+						>
+							<div
+								class="input-group" 
+							>
+								<span class="input-group-btn">
+									<button
+										type="button"
+										class="btn bg-{{f.header === $index ? 'green' : 'gray' }}"
+										ng-disabled="f.header === $index"
+										ng-click="assets.updateFrameFormatHeader($parent.$index,$index)"
+									>
+										<i class="fa fa-bullseye"></i>
+									</button>
+								</span>
+								<select 
+									name=frame_{{$parent.$index}}_{{$index}}" 
+									class="form-control"
+									ng-model="assets.asset.schema_asset.frames[$parent.$index].attributes[$index]"
+									ng-options="assets.asset.schema_asset.attributes[al].label for al in assets.attribute_list"		
+									ng-required="true"
+								></select>
+								<span class="input-group-btn">
+									<button
+										type="button"
+										class="btn btn-danger"
+										ng-click="assets.removeFrameFormatField($parent.$index,$index)"
+									>
+										<i class="fa fa-trash"></i>
+									</button>
+								</span>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+      <div 
+				class="modal-footer"
+			>
+				<button
+					type="button"
+					data-dismiss="modal"
+					class="pull-right btn btn-success"
+					ng-disabled="assets_frames_form.$invalid"
+				>
+					<i class="fa fa-check fa-fw"></i>
+					{{'ASSETS_OK' | translate}}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!--ATTRIBUTES MODAL-->
+<div id="sensum-assets-attribute-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">
+					<i class="fa fa-times"></i>
+				</button>
+				<h4 class="modal-title">
+					<i class="fa fa-pencil fa-fw"></i>
+					{{'ASSETS_EDIT' | translate}}&nbsp;
+					<br class="hidden-lg hidden-md"/>
+					<b>
+						{{assets.asset.schema_asset.attributes[assets.selected_attribute].label}}
+					</b>
+				</h4>
+      </div>
+      <div 
+				class="modal-body"
+			>
+				<form name="assets_attribute_form">
+      	<div 
+					ng-repeat="h in assets.EDITOR_HEADERS track by $index"
+					ng-show="h.visible === true"
+				>
+					<h4>
+						{{h.label[sensum.language]}}
+					</h4>
+					<div 
+						class="form-group"
+						ng-repeat="k in h.kpi"
+						ng-switch="assets.CONSTANTS.SENSUM_CORE_ASSET_KPIS[k].type"
+						ng-show="assets.filters[assets.selected_attribute][k].visible"
+					>
+						<label>
+							{{assets.CONSTANTS.SENSUM_CORE_ASSET_KPIS[k].label[sensum.language]}}
+						</label>
+						<input
+							type="text"
+							class="form-control"
+							ng-model="assets.asset.schema_asset.attributes[assets.selected_attribute][k]"
+							ng-required="assets.filters[assets.selected_attribute][k].required"
+							ng-disabled="assets.filters[assets.selected_attribute][k].disabled"
+							ng-switch-when="text"
+							novalidate
+						/>
+						<input
+							type="number"
+							class="form-control"
+							ng-model="assets.asset.schema_asset.attributes[assets.selected_attribute][k]"
+							ng-required="assets.filters[assets.selected_attribute][k].required"
+							ng-disabled="assets.filters[assets.selected_attribute][k].disabled"
+							ng-switch-when="number"
+							novalidate
+						/>
+						<select
+							class="form-control"
+							ng-model="assets.asset.schema_asset.attributes[assets.selected_attribute][k]"
+							ng-required="assets.filters[assets.selected_attribute][k].required"
+							ng-disabled="assets.filters[assets.selected_attribute][k].disabled"
+							ng-change="assets.updateFilters(assets.selected_attribute)"
+							ng-switch-when="select"
+							ng-options="l.value as l.label[sensum.language] for l in assets.CONSTANTS[assets.CONSTANTS.SENSUM_CORE_ASSET_KPIS[k].list]"
+							novalidate
+						></select>
+						<select
+							class="form-control"
+							ng-model="assets.asset.schema_asset.attributes[assets.selected_attribute][k]"
+							ng-required="assets.filters[assets.selected_attribute][k].required"
+							ng-disabled="assets.filters[assets.selected_attribute][k].disabled"
+							ng-switch-when="list"
+							ng-options="l for l in assets.CONSTANTS[assets.CONSTANTS.SENSUM_CORE_ASSET_KPIS[k].list]"
+							novalidate
+						></select>
+						<div
+							ng-switch-when="next_frame"
+						>
+						<sensum-select
+							ng-model="assets.asset.schema_asset.attributes[assets.selected_attribute][k]"
+							data-options="assets.asset.schema_asset.frames"	
+							data-label="label"
+							data-value="index"
+						></sensum-select>
+						</div>
+						<div ng-switch-when="name">
+							<input
+								type="hidden"
+								class="form-control"
+								ng-model="assets.asset.schema_asset.attributes[assets.selected_attribute][k]"
+								ng-disabled="true"
+								style="background:white!important;"
+								novalidate
+							/>
+							<p
+								ng-show="assets.attribute_list.indexOf(assets.filters[assets.selected_attribute][k].value) != -1"
+								class="callout callout-warning"
+							>
+								<i class="fa fa-warning fa-fw"></i>
+								{{'ASSETS_DUPLICATE_FIELD' | translate}}
+							</p>
+							<div class="input-group">
+								<span class="input-group-addon">
+									{{assets.asset.schema_asset.attributes[assets.selected_attribute][k]}}
+								</span>
+								<input
+									type="text"
+									class="form-control"
+									name="{{k}}"
+									ng-model="assets.filters[assets.selected_attribute][k].value"
+									ng-required="false"
+									ng-disabled="false"
+									ng-pattern="/^[a-z]{1}[a-z0-9_]*$/"
+									novalidate
+								/>
+								<span class="input-group-btn">
+									<button
+										type="button"
+										class="btn btn-primary"
+										ng-click="assets.updateAttributeName()"
+										ng-disabled="!assets_attribute_form[k].$valid || assets.attribute_list.indexOf(assets.filters[assets.selected_attribute][k].value) != -1"
+									>
+										<i class="fa fa-refresh"></i>
+									</button>
+								</span>
+							</div>
+						</div>
+						<div ng-switch-when="label">
+							<div class="input-group">
+								<div class="input-group-btn">
+        					<button 
+										type="button" 
+										class="btn btn-default dropdown-toggle" 
+										data-toggle="dropdown" 
+										aria-haspopup="true" 
+										aria-expanded="false"
+									>
+										<i class="fa fa-circle" 
+											style="color:{{assets.asset.schema_asset.attributes[assets.selected_attribute].color}}!important;"
+										></i>&nbsp;
+										<i class="fa fa-caret-down"></i>
+									</button>
+									<ul class="dropdown-menu">
+										<li
+											ng-repeat="cr in assets.color_matrix"
+										>
+											<div>
+												<button
+													type="button"
+													class="btn btn-xs btn-default btn-flat"
+													ng-repeat="cc in cr"
+													ng-click="assets.asset.schema_asset.attributes[assets.selected_attribute].color = cc"
+												>
+													<i 
+														class="fa fa-circle fa" 
+														style="color:{{cc}}!important;"
+													></i>
+												</button>
+											</div>
+										</li>
+									</ul>
+								</div><!-- /btn-group -->
+								<input
+									class="form-control"
+									ng-model="assets.asset.schema_asset.attributes[assets.selected_attribute][k]"
+									ng-required="true"
+									novalidate
+								/>
+							</div><!-- /input-group -->
+						</div><!-- /input-group -->
+						<div ng-switch-when="fxscript">
+							<input
+								type="hidden"
+								class="form-control"
+								ng-model="assets.asset.schema_asset.attributes[assets.selected_attribute][k]"
+								ng-disabled="true"
+								style="background:white!important;"
+								novalidate
+							/>
+							<div 
+								class="input-group"
+								style="width:100%;"
+							>
+								<span 
+									class="text-mono form-control"
+									ng-bind-html="assets.filters[assets.selected_attribute].fxparams.value"
+								></span>
+							</div>
+							<div class="input-group">
+								<input
+									type="text"
+									class="form-control"
+									name="{{k}}"
+									ng-model="assets.filters[assets.selected_attribute][k].value"
+									ng-required="assets.filters[assets.selected_attribute][k].required"
+									ng-disabled="assets.filters[assets.selected_attribute][k].disabled"
+									novalidate
+								/>
+								<span class="input-group-btn">
+									<button
+										type="button"
+										class="btn btn-primary"
+										ng-click="assets.updateAttributeScript()"
+										ng-disabled="!assets_attribute_form[k].$valid"
+									>
+										<i class="fa fa-refresh"></i>
+									</button>
+								</span>
+							</div>
+						</div>
+						<table
+							ng-switch-when="fxparams"
+							class="table table-bordered table-striped"
+						>
+							<thead>
+								<tr>
+									<th>
+										Key
+									</th>
+									<th>
+										Value
+									</th>
+									<th>
+										Group
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr 
+									ng-repeat="(a,b) in assets.asset.schema_asset.attributes[assets.selected_attribute][k]"
+								>
+									<td>
+										<span class="label text-uppercase bg-{{b.color}}">{{a}}</span>
+									</td>
+									<td>
+										<select                                               
+											type="text"                                         
+											class="form-control"                                
+											ng-required="assets.filters[assets.selected_attribute][k].required"
+											ng-disabled="assets.filters[assets.selected_attribute][k].disabled"
+											ng-model="assets.asset.schema_asset.attributes[assets.selected_attribute][k][a].field"
+											ng-options="w.name as w.label[sensum.language] disable when assets.attribute_list.indexOf(assets.selected_attribute) <= assets.attribute_list.indexOf(w.name) for w in assets.fxparams_fields"
+										></select>  
+									</td>
+									<td>
+										<select                                               
+											type="text"                                         
+											class="form-control"                                
+											ng-required="assets.filters[assets.selected_attribute][k].required"
+											ng-disabled="assets.filters[assets.selected_attribute][k].disabled"
+											ng-model="assets.asset.schema_asset.attributes[assets.selected_attribute][k][a].group"
+											ng-options="f as g.label[sensum.language] for (f,g) in sensum.constants.SENSUM_CORE_VIRTUAL_GROUPS"
+										></select>  
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				</form>
+			</div>
+      <div 
+				class="modal-footer"
+			>
+				<button
+					type="button"
+					class="pull-left btn btn-danger"
+					data-dismiss="modal"
+					ng-click="assets.removeAttribute()"
+				>
+					<i class="fa fa-trash fa-fw"></i>
+					{{'ASSETS_DELETE' | translate}}
+				</button>
+				<button
+					type="button"
+					data-dismiss="modal"
+					class="pull-right btn btn-success"
+					ng-disabled="assets_attribute_form.$invalid"
+				>
+					<i class="fa fa-check fa-fw"></i>
+					{{'ASSETS_OK' | translate}}
+				</button>
+			</div>
+		</div>	
+	</div>	
+</div>
+<!--INFOMODAL-->
+<div id="sensum-assets-info-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form name="assets_info_form">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">
+					<i class="fa fa-times"></i>
+				</button>
+				<h4 class="modal-title">
+					<i class="fa fa-info fa-fw"></i>
+					{{'ASSETS_INFO' | translate}}&nbsp;
+				</h4>
+      </div>
+      <div 
+				class="modal-body"
+			>
+				<div class="form-group">
+					<label>{{'ASSETS_MANUFACTURER' | translate}}</label>
+					<input 
+						type="text"
+						class="form-control"
+						name="manufacturer_asset"
+						ng-model="assets.asset.manufacturer_asset"
+						ng-required="true"
+						novalidate
+					/>
+				</div>
+				<div class="form-group">
+					<label>{{'ASSETS_MODEL' | translate}}</label>
+					<input 
+						type="text"
+						class="form-control"
+						name="model_asset"
+						ng-model="assets.asset.model_asset"
+						ng-required="true"
+						novalidate
+					/>
+				</div>
+				<div class="form-group">
+					<label>{{'ASSETS_NAME' | translate}}</label>
+					<div class="input-group">
+						<div class="input-group-btn">
+        			<button 
+								type="button" 
+								class="btn btn-default dropdown-toggle" 
+								data-toggle="dropdown" 
+								aria-haspopup="true" 
+								aria-expanded="false"
+							>
+								<img 
+									style="height:18px;" 
+									ng-src="/img/markers/{{assets.asset.schema_asset.icon}}.png"
+								/>
+								&nbsp;
+								<i class="fa fa-caret-down"></i>
+							</button>
+							<ul class="dropdown-menu">
+								<li
+									ng-repeat="cr in assets.marker_matrix"
+								>
+									<div>
+										<button
+											type="button"
+											class="btn btn-xs btn-default btn-flat"
+											ng-repeat="m in cr"
+											ng-click="assets.asset.schema_asset.icon = m"
+										>
+											<img 
+												style="height:18px;" 
+												ng-src="/img/markers/{{m}}.png"
+											/>
+										</button>
+									</div>
+								</li>
+							</ul>
+						</div>
+						<input 
+							type="text"
+							class="form-control"
+							name="name_asset"
+							ng-model="assets.asset.name_asset"
+							ng-required="true"
+							novalidate
+						/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label>
+						{{'ASSETS_CARRIER' | translate}}
+					</label>
+					<select 
+						type="text"
+						class="form-control"
+						name="id_carrier"
+						ng-model="assets.asset.id_carrier"
+						ng-options="item.id_carrier as item.name_carrier for item in assets.CONSTANTS.SENSUM_CORE_CARRIERS"
+						ng-change="assets.updateDriver()"
+						ng-required="true"
+						novalidate
+					></select>
+				</div>
+				<div class="form-group">
+					<label>
+						<i class="fa fa-lock fa-fw"></i>
+						{{'ASSETS_IS_PUBLIC' | translate}}
+					</label>
+					<select 
+						type="text"
+						class="form-control"
+						name="is_public_asset"
+						ng-model="assets.asset.is_public_asset"
+						ng-options="item.value as item.label[assets.i18n] for item in assets.CONSTANTS.BOOLEAN"
+						ng-required="true"
+						novalidate
+					></select>
+				</div>
+				<div class="form-group">
+					<label>
+						<i class="fa fa-male fa-fw"></i>
+						{{'ASSETS_ADMITS_MANUAL_ROWS' | translate}}
+					</label>
+					<select 
+						type="text"
+						class="form-control"
+						name="human"
+						ng-model="assets.asset.schema_asset.human"
+						ng-options="item.value as item.label[assets.i18n] for item in assets.CONSTANTS.BOOLEAN"
+						ng-required="true"
+						novalidate
+					></select>
+				</div>
+				<div class="form-group">
+					<label>
+						<i class="fa fa-sort fa-fw"></i>
+						{{'ASSETS_IS_LITTLE_ENDIAN' | translate}}
+					</label>
+					<select 
+						type="text"
+						class="form-control"
+						name="endianess"
+						ng-model="assets.asset.schema_asset.endianess"
+						ng-options="item.value as item.label[assets.i18n] for item in assets.CONSTANTS.BOOLEAN"
+						ng-required="true"
+						novalidate
+					></select>
+				</div>
+				<div class="form-group">
+					<label>
+						<i class="fa fa-chain fa-fw"></i>
+						{{'ASSETS_BIND_PACKAGES' | translate}}
+					</label>
+					<select 
+						type="text"
+						class="form-control"
+						name="bind_packages"
+						ng-model="assets.asset.schema_asset.bind_packages"
+						ng-options="item.value as item.label[assets.i18n] for item in assets.CONSTANTS.BOOLEAN"
+						ng-required="true"
+						novalidate
+					></select>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button
+					type="button"
+					data-dismiss="modal"
+					class="pull-right btn btn-success"
+					ng-disabled="assets_info_form.$invalid"
+				>
+					<i class="fa fa-check fa-fw"></i>
+					{{'ASSETS_OK' | translate}}
+				</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!--TEST MODAL-->
+<div id="sensum-assets-test-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">
+					<i class="fa fa-times"></i>
+				</button>
+				<h4 class="modal-title">
+					<i class="fa fa-bolt fa-fw"></i>
+					{{'ASSETS_TEST_ASSET' | translate}}
+				</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">                                                    
+          <label>                                                                   
+              {{'ASSETS_PAYLOAD' | translate}}                                      
+          </label>                                                                  
+          <div class="input-group">                                                 
+            <span class="input-group-btn">                                          
+              <button                                                               
+                type="button"                                                       
+                class="btn btn-{{assets.FRAME_DIRECTION ? 'success' : 'primary'}}"                                             
+                ng-click="assets.FRAME_DIRECTION = !assets.FRAME_DIRECTION"
+              >                                                                     
+                <i class="fa fa-arrow-{{assets.FRAME_DIRECTION ? 'up' : 'down'}}"></i>                                          
+              </button>                                                             
+            </span>                                                                 
+            <input type="text"  class="form-control" ng-model="assets.frame">   
+            <span class="input-group-btn">                                          
+              <button                                                               
+                type="button"                                                       
+                class="btn btn-primary"                                             
+                ng-click="assets.test()"                                            
+              >                                                                     
+                <i class="fa fa-bolt"></i>                                          
+              </button>                                                             
+            </span>                                                                 
+          </div>                                                                    
+        </div> 
+
+        <div ng-show="assets.nibbles.length > 0">                                   
+          <h4>Result</h4>                                                           
+          <table class="table table-bordered table-striped no-margin">              
+            <thead>                                                                 
+              <tr>                                                                  
+                <th>                                                                
+                  {{'ASSETS_NAME' | translate}}                                     
+                </th>                                                               
+                <th>                                                                
+                  {{'ASSETS_BITS' | translate}}                                     
+                </th>                                                               
+                <th>                                                                
+                  {{'ASSETS_RESULT' | translate}}                                   
+                </th>                                                               
+              </tr>                                                                 
+            </thead>                                                                
+            <tbody>                                                             
+              <tr ng-repeat="(v,k) in assets.asset.schema_asset.attributes">                  
+                <th>                                                            
+                  {{k.label}}                                                   
+                </th>                                                           
+                <td>                                                            
+                  {{assets.result[v].binary}}                              
+                </td>                                                           
+                <td>                                                            
+                  <span ng-show="assets.result[v].value">                  
+                    {{assets.result[v].value}}                             
+                  </span>                                                       
+                </td>                                                           
+              </tr>                                                             
+            </tbody>                                                            
+          </table>                                                              
+          <div ng-show="assets.result.latitude && assets.result.longitude" class="text-center">
+            <h4 class="text-left">                                              
+              {{'ASSETS_MAP' | translate}}                                      
+            </h4>                                                               
+            <img
+							style="max-width:100%;" 
+							ng-src="https://maps.googleapis.com/maps/api/staticmap?key=AIzaSyAatAAxA8-NHEAZ_PQ21ux6LR_JXjL5wO4&markers={{assets.result.latitude.value}},{{assets.result.longitude.value}}&size=800x600&maptype=hybrid&zoom=18"/>
+          </div>                                                                
+        </div>
+			</div>
+			<div class="modal-footer">
+				<button
+					type="button"
+					data-dismiss="modal"
+					class="pull-right btn btn-success"
+				>
+					<i class="fa fa-check fa-fw"></i>
+					{{'ASSETS_OK' | translate}}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!--DELETE MODAL-->
+    <div id="sensum-assets-delete-modal" class="modal fade" role="dialog">               
+      <div class="modal-dialog">                                                   
+        <div class="modal-content bg-red">                                         
+          <div class="modal-header">                                               
+            <h4 class="modal-title">                                               
+              <i class="fa fa-trash fa-fw"></i>&nbsp;                              
+              {{ 'ASSETS_DELETE' | translate}}                                    
+            </h4>                                                                  
+          </div>                                                                   
+                                                                                   
+          <div class="modal-body text-center">                                     
+            <p><b>{{ 'ASSETS_ARE_YOU_SURE' | translate}}</b></p>                  
+                                                                                   
+            <p>{{ 'ASSETS_DELETE_MODAL_MESSAGE' | translate}}</p>                 
+          </div>                                                                   
+                                                                                   
+          <div class="modal-footer">                                               
+            <button                                                                
+              type="button"                                                        
+              class="btn btn-default pull-left"                                    
+              data-dismiss="modal"                                                 
+            >                                                                      
+              <i class="fa fa-times fa-fw"></i>&nbsp;                              
+              {{ 'ASSETS_CANCEL' | translate}}                                    
+            </button>                                                              
+            <button                                                                
+              type="button"                                                        
+              class="btn btn-default text-uppercase"                               
+              data-dismiss="modal"                                                 
+              ng-click="assets.remove()"                                          
+            >                                                                      
+              <i class="fa fa-trash fa-fw"></i>&nbsp;                              
+              {{'ASSETS_DELETE' | translate}}                                     
+            </button>                                                              
+          </div>                                                                   
+        </div>                                                                     
+      </div>                                                                       
+    </div>    
+<!--JSON MODAL-->
+    <div id="sensum-assets-json-modal" class="modal fade" role="dialog">               
+      <div class="modal-dialog">                                                   
+        <div class="modal-content">                                         
+          <div class="modal-header">                                               
+            <h4 class="modal-title">                                               
+              <i class="fa fa-code fa-fw"></i>&nbsp;                              
+              {{ 'ASSETS_JSON' | translate}}                                    
+            </h4>                                                                  
+          </div>                                                                   
+                                                                                   
+          <div class="modal-body text-center">                                     
+						<form name="json_form">
+							<textarea
+								class="form-control"
+								name="json"
+								ng-model="assets.json"
+							></textarea>
+						</form>
+          </div>                                                                  
+                                                                                   
+          <div class="modal-footer">                                               
+            <button                                                                
+              type="button"                                                        
+              class="btn btn-default text-uppercase"                               
+              data-dismiss="modal"                                                 
+              ng-click="assets.cloneAssetByJSON()"                                          
+            >                                                                      
+              <i class="fa fa-clone fa-fw"></i>&nbsp;                              
+              {{'ASSETS_CLONE' | translate}}                                     
+            </button>                                                              
+          </div>                                                                   
+        </div>                                                                     
+      </div>                                                                       
+    </div>    

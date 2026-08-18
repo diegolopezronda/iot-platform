@@ -1,0 +1,161 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="box no-border">
+      <div class="box-header with-border">
+        <h3 class="box-title">
+					<i class="fa fa-fw fa-history"></i>
+					Events Log
+			</h3>
+
+        <div class="box-tools pull-right">
+          <button class="hidden btn btn-success btn-sm" ng-click=
+          "logs.download();">
+						<i class="fa fa-fw fa-download"></i>
+						{{ 'LOGS_DOWNLOAD_CSV' | translate}}
+					</button>
+        </div>
+      </div>
+
+      <div class="box-body no-padding">
+          <table class=
+          "table table-hover table-striped">
+            <thead>
+              <tr>
+                <th title="{{'LOGS_HASH_TOOLTIP' | translate}}" data-toggle=
+                "tooltip">
+									<i class="fa fa-fw fa-hashtag"></i>
+								</th>
+								<th>
+									Device
+								</th>
+                <th title="{{'LOGS_DATE_TOOLTIP' | translate}}" data-toggle=
+                "tooltip">Date</th>
+              <th>{{'CONTROL_CONTROL_NAME' | translate}}</th>
+              <th>{{'CONTROL_ORIGINATOR' | translate}}</th>
+              <th>{{'CONTROL_IP' | translate}}</th>
+              <th>{{'ENTITY_ACTIONS' | translate}}</th>
+            </tr>
+            </thead>
+
+            <tbody>
+              <tr ng-repeat="row in logs.rows">
+                <td class="text-center">{{$index+1}}</td>								
+								<td title="{{row.mac}}" data-toggle="tooltip">
+									<a href="/dashboard/events/{{row._id_item}}">
+										{{row._name}}
+										<i class="fa fa-filter"></i>
+									</a>
+								</td>
+                <td>
+                  <div style="width:170px">
+                    {{row._date | date : 'yyyy-MM-dd'}}&nbsp; {{row._date |
+                    date : 'HH:mm:ss'}}
+                  </div>
+                </td>
+								<td class="text-center">
+									<span
+										class="
+											label 
+											text-uppercase 
+											label-{{row.success === false ? 'danger' : 'success'}}
+										"										
+									>
+										{{row.label}} 
+										<i 
+											class="fa fa-fw fa-info-circle"
+											data-toggle="tooltip"
+											title="{{row.description}}"
+										></i>
+									</span>
+								</td>
+								<td ng-switch="row.originator" class="text-center">
+              		<span 
+										ng-switch-when="-3"
+										class="label bg-gray text-uppercase"
+									>
+										{{'LOGS_UNKNOWN' | translate}}
+									</span>
+              		<span 
+										ng-switch-when="-2"
+										class="label bg-blue text-uppercase"
+									>
+										{{'LOGS_OPERATOR' | translate}}
+									</span>
+              		<span 
+										ng-switch-when="-1"
+										class="label bg-purple text-uppercase"
+									>
+										{{'LOGS_TEST' | translate}}
+									</span>
+              		<span 
+										ng-switch-when="0"
+										class="label bg-orange text-uppercase"
+									>
+										{{'LOGS_SCHEDULER' | translate}}
+									</span>
+              		<span 
+										ng-switch-default
+									>
+              			{{row.originator | lowercase}}
+									</span>
+								</td>
+              	<td>
+									<span ng-show="row.ip != 'device'">
+										{{row.ip}}
+									</span>
+  	            	<span ng-show="row.ip === 'device'">
+										{{'LOGS_LOGS' | translate}}
+									</span>
+								</td>
+              	<td>
+									<button
+										type="button"
+										class="btn btn-block btn-primary"
+										data-toggle="modal"
+										data-target="#events-message-modal"
+										ng-click="logs.current_event = $index"
+									>
+										<i class="fa fa-fw fa-paper-plane"></i>
+										Show message
+									</button>
+              	</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="box-footer text-center">
+          <div class="button-group">
+						<button 
+							class="btn btn-primary btn-block" 
+							ng-disabled="!logs.last_row" 
+							ng-click="logs.getNextPage()"
+						>
+							{{'LOGS_NEXT' | translate}}
+							<i class="fa fa-fw fa-arrow-down"></i>
+						</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="events-message-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">
+					<i class="fa fa-paper-plane fa-fw"></i>&nbsp;
+					Message
+				</h4>
+			</div>
+			<div class="modal-body">
+				<code>
+					{{logs.rows[logs.current_event].message}}
+				</code>
+			</div>
+		</div>
+	</div>
+</div>
+</div>

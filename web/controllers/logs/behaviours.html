@@ -1,0 +1,86 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="box no-border box-data">
+      <div class="box-header">
+        <h3 class="box-title">&nbsp; {{ 'LOGS_DATA_LOG' | translate }}</h3>
+        <div class="box-tools pull-right">
+          <button class="btn btn-success btn-sm" ng-click="logs.download();">
+            <i class="fa fa-fw fa-download"></i>
+            {{ 'LOGS_DOWNLOAD_CSV' | translate}}
+          </button>
+        </div>
+      </div>
+      <div class="box-body no-padding">
+        <div class="x-overflow-container">
+          <table class="table table-bordered table-hover table-striped table-data">
+            <thead>
+              <tr>
+                <th title="{{'LOGS_HASH_TOOLTIP' | translate}}" data-toggle="tooltip">
+                  <i class="fa fa-fw fa-hashtag"></i>
+                </th>
+                <th title="{{'LOGS_DATE_TOOLTIP' | translate}}" data-toggle="tooltip">Date</th>
+                <th>Account</th>
+                <th>Name</th>
+                <th>Device</th>
+                <th>Platform</th>
+                <th>OS</th>
+                <th>Browser</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="row in logs.rows">
+                <td data-toggle="tooltip" title="{{row.user_agent}}" class="text-center">{{$index+1}}</td>
+                <td>
+                  <div style="width:170px">
+                    {{row.date | date : 'yyyy-MM-dd'}}&nbsp; {{row.date | date : 'HH:mm:ss'}}
+                  </div>
+                </td>
+                <td>
+                  <a href="/dashboard/behaviours/{{row.user.id_user}}" target="_blank">
+                    <i class="fa fa-filter fa-fw"></i>{{row.user.account_user}}
+                  </a>
+                </td>
+                <td>
+                  {{row.user.first_name_user}}&nbsp; {{row.user.last_name_user}}
+                </td>
+                <td>
+                  {{row.device}}
+                </td>
+                <td>
+                  <i class="fa fa-{{sensum.constants.UA.brands[row.os_name].icon}} text-{{sensum.constants.UA.brands[row.os_name].color}} fa-fw"></i>
+                  <span class="text-uppercase label label-primary">
+                    {{row.os_architecture}}
+                  </span>
+                </td>
+                <td>
+                  {{sensum.constants.UA.os[row.os_key]}}&nbsp;
+                  <span class="text-uppercase label label-primary">
+                    {{row.os_version}}
+                  </span>
+                </td>
+                <td>
+                  {{row.browser_name}}&nbsp;
+                  <span class="text-uppercase label label-primary">
+                    {{row.browser_version}}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="box-footer text-center">
+          <div class="button-group">
+						<button 
+							class="btn btn-primary btn-block" 
+							ng-disabled="logs.has_next_page === false"
+							ng-click="logs.getNextPage()"
+						>
+							{{'LOGS_NEXT' | translate}}
+							<i class="fa fa-fw fa-arrow-down"></i>
+						</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

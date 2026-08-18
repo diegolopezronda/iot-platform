@@ -1,0 +1,91 @@
+<div class="row no-print">
+	<div class="col-md-12">
+		<div class="box">
+			<div class="box-header">
+				<div class="input-group margin">
+					<div class="input-group-addon">
+						<i class="fa fa-truck"></i>
+					</div>
+					<select 
+						class="form-control" 
+						ng-model="tracktor.IMEI" 
+						ng-options="item for item in tracktor.TRACKTOR_LIST"
+					>
+					</select>
+					<div class="input-group-addon">
+						<i class="fa fa-calendar"></i>
+					</div>
+					<input type="text" class="form-control pull-right" id="date-scope">
+					<div class="input-group-btn">
+						<button 
+							id="date-submit" 
+							class="btn btn-primary pull-right" 
+							ng-disabled="!tracktor.IMEI"
+						>Go!</button>
+					</div>
+				</div>
+			</div>
+			<div class="box-body no-padding">
+				<div id="map">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<div class="box">
+			<div class="box-header">
+				<h3 class="box-title">Task list</h3>
+				<button class="btn btn-sm pull-right bg-teal no-print" id="track-button">
+					<i class="fa fa-fw fa-play"></i>&nbsp;Track path
+				</button>
+			</div>
+			<div class="box-body no-padding">
+				<table class="table table-bordered table-striped">
+					<thead>
+						<tr>
+							<th width="16%">Start</th>
+							<th width="16%">End</th>
+							<th width="16%">Distance</th>
+							<th width="16%">Task</th>
+							<th width="16%">NZ$ per KM</th>
+							<th width="20%">Sub-total</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="pair in tracktor.PAIRS">
+							<td class="text-center"><img height="48" src="{{pair.start_icon}}"></td>
+							<td class="text-center"><img height="48" src="{{pair.end_icon}}"></td>
+							<td class="text-right" style="vertical-align:middle!important;">
+								{{pair.distance}}&nbsp;Km.
+							</td>
+							<td style="vertical-align:middle!important;">
+								<select
+									ng-change="tracktor.getTotal()"
+									ng-model="pair.select" 
+									ng-options="item.name for item in tracktor.TASKS"
+								>
+								</select>
+							</td>
+							<td class="text-right" style="vertical-align:middle!important;">
+								<i class="fa fa-fw fa-usd"></i>
+								<span ng-show="pair.select">{{(pair.select.price*1).toFixed(2)}}</span>
+								<span ng-show="!pair.select">0.00</span>
+							</td>
+							<td class="text-right" style="vertical-align:middle!important;">
+								<i class="fa fa-fw fa-usd"></i>
+								<span ng-show="pair.select">{{(pair.select.price*pair.distance).toFixed(2)}}</span>
+								<span ng-show="!pair.select">0.00</span>
+							</td>
+						</tr>
+						<tr>
+							<th colspan="5" class="text-right bg-info">Total:</th>
+							<th class="text-right bg-info"><i class="fa fa-fw fa-usd"></i>{{tracktor.total.toFixed(2)}}</th>
+						</tr>
+					</tbody>
+				<table>
+			</div>
+		</div>
+	</div>
+</div>

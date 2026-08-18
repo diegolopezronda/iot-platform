@@ -1,0 +1,22 @@
+{
+  "name": "dr-sigfox",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm install;pm2 start app.js --name dr-sigfox --merge-logs -o logs/out.log -e logs/error.log",
+    "restart": "pm2 restart dr-sigfox;pm2 logs dr-sigfox",
+    "log": "pm2 logs dr-sigfox",
+    "errors": "pm2 logs --err dr-sigfox",
+    "clean-errors": "rm logs/err.log",
+		"prettier":"prettier --use-tabs --trailing-comma none --write app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.2",
+    "moment": "^2.18.1",
+    "mongodb": "^2.2.31",
+    "mqtt": "^2.12.1"
+  }
+}

@@ -1,0 +1,930 @@
+<div class="row no-print map-data-view collapse in">
+	<!--WATCH MENU-->
+	<div 
+		class="col-sm-5 col-md-4 col-lg-3" 
+		id="map-select" 
+		style="margin-top:15px!important;"
+	>
+		<div class="box no-border box collapse in">
+			<div class="box-header">
+				<h3 class="box-title hidden">
+					<i class="fa fa-fw fa-bullseye"></i>&nbsp;
+					{{ 'MAP_WATCH' | translate}}
+				
+				</h3>
+				<div class="pull-left">
+					<span class="badge bg-green">
+						{{map.overall_health.ok}}
+					</span>&nbsp;
+					
+					<span class="badge bg-red">
+						{{map.overall_health.fail}}
+					</span>&nbsp;
+					
+					<div class="btn-group">
+						<button 
+							class="btn btn-primary btn-sm" 
+							ng-click="map.toggleZoom(false)"
+						>
+							<i class="fa fa-fw fa-search-minus"></i>
+						</button>
+						<button 
+							class="btn btn-primary btn-sm" 
+							ng-click="map.toggleZoom(true)"
+						>
+							<i class="fa fa-fw fa-search-plus"></i>
+						</button>
+						<button 
+							class="btn btn-primary btn-sm hidden" 
+							ng-click="map.toggleOpacity(false)"
+						>
+							<i class="fa fa-fw fa-circle-o"></i>
+						</button>
+						<button 
+							class="btn btn-primary btn-sm hidden" 
+							ng-click="map.toggleOpacity(true)"
+						>
+							<i class="fa fa-fw fa-circle"></i>
+						</button>
+						<button 
+							class="btn btn-primary btn-sm" 
+							ng-click="map.toggleMap()"
+						>
+							<i class="fa fa-fw fa-map"></i>
+						</button>
+						<button 
+							class="btn btn-primary btn-sm" 
+							ng-click="map.toggleLevel()"
+						>
+							<b>{{map.selected_level.value+1}}</b>
+						</button>
+					</div>
+				</div>
+				<div class="pull-right">
+					<button 
+						type="button"
+						class="btn btn-box-tool btn-sm" 
+						data-widget="collapse"
+						id="map-select-collapse"
+					>
+						<i class="fa fa-minus"></i>
+					</button>
+				</div>
+			</div>
+			<div class="box-body nav-tabs-custom">
+				<ul class="nav nav-tabs">
+					<li class="hidden">
+						<a data-target="#health" data-toggle="tab" id="health-tab">
+							<i class="fa fa-heartbeat text-maroon"></i>&nbsp;
+							
+							<span class="hidden-xs hidden-sm">
+								{{'MAP_HEALTH' | translate}}
+							</span>
+						</a>
+					</li>
+					<li class="active">
+						<a data-target="#devices" data-toggle="tab" id="devices-tab">
+							<i class="fa fa-map-marker text-purple"></i>&nbsp;
+							
+							<span class="hidden-xs hidden-sm">
+								{{'MAP_DEVICES' | translate}}
+							</span>
+						</a>
+					</li>
+					<li>
+						<a data-target="#zones" data-toggle="tab" id="zones-tab">
+							<i class="fa fa-map"></i>&nbsp;
+							
+							<span class="hidden-xs hidden-sm">
+								{{'MAP_ZONES' | translate}}
+							</span>
+						</a>
+					</li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane active" id="devices">
+						<div class="form-group">
+							<label>
+								<i class="fa fa-wifi fa-fw"></i>
+								{{'MAP_SELECT_DEVICE' | translate}}
+							</label>
+							<div class="input-group">
+								<select
+									id="map-select-device"
+									class="form-control" 
+									ng-model="map.selected_device" 
+									ng-options="v.name_item for (k,v) in map.DEVICES track by v.id_item" 
+									ng-change="map.selectDevice()"
+								></select>
+								<span class="input-group-btn">
+									<button
+										id="map-select-device-button"
+										class="btn btn-primary"
+										ng-click="map.selectDevice()"
+										ng-disabled="!map.selected_device"
+									>
+										<i class="fa fa-eye"></i>
+									</button>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane" id="zones">
+						<div
+							class="form-group"
+							ng-show="map.LEVELS.length > 1"
+						>
+							<label>
+								<i class="fa fa-fw fa-binoculars"></i>
+								{{ 'MAP_SELECT_LEVEL' | translate}}
+							</label>
+							<select 
+								class="form-control" 
+								ng-model="map.selected_level" 
+								ng-options="level.name for level in map.LEVELS" 
+								ng-change="map.showLevel()"
+							></select>
+						</div>
+						<div class="form-group">
+							<label>
+								<i class="fa fa-fw fa-map"></i>
+								{{ 'MAP_SELECT_ZONE' | translate}}
+							</label>
+							<div class="input-group">
+								<select 
+									id="map-select-zone"
+									class="form-control" 
+									ng-model="map.selected_zone" 
+									ng-options="v.name_zone for (k,v) in map.VISIBLE_ZONES" 
+									ng-change="map.selectZone()"
+								></select>
+								<span class="input-group-btn">
+									<button 
+										class="btn btn-primary btn-block"
+										ng-click="map.selectZone()"
+										ng-disabled="!map.selected_zone"
+									>
+										<i class="fa fa-eye"></i>
+									</button>
+								</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<a 
+								id="map-add-zone"
+								href="/dashboard/zones/add/"
+								class="btn btn-sm btn-success btn-block text-lowercase"
+							>
+								<i class="fa fa-fw fa-plus"></i>&nbsp;
+								{{ 'MAP_ADD_ZONE' | translate}}	
+							</a>
+						</div>
+					</div>
+					<div class="tab-pane hidden" id="health">
+						<table class="table table-striped">
+							<tbody>
+								<tr id="map-health-type">
+									<th width="50%">
+										<i class="fa fa-fw fa-ambulance"></i>
+										{{ 'MAP_HEALTH_DEVICE_TYPE' | translate}}
+									
+									</th>
+									<td ng-show="!map.current_kpi" class="text-right">
+										{{ 'MAP_HEALTH_ALL' | translate}}
+									</td>
+									<td ng-show="map.current_kpi" class="text-right">
+										{{map.current_kpi.asset}}
+									</td>
+								</tr>
+								<tr id="map-health-index">
+									<th>
+										<i class="fa fa-fw fa-stethoscope"></i>
+										{{ 'MAP_HEALTH_INDEX' | translate}}
+									
+									</th>
+									<td ng-show="!map.current_kpi" class="text-right">
+										{{ 'MAP_HEALTH_ALL' | translate}}
+									</td>
+									<td ng-show="map.current_kpi" class="text-right">
+										{{map.current_kpi.name}}
+									</td>
+								</tr>
+								<tr id="map-health-ok">
+									<th>
+										<i 
+											class="fa fa-square fa-fw" 
+											style="color:{{map.ZONE_COLORS.OK}}"
+										></i>
+										{{ 'MAP_HEALTH_OK' | translate}}
+									
+									</th>
+									<td class="text-right">
+										{{map.overall_health.ok}}
+									</td>
+								</tr>
+								<tr id="map-health-fail">
+									<th>
+										<i 
+											class="fa fa-square fa-fw" 
+											style="color:{{map.ZONE_COLORS.FAIL}}"
+										></i>
+										{{ 'MAP_HEALTH_FAIL' | translate}}
+									
+									</th>
+									<td class="text-right">
+										{{map.overall_health.fail}}
+									</td>
+								</tr>
+								<tr id="map-health-unknown">
+									<th>
+										<i 
+											class="fa fa-square fa-fw" 
+											style="color:{{map.ZONE_COLORS.UNKNOWN}}"
+										></i>
+										{{ 'MAP_HEALTH_UNKNOWN' | translate}}
+									
+									</th>
+									<td class="text-right">
+										{{map.overall_health.unknown}}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<hr/>
+						<button
+							id="map-health-clear"
+							class="btn btn-sm btn-primary btn-block text-lowercase"
+							ng-click="map.clearKPIZoneFilter()"
+						>
+							<i class="fa fa-fw fa-filter"></i>&nbsp;
+							{{ 'MAP_HEALTH_CLEAR' | translate}}
+						
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--MAP CONTAINER-->
+	<div class="col-md-12">
+		<div class="box no-border" id="map-container">
+			<div class="box-body no-padding">
+				<div id="map" style="width:100%;"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<!--BOXES-->
+	<div class="col-sm-6 col-md-4 col-lg-4" id="map-current-marker">
+		<div class="hidden-xs" style="height:15px">&nbsp;</div>
+		<!--CURRENT ZONE-->
+		<div class="box no-border" ng-show="map.current_zone" id="map-current-zone">
+			<div class="box-header text-center">
+				<h4 class="text-left">
+					<i class="fa fa-fw fa-map"></i>
+					<span>{{map.current_zone.name_zone}}</span>
+					<div class="box-tools pull-right">
+						<div class="btn-group">
+							<a
+								type="button"
+								class="btn btn-success btn-sm" 
+								href="/dashboard/zones/add"
+							>
+								<i class="fa fa-plus"></i>
+							</a>
+							<a
+								type="button"
+								class="btn btn-warning btn-sm" 
+								href="/dashboard/zones/edit/{{map.current_zone.id_zone}}"
+							>
+								<i class="fa fa-pencil"></i>
+							</a>
+							<button 
+								ng-click="map.current_zone = null"
+								type="button" 
+								class="btn btn-default btn-sm"
+							>
+								<i class="fa fa-times"></i>
+							</button>
+						</div>
+					</div>
+				</h4>
+			</div>
+			<div class="box-body nav-tabs-custom no-padding">
+				<ul class="nav nav-tabs">
+					<li class="active">
+						<a data-target="#zone-metadata" data-toggle="tab">
+							<i class="fa fa-info fa-fw"></i>{{'MAP_ZONE_METADATA' | translate}}
+						</a>
+					</li>
+				</ul>
+				<div class="tab-content no-padding">
+					<div class="map-forecast-pane tab-pane active" id="zone-metadata">
+						<table class="table table-striped" style="font-size:10pt!important;">
+							<tbody>
+								<tr>
+									<th>Parent Zone</th>
+									<td ng-show="map.current_zone.parent_zone">
+										{{map.current_zone.parent_zone.name_zone}}
+									</td>
+									<td ng-show="!map.current_zone.parent_zone">
+										<span class="label bg-purple text-uppercase">
+											{{'MAP_NULL' | translate}}
+										</span>
+									</td>
+								</tr>
+								<tr ng-repeat="(k,v) in map.current_zone.schema_metadata track by $index">
+									<th>{{v.label[sensum.language]}}</th>
+									<td
+										ng-show="map.current_zone.metadata_zone[k] || map.current_zone.metadata_zone[k] === false"
+									>
+										{{map.current_zone.metadata_zone[k]}}&nbsp;
+										
+										<span ng-bind-html="v.unit"></span>
+									</td>
+									<td
+										ng-show="!map.current_zone.metadata_zone[k] && map.current_zone.metadata_zone[k] != false"
+									>
+										<span class="label bg-purple text-uppercase">
+											{{'MAP_NULL' | translate}}
+										</span>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--CURRENT DEVICE-->
+		<div class="box no-border nav-tabs-custom" ng-show="map.current_device" id="map-current-device">
+			<div class="box-header text-center">
+				<h4 class="text-left">
+					<img src="{{map.current_device._icon}}" />
+					<span>{{map.current_device._name}}</span>
+					<i
+						class='fa fa-truck'
+						ng-show='map.current_device._motion === true'
+					></i>
+					<i 
+						class="fa fa-info-circle" 
+						title="
+							<h5 class='text-left'>
+								{{map.current_device._asset}}
+								<span class='text-uppercase'>#{{map.current_device.key}}</span>
+							</h5>
+						"
+						data-toggle="tooltip"
+						data-html="true"
+					></i>
+					<span 
+						class="label bg-blue text-uppercase"
+						ng-show="map.current_device.empty"
+					>
+						{{'MAP_UNDEFINED' | translate}}
+					</span>
+					<div class="box-tools pull-right">
+						<div class="btn-group">
+							<button
+								type="button"
+								class="btn btn-sm bg-{{map.SUBSCRIPTIONS[map.current_device.mac.toString()].email === true ? 'green' : 'gray' }}"
+								ng-click="map.updateSubscription('email',!map.SUBSCRIPTIONS[map.current_device.mac.toString()].email)"
+							>
+								<i 
+									class="fa fa-envelope"
+								></i>
+							</button>
+							<button
+								type="button"
+								class="btn btn-sm bg-{{map.SUBSCRIPTIONS[map.current_device.mac.toString()].sms === true ? 'green' : 'gray' }}"
+								ng-click="map.updateSubscription('sms',!map.SUBSCRIPTIONS[map.current_device.mac.toString()].sms)"
+							>
+								<i 
+									class="fa fa-phone"
+								></i>
+							</button>
+						</div>
+					</div>
+				</h4>
+			</div>
+			<ul class="nav nav-tabs">
+				<li class="active">
+					<a data-target="#device-status" data-toggle="tab">
+						<i class="fa fa-cube text-maroon"></i>&nbsp;
+						
+						<span class="hidden-xs hidden-sm">
+							{{'MAP_DEVICE' | translate}}
+						</span>
+					</a>
+				</li>
+				<li 
+					ng-repeat="(k,v) in map.current_device._attributes"
+					ng-show="v.type === 'package'"
+				>
+					<a data-target="#kpi-tab-{{k}}" data-toggle="tab">
+						<i 
+							class="fa fa-{{v.icon}}"
+							style="color:{{v.color}}"
+						></i>&nbsp;				
+						<span class="hidden-xs hidden-sm">
+							{{v.label}}
+						</span>
+					</a>
+				</li>
+				<li>
+					<a data-target="#comments" data-toggle="tab">
+						<i class="fa fa-comment"></i>&nbsp;
+						
+						<span class="hidden-xs hidden-sm">
+							{{'MAP_COMMENTS' | translate}}
+						</span>
+					</a>
+				</li>
+			</ul>
+			<div class="tab-content no-padding">
+				<div 
+					ng-repeat="(k,v) in map.current_device._attributes"
+					ng-show="v.type === 'package'"
+					class="tab-pane"
+					id="kpi-tab-{{k}}"
+				>
+					<div class="map-box-body box-body no-padding" ng-switch="v.array">
+						<table 
+							class="table table-striped no-margin"
+							ng-switch-when="true"
+						>
+							<thead>
+								<tr>
+									<th 
+										ng-repeat="(x,y) in v.structure"
+										class="{{y.display}}"
+										style="width:{{y.width}};"
+									>
+										{{y.label}}
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="row in map.current_device[k]">
+									<td 
+										ng-repeat="(x,y) in v.structure"
+										ng-switch="y.type" 
+										class="{{y.display}} {{y.bold === true ? 'text-bold' : ''}}"
+									>
+										<div ng-switch-when="date">
+											{{(row[x]*y.factor) | date:y.format}}{{y.suffix}}
+										</div>
+										<div ng-switch-when="number">
+											{{(row[x]*y.factor) | number:y.decimals}}
+											{{y.unit}}
+										</div>
+										<div ng-switch-default>
+											{{row[x]}}
+										</div>
+									</td>
+								</tr>
+								<tr id="map-current-device-timestamp" ng-show="map.current_device.empty === false">
+									<td colspan="100" class="text-center">
+										<i class="fa fa-calendar"></i>
+										{{map.current_device._date | date : 'yyyy-MM-dd' }}&nbsp;
+										
+										<i class="fa fa-clock-o"></i>
+										{{map.current_device._date | date : 'HH:mm:ss' }}
+										
+										<i 
+											class="fa fa-map-marker text-red"
+											ng-show="map.current_device._latlng === false"
+											title="Last known position."
+											data-toggle="tooltip"
+										></i>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<table 
+							class="table table-striped no-margin"
+							ng-switch-default
+						>
+							<tbody>
+								<tr></tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="tab-pane active" id="device-status">
+					<div class="map-box-body box-body no-padding map-item-menu collapse in">
+						<table class="table table-striped" style="font-size:10pt!important;">
+							<tbody>
+								<tr 
+									ng-show="map.no_attributes === true" 
+									class="text-center"
+								>
+									<td>{{'MAP_NO_ATTRIBUTES' | translate}}</td>
+								</tr>
+								<tr 
+									ng-repeat="(k,v) in map.current_device._display"
+									ng-show="v === true && map.current_device._attributes[k].type != 'package'"
+								>
+									<th>
+										<i
+											class="fa fa-fw fa-question-circle"
+											data-toggle="tooltip"
+											title="{{map.current_device._attributes[k].description}}"
+										></i>
+										<span>{{map.current_device._attributes[k].label}}</span>
+									</th>
+									<td>
+										<div ng-switch on="map.current_device[k]">
+											<span 
+												class="label bg-purple text-uppercase"
+												ng-switch-when="null"
+											>
+												{{'MAP_NULL' | translate}}
+											</span>
+											<span 
+												class="label bg-purple text-uppercase"
+												ng-switch-when="undefined"
+											>
+												{{'MAP_NULL' | translate}}
+											</span>
+											<div ng-switch-default>
+												<div ng-switch on="map.current_device._attributes[k].type">
+													<div ng-switch-when="number|decimal" ng-switch-when-separator="|">
+														<i 
+															class="fa fa-battery-0 text-red fa-fw"
+															ng-show="k === 'battery' && map.current_device[k] === 0"
+														></i>
+														<i 
+															class="fa fa-battery-1 text-red fa-fw"
+															ng-show="k === 'battery' && map.current_device[k] >= 0 && map.current_device[k] < 25"
+														></i>
+														<i 
+															class="fa fa-battery-2 text-yellow fa-fw"
+															ng-show="k === 'battery' && map.current_device[k] >= 25 && map.current_device[k] < 50"
+														></i>
+														<i 
+															class="fa fa-battery-3 text-yellow fa-fw"
+															ng-show="k === 'battery' && map.current_device[k] >= 50 && map.current_device[k] < 75"
+														></i>
+														<i 
+															class="fa fa-battery-4 text-green fa-fw"
+															ng-show="k === 'battery' && map.current_device[k] >= 75 && map.current_device[k] < 100"
+														></i>
+														<i 
+															class="fa fa-battery-5 text-green fa-fw"
+															ng-show="k === 'battery' && map.current_device[k] === 100"
+														></i>
+
+														<sensum-signal
+															ng-show="['rssi','snr','lqi'].indexOf(k) != -1"
+															data-indicator="{{k}}"
+															data-compact="true"
+															data-carrier="{{map.current_device._driver}}"
+															data-sf="{{map.current_device.sf}}"
+															ng-model="map.current_device[k]"
+														></sensum-signal>
+
+														<span
+															ng-show="['rssi','snr','lqi'].indexOf(k) === -1"
+														>{{map.current_device[k] | number:map.current_device._attributes[k].decimals}}</span>
+														<span
+															ng-show="['rssi','snr','lqi'].indexOf(k) === -1"
+															 ng-bind-html="map.current_device._attributes[k].unit"
+														></span>
+													</div>
+													<div ng-switch-when="text|message" ng-switch-when-separator="|">
+														{{map.current_device[k]}}
+													</div>
+													<div ng-switch-when="direction">
+														<span>{{map.current_device[k]}}</span>
+														<i 
+															class="fa fa-fw fa-arrow-{{map.DIRECTION_ICONS[map.current_device[k]]}}"
+														></i>
+													</div>
+													<div ng-switch-when="logical" class="text-uppercase">
+														<span 
+															class="label label-default" 
+															ng-show="map.current_device[k] === false"
+														>
+															{{ 'MAP_NO' | translate }}
+														</span>
+														<span 
+															class="label label-primary" 
+															ng-show="map.current_device[k] === true"
+														>
+															{{ 'MAP_YES' | translate }}
+														</span>
+													</div>
+													<div ng-switch-when="switch" class="text-uppercase">
+														<span 
+															class="label label-success" 
+															ng-show="map.current_device[k] === true"
+														>
+															{{ 'MAP_ON' | translate }}
+														</span>
+														<span 
+															class="label label-default" 
+															ng-show="map.current_device[k] === false"
+														>
+															{{ 'MAP_OFF' | translate }}
+														</span>
+													</div>
+													<div ng-switch-default >
+														{{map.current_device[k]}}
+													</div>
+												</div>
+											</div>
+										</div>
+									</td>
+									<td class="text-center">
+										<div ng-switch on="map.current_device._status[k]">
+											<div ng-switch-when="true">
+												<i
+													class="fa fa-fw fa-calculator text-blue"
+													title="{{'MAP_VIRTUAL_FIELD'|translate}}"
+													data-toggle="tooltip"
+													ng-show="map.current_device._attributes[k].origin === 'algorithm'"
+												></i>
+												<i
+													class="fa fa-fw fa-check-circle text-green"
+													title="{{'MAP_ITEM_OK'|translate}}"
+													data-toggle="tooltip"
+													ng-show="map.current_device._attributes[k].origin !== 'algorithm'"
+												></i>
+											</div>
+											<div ng-switch-when="false">
+												<i
+													class="fa fa-fw fa-warning text-yellow"
+													title="<span class='label bg-blue text-uppercase'>{{'MAP_MIN' | translate}}: {{map.current_device._limits[k].min}}</span><br><span class='label bg-red text-uppercase'>{{'MAP_MAX' | translate}}: {{map.current_device._limits[k].max}}</span>"
+													data-html="true"
+													data-toggle="tooltip"
+												></i>
+											</div>
+											<div ng-switch-default>
+												<i
+													class="fa fa-fw fa-ban text-red"
+													title="{{'MAP_NO_CONFIG'|translate}}"
+													data-toggle="tooltip"
+													ng-show="map.current_device._attributes[k].origin !== 'algorithm'"
+												></i>
+											</div>
+										</div>
+									</td>
+									<td class="hidden">
+										<button 
+											class="btn btn-xs bg-maroon"
+											title="{{'MAP_KPI_TO_LAYER'|translate}}"
+											data-toggle="tooltip"
+											ng-click="map.colorZones(k)"
+										>
+											<i class="fa fa-heartbeat"></i>
+										</button>
+									</td>
+								</tr>
+								<tr id="map-current-device-timestamp" ng-show="map.current_device.empty === false">
+									<td colspan="4" class="text-center">
+										<i class="fa fa-calendar"></i>
+										{{map.current_device._date | date : 'yyyy-MM-dd' }}&nbsp;
+										<i class="fa fa-clock-o"></i>
+										{{map.current_device._date | date : 'HH:mm:ss' }}
+										<i 
+											class="fa fa-map-marker text-red"
+											ng-show="map.current_device._latlng === false"
+											title="Last known position."
+											data-toggle="tooltip"
+										></i>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<!-- APP MENU -->
+					<div id="map-menu" class="box-body map-item-menu collapse text-center">
+						<div 
+							class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-center no-padding"
+							ng-repeat="menu in sensum.constants.SENSUM_DEVICE_MENUS"
+							ng-show="
+								!menu.condition || 
+								map.DEVICES[map.current_device.mac.toString()][menu.condition.key] === menu.condition.value || 
+								map.DEVICES[map.current_device.mac.toString()].schema_asset[menu.condition.key] === menu.condition.value
+							"
+						>
+							<a 
+								ng-href="{{map.sanitize(menu.link)}}"
+								class="btn btn-app map-btn-app"
+							>
+								<i class="fa fa-{{menu.icon}}"></i>
+								{{menu.label[sensum.language]}}
+							</a>
+						</div>
+					</div>
+					<div class="box-footer text-center map-item-menu collapse in">
+						<button
+							id="map-current-device-actions-button"
+							class="btn btn-block btn-primary"
+							data-toggle="collapse"
+							data-target=".map-item-menu"
+						>
+							<i class="fa fa-gear fa-fw"></i>
+							{{'MAP_ITEM_ACTIONS' | translate}}
+						</button>
+					</div>
+					<div class="box-footer text-center map-item-menu collapse">
+						<button
+							id="map-current-device-status-button"
+							class="btn btn-block btn-default"
+							data-toggle="collapse"
+							data-target=".map-item-menu"
+						>
+							<i class="fa fa-arrow-left fa-fw"></i>
+							{{'MAP_ITEM_STATUS' | translate}}
+						</button>
+					</div>
+				</div>
+				<div class="tab-pane" id="comments">
+					<div class="box-body map-box-body">
+						<div 
+							class="direct-chat-messages"
+						>
+							<div
+			          ng-repeat="row in map.DEVICES[map.current_device.mac.toString()].comments | filter:entity.search"
+								ng-switch="row.id_user === user.id_user"
+							>
+								<!-- Message. Default to the left -->
+								<div class="direct-chat-msg" ng-switch-when="true">
+									<div class="direct-chat-info clearfix">
+										<span class="direct-chat-name pull-left">
+											{{row.first_name_user}}&nbsp;{{row.last_name_user}}
+										</span>
+										<span class="direct-chat-timestamp pull-right">
+											{{row.date}}
+										</span>
+									</div>
+									<!-- /.direct-chat-info -->
+									<img 
+										class="direct-chat-img" 
+										src="/img/database/user/{{row.id_user}}.jpg" 
+										alt="{{row.id_user}}"
+									>
+									<!-- /.direct-chat-img -->
+									<div class="direct-chat-text">
+										{{row.message}}
+									</div>
+									<!-- /.direct-chat-text -->
+								</div>
+								<!-- /.direct-chat-msg -->
+								<!-- Message to the right -->
+								<div class="direct-chat-msg right" ng-switch-default>
+									<div class="direct-chat-info clearfix">
+										<span class="direct-chat-name pull-right">
+											{{row.first_name_user}}&nbsp;{{row.last_name_user}}
+										</span>
+										<span class="direct-chat-timestamp pull-left">
+											{{row.date}}
+										</span>
+									</div>
+									<!-- /.direct-chat-info -->
+									<img 
+										class="direct-chat-img" 
+										src="/img/database/user/{{row.id_user}}.jpg" 
+										alt="{{row.id_user}}"
+									>
+									<!-- /.direct-chat-img -->
+									<div class="direct-chat-text">
+										{{row.message}}
+									</div>
+									<!-- /.direct-chat-text -->
+								</div>
+								<!-- /.direct-chat-msg -->
+							</div>
+						</div>
+					</div>
+					<div class="box-footer">
+						<div class="input-group">
+							<input 
+								type="text"
+								placeholder="Type message..."
+								class="form-control"
+								ng-model="map.device_comment.message"
+							/>
+							<span class="input-group-btn">
+								<button 
+									type="button"
+									class="btn btn-primary btn-flat"
+									ng-click="map.sendComment()"
+								>
+									<i class="fa fa-paper-plane"></i>
+								</button>
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--INFOWINDOW-->
+<div class="row hidden">
+	<div id="map-infowindow" class="text-center">
+		<h4>
+			<i class="{{map.current_icon}}"></i>                            
+			{{map.current_label}}        
+		</h4>
+		<h5                                                               
+			class="hidden-sm hidden-lg hidden-md text-info text-center"                     
+			ng-click="map.scrollTo('#map-current-marker')"                                  
+		>
+			<i class="fa fa-fw fa-caret-down"></i>{{'MAP_SEE_INFO' | translate}}          
+		</h5>
+	</div>
+</div>
+<!--MAP BUTTONS-->
+<div class="hidden">
+	<div id="map-opacity-control">
+		<div class="btn-group-vertical" style="margin-left:11px!important"></div>
+	</div>
+	<!--ICONS CREDIT-->
+	<div id="third-party-copyright">
+		<a class="bg-white text-black" href="https://mapicons.mapsmarker.com" target+"_blank">
+			Map Icons Collection
+		</a>
+		<a class="bg-white text-black" href="https://darksky.net/poweredby/" target+"_blank">
+			Powered by Dark Sky
+		</a>
+	</div>
+</div>
+						<!--STYLE-->
+						<style>
+.map-label-light {
+color:#333;
+text-shadow: 0 0 2px #FFF;
+font-weight:bold!important;
+font-family: 'Roboto'!important;
+letter-spacing:0.6pt!important;
+}
+.map-label-dark {
+color:white;
+text-shadow: 0 0 2px black!important;
+font-weight:bold!important;
+font-family: Roboto!important;
+letter-spacing:0.6pt!important;
+}
+
+.map-zone-label{
+font-family:'Source Sans Pro'!important;
+font-size:14pt!important;
+letter-spacing:3pt;
+text-shadow:none!;
+opacity:0.4!important;
+}
+
+@media (min-width: 768px){
+.map-forecast-pane{
+height:calc(100vh - 173px - 200px)!important;
+overflow-x:hidden;
+overflow-y:auto;
+}
+.map-box-body{
+height:calc(100vh - 173px - 250px)!important;
+overflow-x:hidden;
+overflow-y:auto;
+}
+.direct-chat-messages{
+height:auto!important;
+}
+}
+#map *{
+-webkit-touch-callout: none; 
+-webkit-user-select: none; 
+-khtml-user-select: none; 
+-moz-user-select: none; 
+-ms-user-select: none; 
+user-select: none; 
+}
+input,select,textarea{
+-webkit-touch-callout: initial!important; 
+-webkit-user-select: initial!important; 
+-khtml-user-select: initial!important; 
+-moz-user-select: initial!important; 
+-ms-user-select: initial!important; 
+user-select: initial!important; 
+}
+.map-alerts-dropdown li a:hover{
+background:white!important;
+}
+.map-btn-app{
+margin:0 0 10px 0px!important;
+}
+#third-party-copyright{
+background:white;
+color:#EEE!important;
+opacity:0.6;
+padding:1px;
+padding-top:0px;
+padding-left:2px;
+padding-right:2px;
+margin-right:-1px;
+margin-left:1px;
+}
+</style>

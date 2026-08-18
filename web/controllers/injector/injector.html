@@ -1,0 +1,142 @@
+<div class="row" ng-show="!injector.ID">
+	<div class="col-md-12">
+		<div class="box">
+			<div class="box-header">
+				<h3 class="box-title">
+					<i class="fa fa-hand-pointer-o fa-fw"></i>&nbsp;
+					{{ 'INJECTOR_SELECT' | translate }}
+				</h3>
+			</div>
+			<div class="box-body">
+				<div class="form-group" ng-show="!injector.ID">
+					<label>
+						{{'INJECTOR_ITEM' | translate}}
+					</label>
+					<select 
+						class="form-control"
+						ng-model="injector.item" 
+						ng-options="item._label for item in injector.ITEMS"
+					></select>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row" ng-show="injector.item">
+	<div class="col-md-12">
+<form name="injector_form" id="injector-form" novalidate> 
+		<div class="box">
+			<div class="box-header">
+				<h4 class="box-title">
+					<i class="fa fa-list fa-fw"></i>&nbsp;
+					{{'INJECTOR_BOX' | translate}}
+				</h4>
+			</div>
+			<div class="box-body">				
+				<div 
+					class="col-md-3"
+					ng-repeat="(k,v) in injector.item.schema_asset.attributes track by $index"
+				>
+					<div 
+						class=" form-group {{injector_form[k].$invalid ? 'has-error' : ''}}"
+					>
+						<label>
+							{{v.label}}
+							<i 
+								class="fa fa-fw fa-question-circle pull-right"
+								title="{{v.description}}"
+								data-toggle="tooltip"
+							></i>
+						</label>
+						<div class="input-group">
+							<span class="input-group-addon">
+								<i class="fa fa-fw fa-{{injector.ICONS[v.type]}}"></i>
+							</span>
+							<div ng-switch on="v.type">
+								<div 
+									ng-switch-when="text|message|direction"
+									ng-switch-when-separator="|"
+								>	
+									<input 
+										class="form-control"
+										type="text" 
+										name="{{k}}"
+										placeholder="{{ 'INJECTOR_BLANK_PLACEHOLDER' | translate }}"
+										ng-model="injector.data[k]"
+										ng-disabled="injector.disabled[k]" 
+										novalidate
+									/>
+								</div>
+								<div ng-switch-when="number">	
+									<input 
+										class="form-control" 
+										name="{{k}}"
+										type="number"
+										placeholder="{{ 'INJECTOR_BLANK_PLACEHOLDER' | translate }}"
+										ng-model="injector.data[k]" 
+										ng-min="{{v.min}}"
+										ng-max="{{v.max}}"
+										ng-disabled="injector.disabled[k]" 
+										novalidate
+									/>
+								</div>
+								<div ng-switch-when="logical">	
+									<select 
+										class="form-control"
+										name="{{k}}"
+										placeholder="{{ 'INJECTOR_BLANK_PLACEHOLDER' | translate }}"
+										ng-model="injector.data[k]" 
+										ng-options="option.value as option.key for option in injector.LOGICAL"
+										ng-disabled="injector.disabled[k]" 
+										novalidate
+									></select>
+								</div>
+								<div ng-switch-when="switch">	
+									<select 
+										class="form-control"
+										name="{{k}}"
+										placeholder="{{ 'INJECTOR_BLANK_PLACEHOLDER' | translate }}"
+										ng-model="injector.data[k]" 
+										ng-options="option.value as option.key for option in injector.SWITCH"
+										ng-disabled="injector.disabled[k]" 
+										novalidate
+									></select>
+								</div>
+							</div>
+						</div>	
+						<span 
+							ng-show="injector_form[k].$error.required" 
+							class="help-block pull-right"
+						>
+							{{ 'INJECTOR_REQUIRED' | translate}}
+						</span>
+						<span 
+							ng-show="injector_form[k].$error.min" 
+							class="help-block pull-right"
+						>
+							{{ 'INJECTOR_MIN' | translate:{MIN:v.min} }}
+						</span>
+						<span 
+							ng-show="injector_form[k].$error.max" 
+							class="help-block pull-right"
+						>
+							{{ 'INJECTOR_MAX' | translate:{MAX:v.max} }}
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="box-footer">
+				<button
+					type="button" 
+					class="btn btn-success pull-right"
+					ng-disabled="injector_form.$invalid"
+					ng-click="injector.submit()"
+				>
+					<i class="fa fa-fw fa-plus"></i>
+					{{'INJECTOR_SUBMIT' | translate}}
+				</div>
+			</div>
+		</div>
+</form>
+	</div>
+</div>

@@ -1,0 +1,127 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="box">
+      <div class="box-header with-border">
+        <h3 class="box-title text-capitalize">
+					<i class="fa fa-table fa-fw"></i>&nbsp;
+					{{ 'ENTITY_LIST' | translate}}</h3>
+        <div class="pull-right">
+          <a href="/dashboard/devices/add" class=
+          "btn btn-sm btn-success">
+						<i class="fa fa-plus fa-fw"></i>&nbsp;
+						{{ 'ENTITY_ADD' | translate}}
+					</a>
+        </div>
+      </div>
+
+      <div class="box-body">
+        <form>
+          <div class="form-group">
+            <div class="input-group">
+              <div class="input-group-addon">
+								<i class="fa fa-search fa-fw"></i>
+							</div><input type="text" class=
+              "form-control" ng-model="entity.search" placeholder=
+              "{{ 'ENTITY_FILTER' | translate}}">
+            </div>
+          </div>
+        </form><input type="hidden" value="{{entity.CONFIG.display_field}}"
+        ng-model="entity.sortType"> <input type="hidden" value="false"
+        ng-model="entity.sortReverse">
+
+        <div class="x-overflow-container">
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th ng-repeat="column in entity.FIELDS">
+								
+								<i 
+									class="fa fa-question-circle fa-fw" 
+									title="{{column.comment}}"
+									data-toggle="tooltip"
+								></i>
+								<a href="#" ng-click=
+                "entity.sortType = column.field; ; entity.sortReverse = !entity.sortReverse">
+                {{ entity.CONFIG.aliases[column.field] ?
+                entity.CONFIG.aliases[column.field] :
+                entity.humanize(column.field) }}</a></th>
+                <th width="200">{{ 'ENTITY_ACTIONS' | translate}}</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr ng-repeat=
+              "row in entity.ROWS | filter:entity.search | orderBy:entity.sortType:entity.sortReverse">
+              <td ng-repeat="column in entity.FIELDS"><span ng-show=
+              "['date','binded','checkbox','i18n','json','icon'].indexOf(column.type) == -1">
+                {{row[column.field]}}</span> <span ng-show=
+                " column.type == 'checkbox' && row[column.field] == 0"
+                class="label label-default text-uppercase">No</span>
+                <span ng-show=
+                " column.type == 'checkbox' && row[column.field] == 1"
+                class="label label-primary text-uppercase">Yes</span>
+								<i 
+									ng-show="column.type === 'icon'" 
+									class="fa fa-{{row[column.field]}} fa-fw">
+								</i>
+                <span ng-show="column.type === 'i18n'">
+								<i class="fa fa-{{entity.TYPES.i18n.icon}} fa-fw"></i>&nbsp;
+                {{row[column.field][sensum.language]}}</span> <a href=
+                "/dashboard/data/{{entity.getAlias(column.foreign_table)}}/view/{{row[column.field]}}"
+                ng-show="column.constraint">{{row[column.foreign_alias]}}</a>
+								<angular-jsoneditor 
+									ng-show="column.type === 'json'"
+									options="{mode:'view'}" 
+									ng-model="row[column.field]"
+								>
+								</angular-jsoneditor>
+                <span ng-show=
+                "column.type == 'date'">{{row[column.field]}}</span></td>
+                <td class="text-center">
+									<div class="btn-group">
+										<a 
+											ng-href="/dashboard/stats/{{row[entity.PRIMARY]}}"
+      	          		class="btn bg-teal btn-xs"
+										>
+											<i class="fa fa-bar-chart fa-fw"></i>&nbsp;
+										</a>
+										<a 
+											ng-href="/dashboard/control/{{row[entity.PRIMARY]}}"
+      	          		class="btn bg-maroon btn-xs"
+										>
+											<i class="fa fa-gamepad fa-fw"></i>&nbsp;
+										</a>
+										<a 
+											ng-href="/dashboard/track/{{row[entity.PRIMARY]}}"
+      	          		class="btn bg-blue btn-xs"
+										>
+											<i class="fa fa-map-marker fa-fw"></i>&nbsp;
+										</a>
+										<a 
+											ng-href="/dashboard/logs/{{row[entity.PRIMARY]}}"
+      	          		class="btn bg-orange btn-xs"
+										>
+											<i class="fa fa-list fa-fw"></i>&nbsp;
+										</a>
+										<a 
+											ng-href="/dashboard/devices/edit/{{row[entity.PRIMARY]}}"
+                			class="btn bg-purple btn-xs"
+										>
+											<i class="fa fa-pencil fa-fw"></i>&nbsp;
+										</a>
+										<a 
+											ng-href="/dashboard/setup/{{row[entity.PRIMARY]}}"
+      	          		class="btn btn-default btn-xs"
+										>
+											<i class="fa fa-cog fa-fw"></i>&nbsp;
+										</a>
+									</div>
+								</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

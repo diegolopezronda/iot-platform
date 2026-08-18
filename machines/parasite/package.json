@@ -1,0 +1,20 @@
+{
+  "name": "sensum-ma-parasite",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm install;pm2 start app.js --name ma-parasite --merge-logs -o ./logs/out.log -e ./logs/error.log",
+    "restart": "pm2 restart ma-parasite;pm2 logs ma-parasite",
+    "logs": "pm2 logs ma-parasite",
+    "prettier": "prettier --trailing-comma none --use-tabs --write app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "moment-timezone": "^0.5.14",
+    "mongodb": "^2.2.31",
+    "mqtt": "^2.11.0",
+    "mysql2": "^1.5.3"
+  }
+}

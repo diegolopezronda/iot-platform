@@ -1,0 +1,7 @@
+{
+	"port":8883,
+	"username":"sensum",
+	"password":"password",
+	"clientId":"sensumiot",
+	"rejectUnauthorized":false
+}

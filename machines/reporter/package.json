@@ -1,0 +1,23 @@
+{
+  "name": "reporter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "npm install;pm2 start app.js --name ma-reporter --merge-logs -o logs/out.log -e logs/error.log",
+    "restart": "pm2 restart ma-reporter;pm2 logs ma-reporter",
+    "log": "pm2 logs ma-reporter",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prettier": "prettier --write --use-tabs --trailing-comma none --single-quote false app.js "
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ftp": "^0.3.10",
+    "moment-timezone": "^0.5.17",
+    "mongodb": "^3.0.10",
+    "mqtt": "^2.18.0",
+    "nodemailer": "^4.6.5",
+    "xml": "^1.0.1"
+  }
+}

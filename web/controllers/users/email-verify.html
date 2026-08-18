@@ -1,0 +1,21 @@
+<div class="box-body">
+	<div class="callout callout-danger text-center" ng-show="users.error === true">
+		<h4><i class="fa fa-times"></i>&nbsp;Error</h4>
+		{{ 'USERS_EMAIL_VERIFY_ERROR' | translate}}
+	</div>
+	<div class="callout callout-success text-center" ng-show="users.success ===true">
+		<h4><i class="fa fa-check"></i>&nbsp;Success
+		</h4>
+		{{ 'USERS_EMAIL_VERIFY_SUCCESS' | translate}}
+	</div>
+	<a href="/login" class="btn btn-block btn-default" ng-show="users.success === true">
+		<i class="fa fa-arrow-left fa-fw"></i>
+		{{'USERS_LOGIN' | translate}}
+	</a>
+	<div class="callout callout-info text-center" ng-show="users.success === false && users.error === false">
+		<h4>
+			<i class="fa fa-spin fa-cog"></i>
+		</h4>
+		{{ 'USERS_EMAIL_VERIFY_LOADING' | translate}}
+	</div>
+</div>

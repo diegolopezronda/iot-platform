@@ -1,0 +1,121 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="box">
+      <div class="box-header with-border">
+        <h3 class="box-title text-capitalize">
+				<i class="fa fa-eye fa-fw"></i>&nbsp;
+				{{entity.ACTION_LABEL |
+        translate }}&nbsp;
+				<b ng-show=
+        "entity.FIELDS[entity.CONFIG.display_field].type !== 'i18n'">{{entity.ROW[entity.CONFIG.display_field]}}</b>
+        <b ng-show=
+        "entity.FIELDS[entity.CONFIG.display_field].type === 'i18n'">{{entity.ROW[entity.CONFIG.display_field][sensum.language]}}</b></h3>
+
+        <div class="pull-right">
+          <a ng-show="entity.ACTION === entity.VIEW" href=
+          "/dashboard/settings/{{entity.ENTITY}}/edit/{{entity.ID}}" class=
+          "btn btn-sm btn-warning">
+					<i class="fa fa-edit fa-fw"></i>&nbsp;
+					{{ 'ENTITY_EDIT' | translate}}</a>
+        </div>
+      </div>
+
+      <div class="box-body">
+        <form>
+          <div class="form-group">
+            <div class="input-group">
+              <div class="input-group-addon">
+								<i class="fa fa-search fa-fw"></i>
+							</div><input type="text" class=
+              "form-control" ng-model="entity.search" placeholder=
+              "{{ 'ENTITY_FILTER' | translate}}">
+            </div>
+          </div>
+        </form><input type="hidden" value="{{entity.CONFIG.display_field}}"
+        ng-model="entity.sortType"> <input type="hidden" value="false"
+        ng-model="entity.sortReverse">
+
+        <form id="entity-form" name="entity_form">
+          <table class="table table-bordered table-striped">
+            <tbody>
+              <tr 
+								ng-repeat="column in entity.FIELDS" 
+								ng-show="['mac_item','name_item','hash_item'].indexOf(column.field) > -1"
+							>
+              	<th
+									class="hidden-sm hidden-xs" 
+									style="max-width:34%!important;"
+								>
+									<i 
+										class="fa fa-question-circle fa-fw" 
+										title="{{column.comment}}" 
+										data-toggle="tooltip"
+									></i>
+									{{
+										entity.CONFIG.aliases[column.field] ?
+              			entity.CONFIG.aliases[column.field] :
+				           	entity.humanize(column.field)
+									}}
+								</th>
+                <td>
+									<div class="form-group">
+										<label class="hidden-md hidden-lg">
+											<i 
+												class="fa fa-question-circle fa-fw" 
+												title="{{column.comment}}" 
+												data-toggle="tooltip"
+											></i>
+											{{
+												entity.CONFIG.aliases[column.field] ?
+		              			entity.CONFIG.aliases[column.field] :
+						           	entity.humanize(column.field)
+											}}
+										</label>
+										<div ng-switch="column.type">
+											<div ng-switch-default>
+                				{{entity.ROW[column.field]}}
+											</div>
+										</div>
+									</div>
+								</td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="entity-modal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">
+							<i class="fa fa-trash fa-fw"></i>&nbsp;
+							{{ 'ENTITY_DELETE_MODAL_TITLE' | translate}}
+						</h4>
+          </div>
+
+          <div class="modal-body text-center">
+            <p><b>{{ 'ENTITY_ARE_YOU_SURE' | translate}}</b></p>
+
+            <p>{{ 'ENTITY_DELETE_MODAL_MESSAGE' | translate}}</p>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left"
+            data-dismiss="modal">
+						<i class="fa fa-times fa-fw"></i>&nbsp;
+						{{ 'ENTITY_CANCEL' |
+            translate}}</button> <button type="button" class="btn btn-default"
+            data-dismiss="modal" ng-click="entity.submit()">
+						<i class="fa fa-trash fa-fw"></i>&nbsp;
+						{{'ENTITY_DELETE' | translate}}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

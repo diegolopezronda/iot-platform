@@ -1,0 +1,175 @@
+<div class="row">
+	<div 
+		class="col-lg-1 col-md-2 col-sm-6 col-xs-6"
+		ng-repeat="d in panel.DATA track by $index"
+	>
+		<div 
+			class="box no-border"
+		>
+			<div
+				class="box-header"
+			>
+				<div class="pull-left">
+					<span 
+						ng-switch="d.data._useful"
+					>
+						<i 
+							class="fa fa-fw fa-circle text-yellow" 
+							ng-switch-when="false"
+						></i>
+						<i 
+							class="fa fa-fw fa-circle text-green" 
+							ng-switch-when="true"
+						></i>
+						<i 
+							class="fa fa-fw fa-circle text-gray" 
+							ng-switch-default
+						></i>
+					</span>
+					<span 
+						data-toggle="tooltip"
+						title="Last update: {{d.data._days}} days ago."
+						class="text-center"
+						ng-switch="d.data._days"
+					>
+						<i 
+							class="fa fa-clock-o text-green"
+							ng-switch-when="0|1"
+							ng-switch-when-separator="|"
+						></i>
+						<i 
+							class="fa fa-clock-o text-yellow"
+							ng-switch-when="2"
+						></i>
+						<i 
+							class="fa fa-clock-o text-orange"
+							ng-switch-when="3|4|5"
+							ng-switch-when-separator="|"
+						></i>
+						<i 
+							class="fa fa-clock-o text-red"
+							ng-switch-default
+						></i>
+					</span>
+				</div>
+				<div class="pull-right">
+					<span 
+						data-toggle="tooltip"
+						title="LQI: {{d.data.lqi}} RSSI: {{d.data.rssi}} SNR: {{d.data.snr}}"
+						class="fa-stack" style="margin-top:-3px;">
+									<i class="fa fa-signal fa-stack-1x text-gray"></i>
+									<i 
+										class="fa fa-signal fa-stack-1x text-{{i.color}} sensum-no-overflow"
+										ng-repeat="i in sensum.constants.SENSUM_LQI_INDICATORS"
+										ng-style="i.style"
+										ng-show="
+											d.data.lqi > i.limits[d.schema_asset.driver].min && 
+											d.data.lqi <= i.limits[d.schema_asset.driver].max
+										"
+									></i>
+								</span>
+					
+				</div>
+			</div>
+			<div class="box-body text-center" style="height:110px;">
+			<div
+				class="collapse {{$first ? 'in' : ''}} {{$last ? 'info-'+d.mac_item+'-0' : ''}} info-{{d.mac_item}}-{{$index}} info-{{d.mac_item}}-{{$index+1}}"
+				ng-repeat="(k,v) in panel.DEVICES[d.mac_item.toString()].schema_asset.attributes"
+				data-toggle="collapse"
+				data-target=".info-{{d.mac_item}}-{{$last ? 0 : $index+1}}"
+			>
+				<h1 class="text-bold">
+					{{(d[k] || d[k] === false) ? d[k] : '?'}}
+					<small>{{v.unit}}</small>
+				</h1>
+				<small>{{v.label}}</small>
+			</div>
+			</div>
+			<div
+				class="box-footer text-bold text-lowercase text-center"
+				style="overflow:hidden;height:40px;white-space:nowrap;"
+			>
+				<small>{{d.name_item}}</small>
+			</div>
+		</div>
+	</div>
+</div>
+<!--
+
+						<tr							
+							ng-repeat="d in panel.DATA | filter:panel.search | orderBy:panel.sortType:panel.sortReverse track by $index"
+						>
+							<td class="text-uppercase">#{{d.key_item}}</td>
+							<td>
+								<b>{{d.name_item}}</b>
+								<br/>
+								<small>
+									<span class="text-lowercase">{{d.manufacturer_asset}}-{{d.model_asset}}-{{d.name_asset}}</span>
+									<span class="label label-primary text-uppercase">{{d.schema_asset.driver}}</span>
+								</small>
+							</td>
+							<td class="text-center">
+								<br/>
+								<span ng-show="d.data.lqi" class="label label-default">{{d.data.lqi}}</span>
+								<span ng-show="!d.data.lqi" class="label bg-purple text-uppercase">Unknown</span>
+							</td>
+							<td class="text-center">
+								<div ng-show="!d.data._date">
+									<span class="label bg-purple text-uppercase">
+										Unknown
+									</span>
+								</div>
+								<small ng-show="d.data._date">
+									<i class="fa fa-calendar"></i>
+									{{d.data._date | date : 'yyyy-MM-dd' }}&nbsp;
+									<i class="fa fa-clock-o"></i>
+									{{d.data._date | date : 'HH:mm:ss' }}
+									<i 
+										class="fa fa-map-marker text-red"
+										ng-show="d.data._latlng === false"
+										title="Last known position."
+										data-toggle="tooltip"
+									></i>
+								</small>
+							</td>
+							<td class="text-center">
+								<div class="btn-group">
+									<button
+										type="button"
+										class="btn btn-sm bg-{{d._subscriptions.email === true ? 'green' : 'gray' }}"
+										ng-click="panel.updateSubscription(d.mac_item,'email',!d._subscriptions.email)"
+									>
+										<i 
+											class="fa fa-envelope"
+										></i>
+									</button>
+									<button
+										type="button"
+										class="btn btn-sm bg-{{d._subscriptions.sms === true ? 'green' : 'gray' }}"
+										ng-click="panel.updateSubscription(d.mac_item,'sms',!d._subscriptions.sms)"
+									>
+										<i 
+											class="fa fa-phone"
+										></i>
+									</button>
+								</div>
+							</td>
+							<td class="text-center">
+								<div 
+									class="btn-group"
+								>
+									<a
+										ng-repeat="menu in sensum.constants.SENSUM_DEVICE_MENUS"
+										ng-href="{{panel.sanitize(menu.link,d.id_item)}}"
+										ng-show="(
+											!menu.condition || 
+											d[menu.condition.key] === menu.condition.value 
+										)"
+										class="btn btn-sm btn-default"
+									>
+										<i class="fa fa-{{menu.icon}}"></i>
+									</a>
+								</div>
+							</td>
+	</tr>
+-->

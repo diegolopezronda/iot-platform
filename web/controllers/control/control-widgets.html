@@ -1,0 +1,159 @@
+<div class="row">
+	<div class="col-md-4">
+		<div class="box">
+			<div class="box-header">
+				<h3 class="box-title">
+					<i class="fa fa-info fa-fw"></i>&nbsp;
+					{{ 'CONTROL_CONTROL' | translate }}
+				</h3>
+			</div>
+			<div class="box-body" style="min-height:263px;">
+				<table class="table table-bordered table-striped">
+					<tbody>
+						<tr
+							ng-repeat="(key,val) in control.info" 
+						>
+							<th>
+								{{control.info_keys[key] | translate}}
+							</th>
+							<td>{{val}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="box-footer">
+				<a 
+					class="btn btn-block btn-primary"
+					href="/dashboard/my-devices/schedule/{{control.item.id_item}}"
+				>
+					<i class="fa fa-clock-o fa-fw"></i>{{'CONTROL_SCHEDULE' | translate }}
+				</a>
+				<a 
+					class="btn btn-block btn-warning"
+					href="/dashboard/my-devices/logs/{{control.item.id_item}}"
+				>
+					<i class="fa fa-list fa-fw"></i>{{'CONTROL_LOGS' | translate }}
+				</a>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-4">
+		<div class="box">
+			<div class="box-header">
+				<h3 class="box-title">
+					<i class="fa fa-dashboard fa-fw"></i>&nbsp;
+					{{ 'CONTROL_CURRENT_STATUS' | translate }}
+				</h3>
+			</div>
+			<div class="box-body" style="min-height:263px;">
+				<table class="table table-bordered table-striped">
+					<tbody>
+						<tr
+							ng-repeat="(key,val) in control.item.schema_asset.attributes track by $index"
+							ng-show="
+								control.mqtt_status[key] || 
+								control.mqtt_status[key] === false || 
+								control.mqtt_status[key] === 0
+							"
+						>
+							<td class="no-padding" style="vertical-align:center;">
+								<i
+									class="fa fa-fw fa-question"
+									data-toggle="tooltip"
+									title="{{val.description}}"
+								></i>
+							</td>
+							<th
+								class="bg-{{val.color}}"
+							>
+								{{val.label}}
+							</th>
+							<td 
+								ng-show="val.type === 'number'"
+							>
+								{{control.mqtt_status[key]}}
+							</td>
+							<td 
+								ng-show="val.type === 'message'"
+							>
+								{{control.mqtt_status[key]}}
+							</td>
+							<td 
+								ng-show="val.type === 'logical'"
+								class="text-uppercase"
+							>
+								<span 
+									class="label label-default" 
+									ng-show="control.mqtt_status[key] === false"
+								>									
+									{{ 'CONTROL_NO' | translate }}
+								</span>
+								<span 
+									class="label label-primary" 
+									ng-show="control.mqtt_status[key] === true"
+								>
+									{{ 'CONTROL_YES' | translate }}
+								</span>
+							</td>
+							<td 
+								ng-show="val.type === 'switch'"
+								class="text-uppercase"
+							>
+								<span 
+									class="label label-success" 
+									ng-show="control.mqtt_status[key] === true"
+								>
+									{{ 'CONTROL_ON' | translate }}
+								</span>
+								<span 
+									class="label label-default" 
+									ng-show="control.mqtt_status[key] === false"
+								>
+									{{ 'CONTROL_OFF' | translate }}
+								</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-4">
+		<div class="box">
+			<div class="box-header">
+				<h3 class="box-title">
+					<i class="fa fa-bolt fa-fw"></i>&nbsp;
+					{{ 'CONTROL_CONTROL_LIST' | translate }}
+				</h3>
+			</div>
+			<div class="box-body" style="min-height:263px;">
+				<div
+					class="callout callout-info" 
+					ng-show="control.item.schema_asset.control_count === 0"
+				>
+					<i class="fa fa-info"></i>&nbsp;
+					{{ 'CONTROL_NO_CONTROL' | translate }}
+				</div>
+				<div 
+					class="input-group margin"
+					ng-repeat="(key,v) in control.item.schema_asset.controls"
+				>
+					<button 
+						class="btn btn-sm form-control bg-black" 
+						style="background:{{v.color}}!important;"
+						ng-click="control.publishMQTT(key)" 
+					>
+						<i class="fa fa-fw fa-bolt"></i>&nbsp;{{v.label}}
+					</button>
+					<span
+						class="input-group-addon" 
+						data-toggle="tooltip"
+						title="{{v.description}}"
+					>
+						<i class="fa fa-fw fa-question"></i>
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

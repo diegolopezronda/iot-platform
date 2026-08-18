@@ -1,0 +1,52 @@
+<div 
+	class="input-group" 
+	style="width:100%"
+>
+	<input
+		type="number"
+		class="form-control"
+		ng-model="interval"
+	/>
+	<div class="input-group-btn">
+		<button 
+			type="button" 
+			class="btn btn-default dropdown-toggle" 
+			data-toggle="dropdown" 
+			aria-expanded="false"
+		>
+			{{display_text || 'Select a value' }}
+				<i class="fa-fw fa fa-caret-down"></i>
+		</button>
+		<ul 
+			class="dropdown-menu no-margin no-padding" 
+			style="width:100%"
+		>
+			<li>
+				<a href="#" class="no-padding">
+					<div class="form-group no-margin">
+						<div class="input-group" style="width:100%">
+							<span class="input-group-addon">
+								<i class="fa fa-search fa-fw"></i>
+							</span>
+							<input 
+								type="text" 
+								class="form-control"
+								ng-model="search"
+							/>
+						</div>
+					</div>
+				</a>
+			</li>
+			<li
+				ng-repeat="v in options | filter : search"
+			>
+				<a 
+					href="#"
+					ng-click="updateValue(v[label])"
+				>
+					{{v[label]}}
+				</a>
+			</li>
+		</ul>
+	</div>
+</div>

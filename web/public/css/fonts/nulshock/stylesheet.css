@@ -1,0 +1,12 @@
+@font-face {
+    font-family: 'Nulshock';
+    src: url('NulshockRg-Bold.eot');
+    src: url('NulshockRg-Bold.eot?#iefix') format('embedded-opentype'),
+        url('NulshockRg-Bold.woff2') format('woff2'),
+        url('NulshockRg-Bold.woff') format('woff'),
+        url('NulshockRg-Bold.ttf') format('truetype'),
+        url('NulshockRg-Bold.svg#NulshockRg-Bold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+}
+

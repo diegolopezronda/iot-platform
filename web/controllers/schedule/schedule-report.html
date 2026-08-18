@@ -1,0 +1,286 @@
+<div class="row">
+	<div class="col-md-12">
+		<div class="callout callout-info hidden">
+			<i class="fa fa-info fa-fw"></i>
+			{{'SCHEDULE_HELP' | translate}}
+		</div>
+		<div class="box no-border box-primary">
+			<div class="box-body no-padding">
+				<div id="schedule-calendar"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="schedule-new-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<form name="newevent">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button 
+						type="button" 
+						class="close" 
+						data-dismiss="modal"
+					>
+						&times;
+					</button>
+					<h4 class="modal-title">
+						<i class="fa fa-fw fa-clock-o"></i>&nbsp;
+						{{'SCHEDULE_SCHEDULE_MODAL' | translate}}
+					</h4>
+				</div>
+				<div class="modal-body no-padding">
+					<table class="table table-striped">
+						<tbody>
+							<tr>
+								<th>
+									{{'SCHEDULE_SCHEDULE_TEMPLATE' | translate}}
+								</th>
+								<td>
+									<div class="input-group">
+										<input style="display:none">
+										<input type="password" style="display:none">
+										<select
+											class="form-control"
+											name="template"
+											ng-model="schedule.current_event.row.control_event.name"
+											ng-options="k as control.label for (k,control) in sensum.constants.SENSUM_REPORT_TEMPLATES"
+											ng-change="
+												schedule.current_event.row.control_event.report = true;
+												schedule.current_event.row.control_event.key = schedule.current_event.row.control_event.name; 
+												schedule.current_event.row.control_event.label = sensum.constants.SENSUM_REPORT_TEMPLATES[schedule.current_event.row.control_event.name].label;
+												schedule.current_event.row.control_event.color = sensum.constants.SENSUM_REPORT_TEMPLATES[schedule.current_event.row.control_event.name].color;
+												schedule.current_event.row.control_event.border = sensum.constants.SENSUM_REPORT_TEMPLATES[schedule.current_event.row.control_event.name].border;
+												schedule.current_event.row.control_event.background = sensum.constants.SENSUM_REPORT_TEMPLATES[schedule.current_event.row.control_event.name].background;
+												schedule.current_event.row.control_event.description = sensum.constants.SENSUM_REPORT_TEMPLATES[schedule.current_event.row.control_event.name].description;
+												schedule.current_event.row.control_event.message.extension = sensum.constants.SENSUM_REPORT_TEMPLATES[schedule.current_event.row.control_event.name].extension;
+												schedule.current_event.row.control_event.message.format = sensum.constants.SENSUM_REPORT_TEMPLATES[schedule.current_event.row.control_event.name].format;
+											"
+											ng-required="true"
+											novalidate
+										>
+										</select>
+										<span class="input-group-addon">
+											<i class="fa fa-file-text-o fa-fw"></i>
+											{{schedule.current_event.row.control_event.message.extension}}
+										</span>
+									</div>
+								</td>
+							</tr>
+							<tr ng-repeat="input in sensum.constants.SENSUM_REPORT_TEMPLATES[schedule.current_event.row.control_event.name].inputs track by $index">
+								<th>
+								 	<i class="fa fa-info-circle fa-fw"></i>
+									{{input.label[sensum.language]}}
+								</th>
+								<td ng-switch="input.type">
+									<select
+										class="form-control"
+										name="params_{{input.key}}"
+										ng-switch-when="attribute"
+										ng-model="schedule.current_event.row.control_event.message.params[input.key]"
+										ng-options="k as control.label for (k,control) in schedule.KPI"
+										ng-required="true"
+										novalidate
+									>
+									</select>
+									<input							
+										ng-switch-default
+										ng-model="schedule.current_event.row.control_event.message.params[input.key]"
+										name="params_{{input.key}}"
+										type="{{input.type}}"
+										class="form-control"
+										ng-required="true"
+										required
+										novalidate
+									/>
+								</td>
+							</tr>
+							<tr>
+								<th>
+									{{'SCHEDULE_SCHEDULE_RECEIVER' | translate}}
+								</th>
+								<td>
+									<select
+										class="form-control"
+										name="receiver"
+										ng-model="schedule.current_event.row.control_event.message.receiver._type"
+										ng-options="k as control.label for (k,control) in sensum.constants.SENSUM_REPORT_RECEIVERS"
+										ng-required="true"
+										novalidate
+									>
+									</select>
+								</td>
+							</tr>
+							<tr ng-repeat="input in sensum.constants.SENSUM_REPORT_RECEIVERS[schedule.current_event.row.control_event.message.receiver._type].inputs">
+								<th>
+								 	<i class="fa fa-info-circle fa-fw"></i>
+									{{input.label[sensum.language]}}
+								</th>
+								<td>
+									<input									 
+										type="{{input.type}}"
+										class="form-control"
+										name="receiver_{{input.key}}"
+										 autocomplete="off"
+										ng-model="schedule.current_event.row.control_event.message.receiver[input.key]"
+										ng-required="true"
+										required
+										novalidate
+									/>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<table class="table table-bordered table-striped">
+						<tbody>
+							<tr>
+								<th>
+									{{'SCHEDULE_SCHEDULE_START' | translate}}
+								</th>
+								<td>
+									<div class="input-group date">
+										<input			
+											style="background:white!important"
+											type="text"
+											id="schedule-event-start"		 
+											class="form-control text-center"
+											readonly
+											novalidate
+										/>
+										<span 
+											class="input-group-addon"
+											onclick="$('#schedule-event-start').focus()"
+										>
+											<i class="fa fa-calendar"></i>
+										</span>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<th>
+									{{'SCHEDULE_SCHEDULE_AND' | translate}}
+								</th>
+								<td>
+									<div class="input-group">
+										<span class="input-group-addon">
+											<input 
+												type="checkbox" 
+												ng-model="schedule.current_event.row.is_repeat_event"
+											/>
+										</span>
+										<span class="form-control">
+											{{'SCHEDULE_SCHEDULE_REPEAT' | translate}}
+										</span>
+									</div>
+									<div class="input-group" ng-show="schedule.current_event.row.is_repeat_event === true">
+										<span class="input-group-addon">
+											<input 
+												type="checkbox"
+												ng-model="schedule.current_event.row.is_forever_event"
+											/>
+										</span>
+										<span class="form-control">
+											{{'SCHEDULE_SCHEDULE_FOREVER' | translate}}
+										</span>
+									</div>
+								</td>
+							</tr>
+							<tr 
+								ng-show="schedule.current_event.row.is_repeat_event === true"
+							>
+								<th>
+									{{'SCHEDULE_SCHEDULE_EACH' | translate}}
+								</th>
+								<td>
+									<div class="input-group">
+										<select
+											ng-options="c.value as c.key for c in schedule.INTERVALS"  
+											ng-model="schedule.current_event.interval"
+											ng-change="schedule.updateInterval()"
+											class="form-control"
+											ng-required="true"
+											novalidate
+										></select>
+										<span class="input-group-addon">
+											&nbsp;
+										</span>
+										<select
+											ng-options="c.value as c.key for (k,c) in schedule.MAGNITUDES"
+											ng-model="schedule.current_event.magnitude"
+											ng-change="schedule.updateInterval()"
+											class="form-control"
+											ng-required="true"
+											novalidate
+										></select>
+									</div>
+								</td>								
+							</tr>
+							<tr 
+								ng-show="schedule.current_event.row.is_repeat_event === true && schedule.current_event.row.is_forever_event === false"
+							>
+								<th>
+									{{'SCHEDULE_SCHEDULE_UNTIL' | translate}}
+								</th>
+								<td>
+									<div class="input-group date">
+										<input									 
+											style="background:white!important"
+											id="schedule-event-end"		 
+											class="form-control text-center"
+											ng-required="schedule.current_event.row.is_forever_event === false"
+											readonly
+											novalidate
+										/>
+										<span 
+											class="input-group-addon"
+											onclick="$('#schedule-event-end').focus()"
+										>
+											<i class="fa fa-calendar"></i>
+										</span>
+									</div>
+								</td>
+							</tr>
+							<tr 
+								ng-show="schedule.current_event.row.is_repeat_event === true"
+							>
+								<th>
+									{{'SCHEDULE_SCHEDULE_APPLY_ON' | translate}}
+								</th>
+								<td>
+									<div class="input-group" ng-repeat="d in schedule.WEEKDAYS">
+										<span class="input-group-addon">
+											<input 
+												type="checkbox" 
+												ng-model="schedule.current_event.row[d.value]"
+											/>
+										</span>
+										<span class="form-control">{{d.key | translate}}</span>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button 
+						ng-show="schedule.current_event.row.id_event"
+						type="button" 
+						class="pull-left btn btn-danger" 
+						data-dismiss="modal" 
+						ng-click="schedule.deleteEvent()"
+					>
+						<i class="fa fa-fw fa-trash-o"></i>&nbsp;
+						{{'SCHEDULE_SCHEDULE_DELETE' | translate}}
+					</button>
+					<button 
+						ng-disabled="
+							newevent.$invalid || !schedule.current_event.row.control_event.key
+						"
+						type="button" class="btn btn-primary" data-dismiss="modal" ng-click="schedule.saveEvent()">
+						<i class="fa fa-fw fa-floppy-o"></i>&nbsp;
+						{{'SCHEDULE_SCHEDULE_SAVE' | translate}}
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>

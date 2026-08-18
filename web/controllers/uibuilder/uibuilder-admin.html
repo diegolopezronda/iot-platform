@@ -1,0 +1,264 @@
+<div class="hidden">
+	<button 
+		type="button" 
+		ng-click="uibuilder.selectElement('sensum-uibuilder-layer',$event)"
+		class="btn btn-green"
+	>
+		<i class="fa fa-plus"></i>
+	</button>
+</div>
+<div 
+	compile="uibuilder.html"
+>
+</div>
+
+<div id="sensum-uibuilder-element-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header box-header">
+				<h4 class="modal-title">
+					<i class="fa fa-cubes fa-fw"></i>
+					{{uibuilder.current_block.block.label}}&nbsp;
+					<span class="hidden">
+						{{uibuilder.current_block.id}}
+					</span>
+				</h4>
+				<div class="box-tools pull-right">
+					<div class="btn-group">
+						<button
+							type="button"
+							class="btn btn-sm btn-default"
+							ng-show="uibuilder.current_block.unit._parent"
+							ng-click="uibuilder.selectElement(uibuilder.current_block.unit._parent,$event)"
+						>
+							<i class="fa fa-arrow-up fa-fw"></i>
+							Parent element
+						</button>
+					</div>
+				</div>
+			</div>
+			<div 
+				class="modal-body no-padding"
+			>
+				<div class="nav-tabs-custom">
+					<ul class="nav nav-tabs">
+						<li class="active">
+							<a 
+								href="#sensum-uibuilder-content"
+								data-toggle="tab"
+							>
+								Content
+							</a>
+						</li>
+						<li>
+							<a 
+								href="#sensum-uibuilder-attributes"
+								data-toggle="tab"
+							>
+								Attributes
+							</a>
+						</li>
+					</ul>
+					<div class="tab-content no-padding">
+						<div 
+							id="sensum-uibuilder-attributes" 
+							class="tab-pane"
+						>
+							<table class="table table-striped">
+								<tbody>
+									<tr 
+										ng-repeat="(k,v) in uibuilder.current_block.attributes"
+									>
+										<th>
+											{{k}}
+											<span class="badge badge-default pull-right">
+												<i class="fa fa-times"></i>
+											</span>
+										</th>
+										<td>
+											<span 
+												ng-repeat="l in v"
+											>
+												<span	
+													class="label label-default"
+												>
+													{{l}}&nbsp;
+													<i class="fa fa-times"></i>
+												</span>
+												&nbsp;
+											</span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div 
+							id="sensum-uibuilder-content" 
+							class="tab-pane active"
+						>
+							<table class="table table-striped no-margin">
+								<tbody>
+									<tr
+										ng-repeat="(p,q) in uibuilder.current_block.block.fields track by $index"
+									>
+										<th colspan="3">	
+											<div 
+												class="form-group"
+												ng-switch="q.collection"
+											>
+												<label>{{q.label}}</label>
+												<div style="width:100%" class="input-group">
+													<select
+														ng-switch-when="constant"
+														class="form-control"
+													>
+														<option>Hello</option>
+													</select>
+													<select
+														class="form-control"
+														ng-switch-default
+														ng-model="uibuilder.units[uibuilder.current_block.id].fields[p]"
+														ng-options="b.value as b.key for b in q.options"
+														ng-required="q.required"
+														ng-change="uibuilder.updateField(p)"
+													></select>
+												</div>
+											</div>
+										</th>
+									</tr>
+									<tr>
+										<th colspan="3" ng-switch="uibuilder.current_block.block.children">
+
+											<div class="form-group" ng-switch-when="text">
+												<label>Text</label>
+												<input 
+													class="form-control"
+													type="text"
+													ng-model="uibuilder.units[uibuilder.current_block.id].text"
+													ng-change="uibuilder.updateText()"
+												/>
+											</div>		
+											<div 
+												class="form-group" 
+												ng-show="uibuilder.current_block.block.children.length != 0"
+												ng-switch-default
+											>
+												<label>Add Element</label>
+												<div style="width:100%" class="input-group">
+													<select
+														class="form-control"
+														ng-model="uibuilder.selected_block"
+														ng-options="sensum.constants.SENSUM_CORE_UI_BLOCKS[ch].label for ch in uibuilder.current_block.block.children"
+													></select>
+													<span class="input-group-btn">
+														<button
+															type="button"
+															class="btn btn-success"
+															ng-click="uibuilder.addElement()"
+														>
+															<i class="fa fa-plus"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</th>
+									</tr>
+									<tr 
+										ng-repeat="q in uibuilder.current_block.content track by $index"
+									>
+										<th>
+											{{sensum.constants.SENSUM_CORE_UI_BLOCKS[uibuilder.units[q].type].label}}
+											<span class="hidden">
+											{{q}}
+											</span>
+										</th>
+										<th class="text-center">
+											<div class="btn-group">
+												<button
+													ng-click="uibuilder.selectElement(q,$event)"
+													type="button"
+													class="btn btn-xs btn-default"
+												>
+													<i class="fa fa-eye"></i>
+												</button>
+												<button
+													ng-click="uibuilder.removeElement(q)"
+													type="button"
+													class="btn btn-xs btn-danger"
+												>
+													<i class="fa fa-trash"></i>
+												</button>
+											</div>
+										</th>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button
+					ng-click="uibuilder.submit()"
+					type="button"
+					class="btn pull-right btn-primary"
+				>
+					<i class="fa fa-save fa-fw"></i>
+					{{'UIBUILDER_SAVE' | translate }}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+#sensum-uibuilder-layer{
+	height:calc(100vh - 200px);
+	width:100%;
+	position:relative;
+	background:white;
+}
+#sensum-uibuilder-layer:before{
+	width:100%;
+	height:24pt;
+	font-size:24pt;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	font-weight:bold;
+	position:absolute;
+	text-align:center;
+	content:"Click here to add an element.";
+	margin:auto;
+	color:rgba(0,0,0,0.3);
+}
+@media print{
+	#sensum-uibuilder-layer:before{                                                    
+		display:none!important;
+		position:relative!important;
+		border:none;
+		content:"";
+	} 
+}
+h1,h2,h3,h4,h5,h6{
+	font-family:'FreeSans';
+	font-weight:bold;
+}
+/*
+.sensum-uibuilder-element:hover:before,
+.sensum-uibuilder-element:active
+{
+	width:100%;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	font-weight:bold;
+	position:absolute;
+	text-align:center;
+	background:rgba(0,255,0,0.2);
+	content:" ";
+}
+*/
+</style>

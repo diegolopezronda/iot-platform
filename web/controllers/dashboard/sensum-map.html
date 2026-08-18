@@ -1,0 +1,44 @@
+<ng-map		
+	zoom="14" 
+	center="[-37.6305377,176.1629119]"
+	disable-default-u-i="true"
+	map-initialized="handleMapInit(map)"
+>
+	<custom-control id="sensum-map-bar" position="TOP_RIGHT">
+		<div
+			class="col-md-1 no-padding no-margin"
+			style="width:24px!important;margin:5px!important;"
+		>
+			<div class="box no-border no-padding no-margin">
+				<div class="box-body no-padding no-margin">
+					<div 
+						class="btn-group btn-group-vertical"
+						style="margin-bottom:-1px!important;"
+					>
+						<button 
+							type="button"
+							class="btn btn-default btn-xs"
+							ng-click="zoom(true)"
+						>
+							<i class="fa fa-plus fa-fw"></i>
+						</button>
+						<button 
+							type="button"
+							class="btn btn-default btn-xs"
+							ng-click="zoom(false)"
+						>
+							<i class="fa fa-minus fa-fw"></i>
+						</button>
+						<button 
+							type="button"
+							class="btn btn-default btn-xs"
+							ng-click="toggleMap()"
+						>
+							<i class="fa fa-{{map_icon}} fa-fw"></i>							
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</custom-control>
+</ng-map>

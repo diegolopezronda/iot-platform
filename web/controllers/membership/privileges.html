@@ -1,0 +1,248 @@
+<form name="membership_form">
+<div class="row">
+	<div class="col-md-4">
+		<div class="box no-border membership-step-one collapse in">
+			<div class="box-header with-border">
+				<h4 class="box-title">
+					<i class="fa fa-fw fa-user"></i>
+					{{'MEMBERSHIP_CURRENT_USER' | translate}}
+				</h4>
+				<div class="box-tools pull-right">
+					<a
+						class="btn btn-sm btn-default"
+						href="/dashboard/project/team/"
+					>
+						<i class="fa fa-arrow-left fa-fw"></i>
+						{{'MEMBERSHIP_BACK' | translate}}
+					</a>
+				</div>
+			</div>
+			<div class="box-body no-padding">
+				<table class="table table-striped">
+					<tbody>
+						<tr ng-repeat="(k,v) in membership.member">
+							<th>
+								{{'MEMBERSHIP_'+k.toUpperCase() | translate}}
+							</th>
+							<td>
+								{{v}}
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="box-footer">
+				<button
+					type="button"
+					class="btn btn-danger pull-right"
+					data-toggle="modal"
+					data-target="#membership-revoke-modal"
+				>
+					<i class="fa fa-ban fa-fw"></i>
+					{{'MEMBERSHIP_REVOKE' | translate}}
+				</button>
+			</div>
+		</div>
+		<div class="box no-border membership-step-one collapse in">
+			<div class="box-header with-border">
+				<h4 class="box-title">
+					<i class="fa fa-fw fa-key"></i>
+					{{'MEMBERSHIP_LEVELS_BOX' | translate}}
+				</h4>
+			</div>
+			<div class="box-body">
+				<div class="form-group">
+					<label>{{'MEMBERSHIP_LEVELS' | translate}}</label>
+					<select 
+						class="form-control"
+						ng-model="membership.selected_level"
+						ng-options="v.schema_level.label[sensum.language] for (k,v) in membership.available_levels"
+						ng-required="false"
+						ng-change="membership.addPrivilege()"
+						novalidate
+					></select>
+				</div>
+
+	
+				<div class="form-group">
+					<label>
+						{{'MEMBERSHIP_ACTUAL_LEVELS' | translate}}&nbsp;
+						<i 
+							class="fa fa-info-circle"
+							data-toggle="collapse"
+							data-target="#privileges-info"
+						></i>
+					</label>
+					<table class="table table-bordered collapse" id="privileges-info">
+						<tbody>
+							<tr
+								ng-repeat="k in membership.privileges_keys"
+							>
+								<td style="width:25px;"><i class="fa fa-{{k.icon}}"></i></td>
+								<td><small>{{k.legend[sensum.language]}}</small></td>
+							</tr>
+						</tbody>
+					</table>	
+					<div 
+						class="callout callout-info"
+						ng-show="membership.privileges_count === 0"
+					>
+						<i class="fa fa-info fa-fw"></i>
+						{{'MEMBERSHIP_NO_PRIVILEGES' | translate}}
+					</div>
+				</div>
+				<div 
+					class="form-group no-margin"
+					ng-repeat="(q,v) in membership.member_privileges"
+				>
+					<div class="input-group">
+						<span class="input-group-btn">
+							<button
+								ng-click="membership.revokePrivilege(q)"
+								type="button"
+								class="btn btn-danger"
+							>
+								<i class="fa fa-times"></i>
+							</button>
+						</span>
+						<span class="form-control">
+							<small>
+								{{membership.LEVELS[v.id_level.toString()].schema_level.label[sensum.language]}}
+							</small>
+						</span>
+						<span class="input-group-btn">
+							<button
+								ng-repeat="k in membership.privileges_keys"
+								type="button"
+								class="btn btn-{{v['is_'+k.key+'_privilege'] === true ? 'success' : 'default'}}"
+								ng-click="v['is_'+k.key+'_privilege'] = !v['is_'+k.key+'_privilege']"
+								ng-disabled="membership.LEVELS[v.id_level.toString()]['is_'+k.key+'_capability'] === 0"
+							>
+								<i class="fa fa-{{k.icon}}"></i>
+							</button>
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="box-footer">
+				<button 
+					class="btn btn-success pull-right" 
+					type="button"
+					ng-click="membership.submitPrivileges()"
+				>
+					<i class="fa fa-save fa-fw"></i>
+					{{'MEMBERSHIP_SUBMIT_PRIVILEGES' | translate}}
+				</button>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-8">
+		<div class="box no-border membership-step-one collapse in">
+			<div class="box-header with-border">
+				<h4 class="box-title">
+					<i class="fa fa-fw fa-map"></i>
+					{{'MEMBERSHIP_ZONES_BOX' | translate}}
+				</h4>
+			</div>
+			<div class="box-body">
+				<div class="form-group">
+					<label>{{'MEMBERSHIP_ZONES' | translate}}</label>
+					<select 
+						class="form-control"
+						ng-model="membership.selected_zone"
+						ng-options="v.name_zone for (k,v) in membership.available_zones"
+						ng-required="false"
+						ng-change="membership.addZone()"
+						novalidate
+					></select>
+				</div>
+				<div class="form-group">
+					<div id="membership-map"></div>
+				</div>
+				<div class="form-group">
+					<label>{{'MEMBERSHIP_ACTUAL_ZONES' | translate}}</label>
+					<br/>
+					<span
+						ng-repeat="z in membership.member_zones track by $index"
+					>
+						<span
+							class="label label-default bg-black text-uppercase"
+						>
+							<i 
+								class="fa fa-{{membership.ZONES[z.toString()].polygon_zone === null ? 'circle-o' : 'circle' }}"
+								style="color:{{membership.ZONES[z.toString()].color_zone}};"
+							></i>
+							{{membership.ZONES[z.toString()].name_zone}}
+							<i 
+								class="fa fa-times"
+								ng-click="membership.removeZone($index)"
+							></i>
+						</span>&nbsp;
+					</span>
+					<div 
+						class="callout callout-info"
+						ng-show="membership.member_zones.length === 0"
+					>
+						<i class="fa fa-info fa-fw"></i>
+						{{'MEMBERSHIP_NO_ZONES' | translate}}
+					</div>
+				</div>
+			</div>
+			<div class="box-footer">
+				<button 				
+					class="btn btn-success pull-right" 
+					type="button"
+					ng-click="membership.submitZones()"
+				>
+					<i class="fa fa-save fa-fw"></i>
+					{{'MEMBERSHIP_SUBMIT_ZONES' | translate}}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+</form>
+<style>
+	#membership-map{
+		width:100%!important;
+		min-height:300px!important;
+		height:calc(100vh - 250px)!important;
+	}
+</style>
+    <div id="membership-revoke-modal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content bg-red">
+          <div class="modal-header">
+            <h4 class="modal-title">
+							<i class="fa fa-ban fa-fw"></i>&nbsp;
+							{{ 'MEMBERSHIP_REVOKE' | translate}}
+						</h4>
+          </div>
+
+          <div class="modal-body text-center">
+            <p><b>{{ 'MEMBERSHIP_ARE_YOU_SURE' | translate}}</b></p>
+            <p>{{ 'MEMBERSHIP_MODAL_MESSAGE' | translate}}</p>
+          </div>
+
+          <div class="modal-footer">
+            <button 
+							type="button" 
+							class="btn btn-default pull-left"
+            	data-dismiss="modal"
+						>
+							<i class="fa fa-times fa-fw"></i>&nbsp;
+							{{ 'MEMBERSHIP_CANCEL' | translate}}
+						</button>
+						<button 
+							type="button" 
+							class="btn btn-default text-uppercase"
+            	data-dismiss="modal" 
+							ng-click="membership.revoke()"
+						>
+							<i class="fa fa-ban fa-fw"></i>&nbsp;
+							{{'MEMBERSHIP_REVOKE' | translate}}
+						</button>
+          </div>
+        </div>
+      </div>
+		</div>

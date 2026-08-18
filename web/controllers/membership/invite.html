@@ -1,0 +1,176 @@
+<div class="row">
+	<div class="col-md-4 hidden-sm hidden-xs">
+	</div>
+	<div class="col-md-4">
+<form name="membership_form">
+		<div class="box no-border membership-step-one collapse in">
+			<div class="box-header">
+				<h4 class="box-title">
+					<i class="fa fa-fw fa-users"></i>
+					{{'MEMBERSHIP_INVITE_BOX' | translate}}
+				</h4>
+			</div>
+			<div class="box-body">
+				<div
+					class="form-group"
+				>
+				<div
+					class="input-group"
+				>
+					<span class="input-group-addon">
+					<i class="fa fa-search"></i>
+					</span>
+					<input 					
+						class="form-control"
+						type="text"
+						name="needle"
+						autocomplete="off" 
+						autocorrect="off"
+						autocapitalize="off" 
+						spellcheck="false"
+						ng-model="membership.needle"
+						ng-required="true"
+						novalidate
+						ng-keyup="membership.search()"
+						placeholder="User name, first name or last name"
+					/>
+				</div>
+					<table class="table table-bordered table-striped">
+						<tbody>
+							<tr ng-repeat="r in membership.results track by $index">
+								<td style="width:50px;">
+									<img 
+										class="img-circle"
+										style="max-width:50px;max-height:50px;"
+										ng-src="https://backend.sensum.co.nz/img/database/user/{{r.id_user}}.jpg"
+									/>
+								</td>
+								<td>
+									<b>{{r.first_name_user}}&nbsp;{{r.last_name_user}}</b>
+									<button 
+										type="button" 
+										class="btn btn-primary btn-xs pull-right"
+										ng-click="membership.invite($index)"
+									>
+										<i class="fa fa-fw fa-plus"></i>
+										{{'MEMBERSHIP_INVITE' | translate}}
+									</button>
+									<br/>
+									<span>
+										<i class="fa fa-fw fa-user"></i>
+										{{r.account_user}}
+									</span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<h4>
+					<i class="fa fa-ticket fa-fw"></i>
+						{{'MEMBERSHIP_GUEST_LIST' | translate}}
+				</h4>
+				<p
+					class="callout callout-info" 
+					ng-show="membership.guests.length === 0"
+				>
+					<i class="fa fa-fw fa-info"></i>
+					{{'MEMBERSHIP_GUEST_LIST_EMPTY' | translate}}
+				</p>
+				<table class="table table-bordered">
+					<tbody>
+						<tr
+							ng-repeat="r in membership.guests track by $index"
+						>
+							<td>
+								<div class="pull-right">
+									<i 
+										class="fa fa-times"
+										ng-click="membership.uninvite($index)"
+									></i>
+								</div>
+								<img 
+									class="img-circle"
+									style="max-width:25px;max-height:25px;"
+									ng-src="https://backend.sensum.co.nz/img/database/user/{{r.id_user}}.jpg"
+								/>&nbsp;
+								{{r.account_user}}
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="box-footer">
+				<button
+					type="button"
+					class="pull-right btn btn-success"
+					ng-click="membership.submitInvitations()"
+					ng-disabled="membership.guests.length === 0"
+				>
+					<i class="fa fa-plus fa-fw"></i>
+					{{'MEMBERSHIP_SUBMIT'|translate}}
+				</button>	
+			</div>	
+		</div>
+</form>
+		<form name="anonymous_form">
+		<div class="box no-border">
+			<div class="box-header">
+				<h4 class="box-title">
+					<i class="fa fa-fw fa-users"></i>
+					{{'MEMBERSHIP_ANONYMOUS_BOX' | translate}}
+				</h4>
+			</div>
+			<div class="box-body">
+				<p>{{'MEMBERSHIP_ANONYMOUS_INVITATION_MESSAGE' | translate}}</p>
+				<div
+					class="form-group"
+				>
+					<label>Name</label>
+					<input 					
+						class="form-control"
+						type="text"
+						name="anonymous_name"
+						autocomplete="off" 
+						autocorrect="off"
+						autocapitalize="off" 
+						spellcheck="false"
+						ng-model="membership.anonymous_name"
+						ng-required="true"
+						novalidate
+						placeholder="John Doe"
+					/>
+				</div>
+				<div
+					class="form-group"
+				>
+					<label>E-mail</label>
+					<input 					
+						class="form-control"
+						type="email"
+						name="anomynous_email"
+						autocomplete="off" 
+						autocorrect="off"
+						autocapitalize="off" 
+						spellcheck="false"
+						ng-model="membership.anonymous_email"
+						ng-required="true"
+						novalidate
+						placeholder="johndoe@company.co.nz"
+					/>
+				</div>
+			</div>
+			<div class="box-footer">
+				<button
+					type="button"
+					class="pull-right btn btn-success"
+					ng-click="membership.inviteAnonymous()"
+					ng-disabled="anonymous_form.$invalid"
+				>
+					<i class="fa fa-envelope fa-fw"></i>
+					{{'MEMBERSHIP_ANONYMOUS_INVITE'|translate}}
+				</button>	
+			</div>	
+		</div>
+		</form>
+	</div>
+</div>

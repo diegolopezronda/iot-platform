@@ -1,0 +1,16 @@
+**/logs/*.log
+**/.logs
+**/node_modules
+**/.node_modules
+**/.npm_debug.log
+**/npm_debug.log
+npm_debug.log
+web/public/ng
+web/public/img/database/*/*.*
+web/public/img/database/*/*/*.*
+!web/public/img/database/*/default.*
+!web/public/img/database/*/*/default.*
+!web/public/img/database/user/default.jpg
+!web/controllers/logs
+!web/controllers/logs/*.*
+**/nbproject

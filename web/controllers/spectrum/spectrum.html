@@ -1,0 +1,570 @@
+<form name="spectrum_form" id="spectrum-form" novalidate>
+<div class="row">
+	<div class="col-md-12">
+			<div class="box no-border">
+				<div class="box-header">
+					<h4 class="box-title">
+						<i class="fa fa-cog fa-fw"></i>
+						{{'SPECTRUM_GENERAL' | translate}}
+					</h4>
+					<div class="box-tools pull-right">
+						<a
+							type="button"
+							class="btn btn-default btn-sm" 
+							href="/dashboard/virtual-fields/{{spectrum.ID}}"
+						>
+							{{'SPECTRUM_VIRTUAL' | translate}}&nbsp;
+							<i class="fa fa-arrow-right"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+	</div>
+	<div class="col-md-6">
+			<!--TIME FLAGS-->
+			<div class="box no-border collapse in">
+				<div class="box-header">
+					<h3 class="box-title">
+						<i class="fa fa-flag fa-fw"></i>&nbsp;
+						{{'SPECTRUM_FLAGS' | translate}}
+					</h3>
+					<div class="pull-right">
+						<button 
+							type="button"
+							class="btn btn-box-tool btn-sm" 
+							data-widget="collapse"
+						>
+							<i class="fa fa-minus"></i>
+						</button>
+					</div>
+				</div>
+				<div class="box-body no-padding">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<td style="width:30px;"><i class="fa fa-flag fa-fw"></i></td>
+								<td>Description</td>
+								<td>Duration</td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr 
+								ng-repeat="(k,v) in spectrum.TIME_FLAGS" 
+							>
+								<td>
+									<i class="fa fa-flag text-{{v.color}}"></i>
+								</td>
+								<td>
+									{{v.label}}
+								</td>
+								<td class="no-padding">
+									<sensum-interval
+										data-min="{{v._parent ? spectrum.item.schema_item.flags[v._parent] : 0}}"
+										ng-model="spectrum.item.schema_item.flags[k]"
+									></sensum-interval>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+	</div>
+	<div class="col-md-6">
+			<div class="box no-border collapse in">
+				<div class="box-header">
+					<h3 class="box-title">
+						<i class="fa fa-info fa-fw"></i>&nbsp;
+						{{'SPECTRUM_METADATA' | translate}}
+					</h3>
+					<div class="pull-right">
+						<button 
+							type="button"
+							class="btn btn-box-tool btn-sm" 
+							data-widget="collapse"
+						>
+							<i class="fa fa-minus"></i>
+						</button>
+					</div>
+				</div>
+				<div class="box-body no-padding">
+					<table class="table table-striped table-bordered">
+						<thead>
+							<tr>
+								<th class="text-center" style="width:37px;"><i class="fa fa-info-circle"></i></th>
+								<th>{{'SPECTRUM_KEY' | translate}}</th>
+								<th>{{'SPECTRUM_VALUE' | translate}}</th>
+								<th class="text-center" style="width:37px;">{{'SPECTRUM_ACTIONS' | translate}}</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr
+								ng-repeat="(k,m) in spectrum.item.schema_item.metadata"								
+							>
+								<td style="vertical-align:middle;">
+									<span 
+										class="label bg-blue"
+										ng-show="sensum.project.schema_project.metadata[k]" 
+									>P</span>
+									<span 
+										class="label bg-red"
+										ng-show="!sensum.project.schema_project.metadata[k]" 
+									>U</span>
+								</td>
+								<th style="vertical-align:middle;">
+									{{m.key}}&nbsp;
+								</th>
+								<td style="vertical-align:middle;" class="no-padding">
+									<input
+										class="form-control"
+										name="metadata_{{k}}"
+										type="text"
+										placeholder="Type Value"
+										ng-model="spectrum.item.schema_item.metadata[k].value"
+										ng-required="false"
+										novalidate
+									/>
+								</td>
+								<td class="no-padding text-center">
+									<button
+										ng-click="spectrum.removeMetadata(k)"
+										ng-disabled="sensum.project.schema_project.metadata[k]" 
+										type="button"
+										class="btn btn-danger"
+									>
+										<i class="fa fa-trash"></i>
+									</button>
+								</td>
+							</tr>
+							<tr>
+								<td style="vertical-align:middle;">
+									<span 
+										class="label bg-red"
+									>U</span>
+								</td>
+								<td class="no-padding">
+									<input
+										class="form-control"
+										name="metadata_key"
+										placeholder="Type new key"
+										ng-model="spectrum.metadata_key"
+										ng-required="false"
+										novalidate
+									/>
+								</td>
+								<td class="no-padding">
+									<input
+										class="form-control"
+										placeholder="Type new value"
+										name="metadata_value"
+										ng-model="spectrum.metadata_value"
+										ng-required="false"
+										novalidate
+									/>
+								</td>
+								<td class="no-padding text-center">
+									<button
+										ng-click="spectrum.addMetadata()" 
+										type="button"
+										class="btn btn-success"
+									>
+										<i class="fa fa-plus"></i>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+	</div>
+	<div class="col-md-12">
+			<!--EXTERNAL VALUES--> 
+			<div class="box no-border collapse in" ng-show="spectrum.attr_count.external > 0">
+				<div class="box-header">
+					<h3 class="box-title">
+						<i class="fa fa-plug fa-fw"></i>&nbsp;
+						{{'SPECTRUM_EXTERNAL' | translate}}
+					</h3>
+					<div class="pull-right">
+						<button 
+							type="button"
+							class="btn btn-box-tool btn-sm" 
+							data-widget="collapse"
+						>
+							<i class="fa fa-minus"></i>
+						</button>
+					</div>
+				</div>
+				<div class="box-body">
+					<table class="table table-border table-striped">
+						<tbody>
+							<tr 
+								ng-repeat="(k,v) in spectrum.item.schema_item.external"
+							>
+								<td>
+									<label>
+										{{spectrum.item.schema_asset.attributes[k].label}}
+										<i 
+											class="fa fa-fw fa-question-circle pull-right"
+											title="{{spectrum.item.schema_asset.attributes[k].description}}"
+											data-toggle="tooltip"
+										></i>
+									</label>
+								</td>
+								<td>
+									<div 
+										class="
+											form-group no-margin  
+											{{spectrum_form[k+'_external'].$invalid ? 'has-error' : ''}}
+										"
+									>
+										<select 
+											class="text-center form-control" 
+											name="{{k}}_external_item"
+											ng-model="spectrum.item.schema_item.external[k].item"
+											ng-options="b.mac_item as b.name_item for (a,b) in spectrum.EXTERNAL"
+										></select>
+										<span 
+											ng-show="spectrum_form[k+'_constant'].$error.required" 
+											class="help-block pull-right"
+										>
+											{{ 'SPECTRUM_REQUIRED' | translate}}
+										</span>
+									</div>
+								</td>
+								<td>
+									<div 
+										class="
+											form-group no-margin 
+											{{spectrum_form[k+'_external'].$invalid ? 'has-error' : ''}}
+										"
+									>
+										<select 
+											class="text-center form-control" 
+											name="{{k}}_external_attribute"
+											ng-model="spectrum.item.schema_item.external[k].attribute"
+											ng-options="a as b.label for (a,b) in spectrum.EXTERNAL[v.item.toString()].schema_asset.attributes"
+										></select>
+										<span 
+											ng-show="spectrum_form[k+'_constant'].$error.required" 
+											class="help-block pull-right"
+										>
+											{{ 'SPECTRUM_REQUIRED' | translate}}
+										</span>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<!--CONSTANTS--> 
+			<div class="box no-border collapse in" ng-show="spectrum.attr_count.constants > 0">
+				<div class="box-header">
+					<h3 class="box-title">
+						<i class="fa fa-globe fa-fw"></i>&nbsp;
+						{{'SPECTRUM_CONSTANTS' | translate}}
+					</h3>
+					<div class="pull-right">
+						<button 
+							type="button"
+							class="btn btn-box-tool btn-sm" 
+							data-widget="collapse"
+						>
+							<i class="fa fa-minus"></i>
+						</button>
+					</div>
+				</div>
+				<div class="box-body">
+					<div 
+						class="col-md-3"
+						ng-repeat="(k,v) in spectrum.item.schema_item.constants track by $index"
+					>
+						<div 
+							class="
+								form-group 
+								{{spectrum_form[k+'_constant'].$invalid ? 'has-error' : ''}}
+							"
+						>
+							<label>
+								{{spectrum.item.schema_asset.attributes[k].label}}
+								<i 
+									class="fa fa-fw fa-question-circle pull-right"
+									title="{{spectrum.item.schema_asset.attributes[k].description}}"
+									data-toggle="tooltip"
+								></i>
+							</label>
+							<input 
+								class="text-center form-control" 
+								type="number"	
+								name="{{k}}_constant"
+								ng-min="spectrum.item.schema_asset.attributes[k].min"
+								ng-max="spectrum.item.schema_asset.attributes[k].max"
+								ng-model="spectrum.item.schema_item.constants[k]"
+							/>
+							<span 
+								ng-show="spectrum_form[k+'_constant'].$error.required" 
+								class="help-block pull-right"
+							>
+								{{ 'SPECTRUM_REQUIRED' | translate}}
+							</span>
+							<span 
+								ng-show="spectrum_form[k+'_constant'].$error.min" 
+								class="help-block pull-right"
+							>
+								{{ 'SPECTRUM_MIN' | translate:{MIN:spectrum.item.schema_asset.attributes[k].min} }}
+							</span>
+							<span 
+								ng-show="spectrum_form[k+'_constant'].$error.max" 
+								class="help-block pull-right"
+							>
+								{{ 'SPECTRUM_MAX' | translate:{MAX:spectrum.item.schema_asset.attributes[k].max} }}
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--BOUNDARIES-->
+			<div class="box no-border collapse in">
+				<div class="box-header">
+					<h3 class="box-title">
+						<i class="fa fa-wrench fa-fw"></i>&nbsp;
+						{{'SPECTRUM_BOUNDARIES' | translate}}
+					</h3>
+					<div class="pull-right">
+						<button 
+							type="button"
+							class="btn btn-box-tool btn-sm" 
+							data-widget="collapse"
+						>
+							<i class="fa fa-minus"></i>
+						</button>
+					</div>
+				</div>
+				<div class="box-body">
+					<div 
+						class="col-md-3"
+						ng-repeat="(k,v) in spectrum.item.schema_item.attributes track by $index"
+					>
+						<div 
+							class="
+								form-group 
+								{{spectrum_form[k+'_min'].$invalid ? 'has-error' : ''}}
+								{{spectrum_form[k+'_max'].$invalid ? 'has-error' : ''}}
+							"
+						>
+							<label title="k">
+								{{spectrum.item.schema_asset.attributes[k].label}}
+								<i 
+									class="fa fa-fw fa-question-circle pull-right"
+									title="{{spectrum.item.schema_asset.attributes[k].description}}"
+									data-toggle="tooltip"
+								></i>
+							</label>
+							<div ng-switch on="spectrum.item.schema_asset.attributes[k].type">
+								<div ng-switch-when="number">
+									<table class="table table-bordered table-striped">
+										<thead>
+											<th class="bg-blue text-center">
+												{{ 'SPECTRUM_MINIMUM' | translate}}
+											</th>
+											<th class="bg-red text-center">
+												{{ 'SPECTRUM_MAXIMUM' | translate}}
+											</th>
+										</thead>
+										<tbody>
+											<tr>
+												<td class="no-padding">
+													<input 
+														class="text-center form-control" 
+														type="number"	
+														name="{{k}}_min"
+														ng-model="v.min"
+														ng-min="spectrum.item.schema_asset.attributes[k].min"
+														ng-max="v.max"
+														ng-required="true"
+														novalidate
+													/>
+												</td>
+												<td class="no-padding">
+													<input 
+														class="text-center form-control" 
+														type="number"	
+														name="{{k}}_max"
+														ng-model="v.max"
+														ng-min="v.min"
+														ng-max="spectrum.item.schema_asset.attributes[k].max"
+														ng-required="true"
+														novalidate
+													/>
+												</td>
+											</tr>
+											<tr>
+												<td class="no-padding">
+													<div class="btn-group" style="width:100%">
+														<button
+															style="width:50%"
+															class="btn btn-sm btn-default"
+															ng-click="spectrum.up(false,false,k)"
+														>
+															<i class="fa fa-fw fa-minus"></i>
+														</button>
+														<button
+															style="width:50%"
+															class="btn btn-sm btn-default"
+															ng-click="spectrum.up(true,false,k)"
+														>	
+															<i class="fa fa-fw fa-plus"></i>
+														</button>
+													</div>
+												</td>
+												<td class="no-padding">
+													<div class="btn-group" style="width:100%">
+														<button
+															style="width:50%"
+															class="btn btn-sm btn-default"
+															ng-click="spectrum.up(false,true,k)"
+														>
+															<i class="fa fa-fw fa-minus"></i>
+														</button>
+														<button
+															style="width:50%"
+															class="btn btn-sm btn-default"
+															ng-click="spectrum.up(true,true,k)"
+														>
+															<i class="fa fa-fw fa-plus"></i>
+														</button>
+													</div>
+												</td>
+											</tr>
+											<tr>
+												<td colspan="2" style="border:none!important;" class="no-padding">
+													<span 
+														ng-show="spectrum_form[k+'_min'].$error.required" 
+														class="help-block pull-right"
+													>
+														{{ 'SPECTRUM_REQUIRED' | translate}}
+													</span>
+													<span 
+														ng-show="spectrum_form[k+'_min'].$error.min" 
+														class="help-block pull-right"
+													>
+														{{ 'SPECTRUM_MIN' | translate:{MIN:spectrum.item.schema_asset.attributes[k].min} }}
+													</span>
+													<span 
+														ng-show="spectrum_form[k+'_min'].$error.max" 
+														class="help-block pull-right"
+													>
+														{{ 'SPECTRUM_MAX' | translate:{MAX:v.max} }}
+													</span>
+													<span 
+														ng-show="spectrum_form[k+'_max'].$error.required" 
+														class="help-block pull-right"
+													>
+														{{ 'SPECTRUM_REQUIRED' | translate}}
+													</span>
+													<span 
+														ng-show="spectrum_form[k+'_max'].$error.min" 
+														class="help-block pull-right"
+													>
+														{{ 'SPECTRUM_MIN' | translate:{MIN:v.min} }}
+													</span>
+													<span 
+														ng-show="spectrum_form[k+'_max'].$error.max" 
+														class="help-block pull-right"
+													>
+														{{ 'SPECTRUM_MAX' | translate:{MAX:spectrum.item.schema_asset.attributes[k].max} }}
+													</span>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="box no-border collapse in">
+				<div class="box-header">
+					<h3 class="box-title">
+						<i class="fa fa-sort fa-fw"></i>&nbsp;
+						{{'SPECTRUM_SORT_VISIBILITY' | translate}}
+					</h3>
+					<div class="pull-right">
+						<button 
+							type="button"
+							class="btn btn-box-tool btn-sm" 
+							data-widget="collapse"
+						>
+							<i class="fa fa-minus"></i>
+						</button>
+					</div>
+				</div>
+				<div class="box-body no-padding">
+					<table class="table table-bordered table-striped table-hover">
+						<tbody>
+							<tr
+								ng-repeat="d in spectrum.item.schema_item._display track by $index"
+							>
+								<td style="width:100px;vertical-align:middle;text-align:center">
+									<div class="btn-group">
+										<button 
+											type="button" 
+											class="btn btn-default"
+											ng-click="spectrum.sort($index,false)"
+											ng-disabled="$first"
+										>
+											<i class="fa fa-arrow-up"></i>
+										</button>
+										<button 
+											type="button" 
+											class="btn btn-default"
+											ng-click="spectrum.sort($index,true)"
+											ng-disabled="$last"
+										>
+											<i class="fa fa-arrow-down"></i>
+										</button>
+									</div>
+								</td>
+								<td style="width:49px;vertical-align:middle;">
+									<div
+										ng-show="d.value === false"
+									>
+										<i 
+											class="fa fa-toggle-off fa-2x text-gray"
+											ng-click="d.value = true"
+										></i>
+									</div>
+									<div
+										ng-show="d.value === true"
+									>
+										<i 
+											class="fa fa-toggle-on text-green fa-2x"
+											ng-click="d.value = false"
+										></i>
+									</div>
+								</td>
+								<th>
+									{{spectrum.item.schema_asset.attributes[d.key].label}}
+								</th>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+<!--SUBMIT-->
+			<div class="box no-border">
+				<div class="box-footer">
+					<button 
+						class="btn btn-primary pull-right"
+						ng-disabled="spectrum_form.$invalid"
+						ng-click="spectrum.submit()"
+					>
+						<i class="fa fa-fw fa-bolt"></i>
+						{{'SPECTRUM_SUBMIT' | translate}}
+					</button>
+				</div>
+			</div>
+	</div>
+</div>
+</form>
+

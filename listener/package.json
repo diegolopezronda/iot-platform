@@ -1,0 +1,21 @@
+{
+  "name": "sensum-mqtt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm install;pm2 start app.js --name co-listener --merge-logs -o logs/out.log -e logs/error.log",
+    "restart": "pm2 restart co-listener;pm2 logs co-listener",
+    "log": "pm2 logs co-listener",
+    "errors": "pm2 logs --err co-listener",
+		"prettier": "prettier --use-tabs --write --trailing-comma=none app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "moment": "^2.19.1",
+    "moment-timezone": "^0.5.14",
+    "mongodb": "^2.2.33",
+    "mqtt": "^2.13.1"
+  }
+}

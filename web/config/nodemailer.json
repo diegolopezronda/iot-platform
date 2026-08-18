@@ -1,0 +1,12 @@
+{
+	"host": "sensum.co.nz",
+	"auth":{
+		"user": "no-reply@sensum.co.nz",
+		"pass": "Pnm5s?96"
+	},
+	"port": 25,
+	"secure":false,
+	"tls": {
+		"rejectUnauthorized":false
+	}
+}

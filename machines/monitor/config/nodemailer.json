@@ -1,0 +1,11 @@
+{                                                                                  
+  "host":"webmail.sensum.co.nz",                                                   
+  "auth":{                                                                         
+    "user":"no-reply@sensum.co.nz",                                                
+    "pass":"vDlq60*9"                                                              
+  },                                                                               
+  "pool":true,                                                                     
+  "tls":{                                                                          
+    "rejectUnauthorized":false                                                     
+  }                                                                                
+}  

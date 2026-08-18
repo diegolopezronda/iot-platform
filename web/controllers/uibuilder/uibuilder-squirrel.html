@@ -1,0 +1,200 @@
+<div class="row">
+	<div class="col-md-4 hidden-sm hidden-xs">
+	</div>
+	<div class="col-md-4">
+		<div class="box hidden">
+			<div class="box-header with-border">
+				<h3 class="box-title">
+					<img
+						src="/img/squirrel.svg"
+						style="height:1em;margin-top:-5px;"
+					/>
+					&nbsp;
+					Welcome
+				</h3>
+			</div>
+			<div class="box-body text-center">
+				<img
+					src="/img/squirrel.svg"
+					style="height:60px;"
+				/>
+				<h4>
+					Hello, I'm Squery, the Squirrel, your report assistant. 
+					Let's find some acorns!
+				</h4>
+			</div>
+		</div>
+		<div class="box no-border">
+			<div class="box-header with-border">
+				<h3 class="box-title">
+					<i class="fa fa-fw fa-book"></i>
+					Reports
+				</h3>
+			</div>
+			<div class="box-body text-justify">
+				<h3 class="no-margin">
+					I want to generate  
+					<span 
+						class="text-blue"
+						data-target="#sensum-uibuilder-options-modal" 
+						data-toggle="modal"
+						ng-click="uibuilder.selected_field='document_type'"
+					>
+						{{uibuilder.FORM.document_type.options[uibuilder.FORM.document_type.value].key}}
+						<i class="fa fa-pencil"></i>
+					</span> 
+					<br/>
+					from
+					<div 
+						class="text-blue"
+						style="
+							text-overflow: ellipsis;
+							white-space: nowrap;
+							overflow: hidden;
+							width: 250px;
+							display: inline-block;
+							padding: 1px 0px 0px 0px;
+							margin-bottom: -3px;
+						"
+						data-target="#sensum-uibuilder-options-modal" 
+						data-toggle="modal"
+						ng-click="uibuilder.selected_field='device'"
+					>
+						{{uibuilder.FORM.device.options[uibuilder.FORM.device.value].key}}
+						<i class="fa fa-pencil"></i>
+					</div>
+					<br/>
+					showing the 
+					<span 
+						class="text-blue"
+						data-target="#sensum-uibuilder-options-modal" 
+						data-toggle="modal"
+						ng-click="uibuilder.selected_field='group'"
+					>
+						{{uibuilder.FORM.group.options[uibuilder.FORM.group.value].key}}
+						<i class="fa fa-pencil"></i>
+					</span>
+					<br/>
+					<span 
+						class="text-blue"
+						data-target="#sensum-uibuilder-options-modal" 
+						data-toggle="modal"
+						ng-click="uibuilder.selected_field='field'"
+					>
+						{{uibuilder.FORM.field.options[uibuilder.FORM.field.value].key}}
+						<i class="fa fa-pencil"></i>
+					</span>
+					per
+					<span 
+						class="text-blue"
+						data-target="#sensum-uibuilder-options-modal" 
+						data-toggle="modal"
+						ng-click="uibuilder.selected_field='scale'"
+					>
+						{{uibuilder.FORM.scale.options[uibuilder.FORM.scale.value].key}}
+						<i class="fa fa-pencil"></i>
+					</span>
+					<br/>
+					from 
+					<span 
+						class="text-blue"
+						data-target="#sensum-uibuilder-options-modal" 
+						data-toggle="modal"
+						ng-click="uibuilder.selected_field='start'"
+					>
+						{{uibuilder.FORM.start.value}}
+						<i class="fa fa-pencil"></i>
+					</span>
+					<br/>
+					until	
+					<span 
+						class="text-blue"
+						data-target="#sensum-uibuilder-options-modal" 
+						data-toggle="modal"
+						ng-click="uibuilder.selected_field='end'"
+					>
+						{{uibuilder.FORM.end.value}}
+						<i class="fa fa-pencil"></i>
+					</span>
+				</h3>
+			</div>
+      <div class="box-footer">	
+				<button 
+					class="btn btn-success btn-block" 
+					type="button"
+					ng-click="uibuilder.generateReport()"
+				>
+					<i class="fa fa-magic fa-fw"></i>
+					Generate
+				</button>
+      </div>
+		</div>
+	</div>
+</div>
+<!--OPTIONS MODAL-->
+<div id="sensum-uibuilder-options-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">
+					<i class="fa fa-pencil fa-fw"></i>
+					{{uibuilder.FORM[uibuilder.selected_field].title}}&nbsp;
+				</h4>
+      </div>
+      <div class="modal-body" ng-switch="uibuilder.FORM[uibuilder.selected_field].type">	
+				<div ng-switch-when="date">
+					<sensum-select
+						ng-model="uibuilder.FORM[uibuilder.selected_field].interval"
+						data-options="uibuilder.FORM.interval.options"
+						data-value="value"
+						data-label="key"
+					></sensum-select>
+					<div 
+						ng-switch="uibuilder.FORM[uibuilder.selected_field].interval"
+					>
+						<div 
+							ng-switch-when="true"
+							class="form-group"
+						>
+							<sensum-interval
+								data-min="0"
+								ng-model="uibuilder.FORM[uibuilder.selected_field].time"
+							></sensum-interval>
+						</div>
+						<div 
+							ng-switch-when="false"
+							class="form-group"
+						>
+							<sensum-date
+								label="Select a date"
+								format="date"
+								ng-model="uibuilder.FORM[uibuilder.selected_field].value"
+							></sensum-date>
+						</div>
+					</div>
+      	</div>
+				<div ng-switch-default>
+					<sensum-select
+						ng-model="uibuilder.FORM[uibuilder.selected_field].value"
+						ng-change="uibuilder.updateFormDependencies()"
+						data-options="uibuilder.FORM[uibuilder.selected_field].options"
+						data-value="index"
+						data-label="key"
+					></sensum-select>
+      	</div>
+      </div>
+      <div class="modal-footer">	
+				<button 
+					data-dismiss="modal" 
+					class="btn btn-success btn-block" 
+					type="button"
+				>
+					<i class="fa fa-check fa-fw"></i>
+					OK
+				</button>
+      </div>
+		</div>
+	</div>
+	<div class="col-md-2">
+	</div>
+</div>

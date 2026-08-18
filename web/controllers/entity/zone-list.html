@@ -1,0 +1,116 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="box no-border">
+      <div class="box-header with-border">
+        <h3 class="box-title text-capitalize">
+					<i class="fa fa-table fa-fw"></i>&nbsp;
+					{{ 'ENTITY_LIST' | translate}}</h3>
+        <div class="pull-right">
+          <a href="/dashboard/zones/add" class=
+          "btn btn-sm btn-success">
+						<i class="fa fa-plus fa-fw"></i>
+						New Zone
+					</a>
+        </div>
+      </div>
+
+      <div class="box-body flat bg-gray">
+        <form>
+          <div class="form-group no-margin">
+            <div class="input-group">
+              <div class="input-group-addon">
+								<i class="fa fa-search fa-fw"></i>
+							</div><input type="text" class=
+              "form-control" ng-model="entity.search" placeholder=
+              "{{ 'ENTITY_FILTER' | translate}}">
+            </div>
+          </div>
+        </form><input type="hidden" value="{{entity.CONFIG.display_field}}"
+        ng-model="entity.sortType"> <input type="hidden" value="false"
+        ng-model="entity.sortReverse">
+			</div>
+      <div class="box-body no-padding">
+        <div class="x-overflow-container">
+          <table class="table  table-striped">
+            <thead>
+              <tr>
+                <th ng-repeat="column in entity.FIELDS">
+								
+								<i 
+									class="fa fa-question-circle fa-fw" 
+									title="{{column.comment}}"
+									data-toggle="tooltip"
+								></i>
+								<a href="#" ng-click=
+                "entity.sortType = column.field; ; entity.sortReverse = !entity.sortReverse">
+                {{ entity.CONFIG.aliases[column.field] ?
+                entity.CONFIG.aliases[column.field] :
+                column.label}}</a></th>
+
+                <th width="100">{{ 'ENTITY_ACTIONS' | translate}}</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr 
+								ng-repeat="row in entity.ROWS | filter:entity.search | orderBy:entity.sortType:entity.sortReverse"
+							>
+	              <td ng-repeat="column in entity.FIELDS">
+									<span ng-show="['date','binded','checkbox','i18n','json','icon'].indexOf(column.type) == -1">
+                		{{row[column.field]}}
+									</span> 
+									<span 
+										ng-show="column.type == 'checkbox' && row[column.field] == 0"
+                		class="label label-default text-uppercase"
+									>No</span>
+                	<span 
+										ng-show="column.type == 'checkbox' && row[column.field] == 1"
+                class="label label-primary text-uppercase">Yes</span>
+								<i 
+									ng-show="column.type === 'icon'" 
+									class="fa fa-{{row[column.field]}} fa-fw">
+								</i>
+                <span ng-show="column.type === 'i18n'">
+									<i class="fa fa-{{entity.TYPES.i18n.icon}} fa-fw"></i>&nbsp;
+  	              {{row[column.field][sensum.language]}}
+								</span> 
+								<a href=
+                	"/dashboard/data/{{entity.getAlias(column.foreign_table)}}/view/{{row[column.field]}}"
+                	ng-show="column.constraint === true"
+								>
+									{{row[column.foreign_alias]}}
+								</a>
+								<angular-jsoneditor 
+									ng-show="column.type === 'json'"
+									options="{mode:'view'}" 
+									ng-model="row[column.field]"
+								>
+								</angular-jsoneditor>
+                <span ng-show=
+                "column.type == 'date'">{{row[column.field]}}</span></td>
+
+                <td class="text-center" style="vertical-align:middle"><a ng-href=
+                "/dashboard/zones/edit/{{row[entity.PRIMARY]}}"
+                class="btn btn-warning btn-sm">
+									<i class="fa fa-pencil fa-fw"></i>
+									Edit Zone
+								</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+			<div class="text-center box-footer">
+				<button
+					type="button"
+					class="btn btn-block btn-primary"
+					ng-click="entity.getNextPage()"
+					ng-disabled="entity.more === false"
+				>
+					<i class="fa fa-fw fa-arrow-down"></i>
+					More
+				</button>
+			</div>
+    </div>
+  </div>
+</div>

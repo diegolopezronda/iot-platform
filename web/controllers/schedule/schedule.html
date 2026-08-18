@@ -1,0 +1,209 @@
+<div class="row">
+	<div class="col-md-12">
+		<div class="callout callout-info hidden">
+			<i class="fa fa-info fa-fw"></i>
+			{{'SCHEDULE_HELP' | translate}}
+		</div>
+		<div class="box no-border box-primary">
+			<div class="box-body no-padding">
+				<div id="schedule-calendar"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="schedule-new-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<form name="newevent">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button 
+						type="button" 
+						class="close" 
+						data-dismiss="modal"
+					>
+						&times;
+					</button>
+					<h4 class="modal-title">
+						<i class="fa fa-fw fa-clock-o"></i>&nbsp;
+						{{'SCHEDULE_SCHEDULE_MODAL' | translate}}
+					</h4>
+				</div>
+				<div class="modal-body no-padding">
+					<table class="table table-striped">
+						<tbody>
+							<tr>
+								<th>
+									Control
+								</th>
+								<td>
+									<select
+										class="form-control"
+										ng-model="schedule.current_event.row.control_event"
+										ng-options="control.label for control in schedule.CONTROLS"
+										ng-required="true"
+										novalidate
+									>
+									</select>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<table class="table table-bordered table-striped">
+						<tbody>
+							<tr>
+								<th>
+									{{'SCHEDULE_SCHEDULE_START' | translate}}
+								</th>
+								<td>
+									<div class="input-group date">
+										<input									 
+											type="text"
+											id="schedule-event-start"		 
+											class="form-control text-center"
+											readonly
+											novalidate
+										/>
+										<span 
+											class="input-group-addon"
+											onclick="$('#schedule-event-start').focus()"
+										>
+											<i class="fa fa-calendar"></i>
+										</span>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<th>
+									{{'SCHEDULE_SCHEDULE_AND' | translate}}
+								</th>
+								<td>
+									<div class="input-group">
+										<span class="input-group-addon">
+											<input 
+												type="checkbox" 
+												ng-model="schedule.current_event.row.is_repeat_event"
+											/>
+										</span>
+										<span class="form-control">
+											{{'SCHEDULE_SCHEDULE_REPEAT' | translate}}
+										</span>
+									</div>
+									<div class="input-group" ng-show="schedule.current_event.row.is_repeat_event === true">
+										<span class="input-group-addon">
+											<input 
+												type="checkbox"
+												ng-model="schedule.current_event.row.is_forever_event"
+											/>
+										</span>
+										<span class="form-control">
+											{{'SCHEDULE_SCHEDULE_FOREVER' | translate}}
+										</span>
+									</div>
+								</td>
+							</tr>
+							<tr 
+								ng-show="schedule.current_event.row.is_repeat_event === true"
+							>
+								<th>
+									{{'SCHEDULE_SCHEDULE_EACH' | translate}}
+								</th>
+								<td>
+									<div class="input-group">
+										<select
+											ng-options="c.value as c.key for c in schedule.INTERVALS"  
+											ng-model="schedule.current_event.interval"
+											ng-change="schedule.updateInterval()"
+											class="form-control"
+											ng-required="true"
+											novalidate
+										></select>
+										<span class="input-group-addon">
+											&nbsp;
+										</span>
+										<select
+											ng-options="c.value as c.key for (k,c) in schedule.MAGNITUDES"
+											ng-model="schedule.current_event.magnitude"
+											ng-change="schedule.updateInterval()"
+											class="form-control"
+											ng-required="true"
+											novalidate
+										></select>
+									</div>
+								</td>								
+							</tr>
+							<tr 
+								ng-show="schedule.current_event.row.is_repeat_event === true && schedule.current_event.row.is_forever_event === false"
+							>
+								<th>
+									{{'SCHEDULE_SCHEDULE_UNTIL' | translate}}
+								</th>
+								<td>
+									<div class="input-group date">
+										<input									 
+											id="schedule-event-end"		 
+											class="form-control text-center"
+											ng-required="schedule.current_event.row.is_forever_event === false"
+											readonly
+											novalidate
+										/>
+										<span 
+											class="input-group-addon"
+											onclick="$('#schedule-event-end').focus()"
+										>
+											<i class="fa fa-calendar"></i>
+										</span>
+									</div>
+								</td>
+							</tr>
+							<tr 
+								ng-show="schedule.current_event.row.is_repeat_event === true"
+							>
+								<th>
+									{{'SCHEDULE_SCHEDULE_APPLY_ON' | translate}}
+								</th>
+								<td>
+									<div class="input-group" ng-repeat="d in schedule.WEEKDAYS">
+										<span class="input-group-addon">
+											<input 
+												type="checkbox" 
+												ng-model="schedule.current_event.row[d.value]"
+											/>
+										</span>
+										<span class="form-control">{{d.key | translate}}</span>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button 
+						ng-show="schedule.current_event.row.id_event"
+						type="button" 
+						class="pull-left btn btn-danger" 
+						data-dismiss="modal" 
+						ng-click="schedule.deleteEvent()"
+					>
+						<i class="fa fa-fw fa-trash-o"></i>&nbsp;
+						{{'SCHEDULE_SCHEDULE_DELETE' | translate}}
+					</button>
+					<button 
+						ng-disabled="
+							(!schedule.current_event.row.start_date_event || !schedule.current_event.row.control_event.key) || 
+							(
+								(
+									newevent.$invalid ||
+                  (!schedule.current_event.row.end_date_event && schedule.current_event.row.is_forever_event === false)
+								) && 
+								schedule.current_event.row.is_repeat_event === true
+							)
+						"
+						type="button" class="btn btn-primary" data-dismiss="modal" ng-click="schedule.saveEvent()">
+						<i class="fa fa-fw fa-floppy-o"></i>&nbsp;
+						{{'SCHEDULE_SCHEDULE_SAVE' | translate}}
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>

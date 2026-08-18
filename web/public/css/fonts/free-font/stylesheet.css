@@ -1,0 +1,144 @@
+@font-face {
+    font-family: 'FreeSans';
+    src: url('FreeSans.eot');
+    src: url('FreeSans.eot?#iefix') format('embedded-opentype'),
+        url('FreeSans.woff2') format('woff2'),
+        url('FreeSans.woff') format('woff'),
+        url('FreeSans.ttf') format('truetype'),
+        url('FreeSans.svg#FreeSans') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'FreeMono';
+    src: url('FreeMono.eot');
+    src: url('FreeMono.eot?#iefix') format('embedded-opentype'),
+        url('FreeMono.woff2') format('woff2'),
+        url('FreeMono.woff') format('woff'),
+        url('FreeMono.ttf') format('truetype'),
+        url('FreeMono.svg#FreeMono') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'FreeSans';
+    src: url('FreeSansOblique.eot');
+    src: url('FreeSansOblique.eot?#iefix') format('embedded-opentype'),
+        url('FreeSansOblique.woff2') format('woff2'),
+        url('FreeSansOblique.woff') format('woff'),
+        url('FreeSansOblique.ttf') format('truetype'),
+        url('FreeSansOblique.svg#FreeSansOblique') format('svg');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'FreeMono';
+    src: url('FreeMonoBoldOblique.eot');
+    src: url('FreeMonoBoldOblique.eot?#iefix') format('embedded-opentype'),
+        url('FreeMonoBoldOblique.woff2') format('woff2'),
+        url('FreeMonoBoldOblique.woff') format('woff'),
+        url('FreeMonoBoldOblique.ttf') format('truetype'),
+        url('FreeMonoBoldOblique.svg#FreeMonoBoldOblique') format('svg');
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'FreeMono';
+    src: url('FreeMonoBold.eot');
+    src: url('FreeMonoBold.eot?#iefix') format('embedded-opentype'),
+        url('FreeMonoBold.woff2') format('woff2'),
+        url('FreeMonoBold.woff') format('woff'),
+        url('FreeMonoBold.ttf') format('truetype'),
+        url('FreeMonoBold.svg#FreeMonoBold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'FreeSerif';
+    src: url('FreeSerifBoldItalic.eot');
+    src: url('FreeSerifBoldItalic.eot?#iefix') format('embedded-opentype'),
+        url('FreeSerifBoldItalic.woff2') format('woff2'),
+        url('FreeSerifBoldItalic.woff') format('woff'),
+        url('FreeSerifBoldItalic.ttf') format('truetype'),
+        url('FreeSerifBoldItalic.svg#FreeSerifBoldItalic') format('svg');
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'FreeSerif';
+    src: url('FreeSerifBold.eot');
+    src: url('FreeSerifBold.eot?#iefix') format('embedded-opentype'),
+        url('FreeSerifBold.woff2') format('woff2'),
+        url('FreeSerifBold.woff') format('woff'),
+        url('FreeSerifBold.ttf') format('truetype'),
+        url('FreeSerifBold.svg#FreeSerifBold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'FreeSerif';
+    src: url('FreeSerifItalic.eot');
+    src: url('FreeSerifItalic.eot?#iefix') format('embedded-opentype'),
+        url('FreeSerifItalic.woff2') format('woff2'),
+        url('FreeSerifItalic.woff') format('woff'),
+        url('FreeSerifItalic.ttf') format('truetype'),
+        url('FreeSerifItalic.svg#FreeSerifItalic') format('svg');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'FreeSans';
+    src: url('FreeSansBoldOblique.eot');
+    src: url('FreeSansBoldOblique.eot?#iefix') format('embedded-opentype'),
+        url('FreeSansBoldOblique.woff2') format('woff2'),
+        url('FreeSansBoldOblique.woff') format('woff'),
+        url('FreeSansBoldOblique.ttf') format('truetype'),
+        url('FreeSansBoldOblique.svg#FreeSansBoldOblique') format('svg');
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'FreeSerif';
+    src: url('FreeSerif.eot');
+    src: url('FreeSerif.eot?#iefix') format('embedded-opentype'),
+        url('FreeSerif.woff2') format('woff2'),
+        url('FreeSerif.woff') format('woff'),
+        url('FreeSerif.ttf') format('truetype'),
+        url('FreeSerif.svg#FreeSerif') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'FreeSans';
+    src: url('FreeSansBold.eot');
+    src: url('FreeSansBold.eot?#iefix') format('embedded-opentype'),
+        url('FreeSansBold.woff2') format('woff2'),
+        url('FreeSansBold.woff') format('woff'),
+        url('FreeSansBold.ttf') format('truetype'),
+        url('FreeSansBold.svg#FreeSansBold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'FreeMono';
+    src: url('FreeMonoOblique.eot');
+    src: url('FreeMonoOblique.eot?#iefix') format('embedded-opentype'),
+        url('FreeMonoOblique.woff2') format('woff2'),
+        url('FreeMonoOblique.woff') format('woff'),
+        url('FreeMonoOblique.ttf') format('truetype'),
+        url('FreeMonoOblique.svg#FreeMonoOblique') format('svg');
+    font-weight: normal;
+    font-style: italic;
+}
+

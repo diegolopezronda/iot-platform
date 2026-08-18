@@ -1,0 +1,17 @@
+{
+  "name": "sensum-ma-user-remover",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm install;pm2 start app.js --name ma-user-remover --merge-logs -o ./logs/out.log -e ./logs/error.log",
+    "restart": "pm2 restart ma-user-remover;pm2 logs ma-user-remover",
+    "logs": "pm2 logs ma-user-remover",
+    "prettier": "prettier --trailing-comma none --use-tabs --write app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mysql2": "^1.5.3"
+  }
+}

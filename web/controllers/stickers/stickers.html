@@ -1,0 +1,196 @@
+<div class="row no-print">
+	<div class="col-md-12">
+		<div class="box text-center">
+			<div class="box-header">
+				<h3 class="box-title">
+					Sticker Machine
+				</h3>
+			</div>
+			<div class="box-body">
+				<div class="form-group">
+					<label>STEP 1</label>
+					<textarea class="form-control" ng-model="stickers.input" ng-change="stickers.parse()"></textarea>
+				</div>
+			</div>
+			<div class="box-footer">
+				<button
+					class="btn btn-primary btn-block"
+					onclick="window.print()"
+				>
+					<i class="fa fa-fw fa-printer"></i>Print
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="sticker-a4">	
+		<div class="sticker-a4-avery">	
+			<div class="sticker-a4-contents">
+				<table class="sticker-a4-grid">
+					<tbody>
+						<tr ng-repeat="r in stickers.ROWS track by $index">
+							<td 
+								ng-repeat="c in r track by $index"
+							>
+								<div class="sticker-a4-right pull-right text-center">
+									<h2>{{c.company}}</h2>
+									<h4 class="sticker-slogan text-bold hidden">Connecting your things</h4>
+									<h3 class="text-bold" style="height:14px;">{{c.device}}</h3>
+									<h4 class="text-left text-uppercase text-bold">
+										{{c.interface}}: 
+										<span class="pull-right">{{c.id}}</span>
+									</h4>
+									<h4 class="text-left text-uppercase text-bold">
+										SRN:
+										<span class="pull-right">{{c.serial}}</span>
+									</h4>
+									<div class="text-center">
+										<img src="/img/kiwi.png"/>
+										<img src="/img/c-tick.svg"/>
+										<span class="sticker-rn-z">R-NZ</span>
+										<h5 class="text-uppercase text-bold">Made in New Zealand</h5>
+									</div>
+								</div>
+							</td>							
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<style>
+.sticker-a4{	
+	width:210mm!important;
+	height:297mm!important;
+	background:white!important;
+	border:1px red solid;
+	margin:0px auto;
+	padding-top:5.7mm!important;
+	padding-bottom:2mm!important;
+	padding-left:5.2mm!important;
+	padding-right:5.2mm!important;
+	overflow:hidden;
+}
+.sticker-a4 .sticker-a4-avery{
+	width:100%!important;
+	height:100%!important;
+	-webkit-border-radius: 2mm!important;
+	-moz-border-radius: 2mm!important;
+	border-radius: 2mm!important;
+	border:1px pink solid;
+	padding:2mm!important;	
+	overflow:hidden;
+}
+.sticker-a4 .sticker-a4-avery .sticker-a4-contents{
+	width:100%!important;
+	height:100%!important;
+	border:1px green solid;
+	overflow:hidden;
+}
+.sticker-a4 .sticker-a4-avery .sticker-a4-contents .sticker-a4-grid,
+.sticker-a4 .sticker-a4-avery .sticker-a4-contents .sticker-a4-grid tbody tr,
+.sticker-a4 .sticker-a4-avery .sticker-a4-contents .sticker-a4-grid tbody tr td{
+	border-collapse:collapse!important;
+	padding:0px!important;
+	margin:0px!important;
+}
+.sticker-a4 .sticker-a4-avery .sticker-a4-contents .sticker-a4-grid tbody tr td{
+	border:black 1px dashed!important;
+	width:calc(50mm - 0mm)!important;
+	height:calc(30mm - 0mm)!important;
+	padding:2mm!important;
+	position:relative;
+}
+.sticker-a4 .sticker-a4-avery .sticker-a4-contents .sticker-a4-grid tbody tr td .sticker-editor{
+	background:white;
+	position:absolute;
+	width:50mm;
+	height:30mm;
+	top:0;
+	left:0;
+	right:0;
+	bottom:0;
+	margin:-1px;
+	padding:2mm;
+	border:#333 1px solid;
+}
+.sticker-a4 .sticker-a4-avery .sticker-a4-contents .sticker-a4-grid tbody tr td .sticker-a4-left{
+	width:24mm!important;
+	height:24mm!important;
+	/*margin-top:6.5mm!important;*/
+}
+.sticker-a4 .sticker-a4-avery .sticker-a4-contents .sticker-a4-grid tbody tr td .sticker-a4-left .sticker-qr{
+	width:87px;
+	height:87px;
+}
+
+.sticker-a4 .sticker-a4-avery .sticker-a4-contents .sticker-a4-grid tbody tr td .sticker-a4-right{
+	width:100%!important;
+	height:100%!important;
+}
+.sticker-a4 .sticker-a4-avery .sticker-a4-contents .sticker-a4-grid tbody tr td .sticker-a4-right h2{
+	font-family:'Nulshock';
+	font-size:15pt;
+	margin:0px!important;
+	color:black!important;
+}
+.sticker-a4 .sticker-a4-avery .sticker-a4-contents .sticker-a4-grid tbody tr td .sticker-a4-right .sticker-slogan{
+	font-family:'Cabin';
+	font-size:10pt;
+	margin:0px!important;
+	color:black!important;
+}
+.sticker-a4 .sticker-a4-avery .sticker-a4-contents .sticker-a4-grid tbody tr td .sticker-a4-right h3{
+	font-family:'Cabin';
+	font-size:10pt;
+	margin:0px!important;
+	color:black!important;
+}
+.sticker-a4 .sticker-a4-avery .sticker-a4-contents .sticker-a4-grid tbody tr td .sticker-a4-right h4{
+	font-family:'Anonymous Pro';
+	font-size:8pt;
+	margin:0px!important;
+	color:black!important;
+}
+.sticker-a4 .sticker-a4-avery .sticker-a4-contents .sticker-a4-grid tbody tr td .sticker-a4-right h5{
+	font-family:'Anonymous Pro';
+	font-size:9pt;
+	margin:0px!important;
+	color:black!important;
+}
+.sticker-a4 .sticker-a4-avery .sticker-a4-contents .sticker-a4-grid tbody tr td .sticker-a4-right .sticker-rn-z{
+	font-family:'Anton';
+	font-size:14px;
+	margin:0px!important;
+	color:black!important;
+}
+.sticker-a4 .sticker-a4-avery .sticker-a4-contents .sticker-a4-grid tbody tr td .sticker-a4-right img{
+	vertical-align:baseline!important;
+	height:15px!important;
+}
+.form-horizontal .form-group{
+	margin:0px!important;
+}
+
+@media print{
+	.row,section.content{
+		margin: 0cm!important;
+		padding: 0cm!important;
+	}
+	.sticker-a4,
+	.sticker-a4 .sticker-a4-avery,
+	.sticker-a4 .sticker-a4-avery .sticker-a4-contents{
+		border:none!important;
+		display:block!important;
+	}
+	.sticker-a4{	
+		margin:0px!important;
+	}
+	.sticker-a4 .sticker-a4-avery .sticker-a4-contents .sticker-a4-grid tbody tr td .sticker-a4-left,
+	.sticker-a4 .sticker-a4-avery .sticker-a4-contents .sticker-a4-grid tbody tr td .sticker-a4-right{
+		background:none!important;
+	}
+}
+</style>

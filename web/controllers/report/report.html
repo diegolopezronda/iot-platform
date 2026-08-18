@@ -1,0 +1,141 @@
+<html>
+<head>
+</head>
+<body>
+<div
+	id="sensum-report-bill"
+	compile="report.EVENT_RESPONSE.report"
+></div>
+</body>
+</html>
+<div data-backdrop="static" class="modal fade" role="dialog" id="sensum-report-modal">
+	<div class="modal-dialog">
+		<form>
+			<div class="modal-content no-border">
+				<div class="modal-header with-border">
+					<h3 class="modal-title">
+						Tell us what are you up to today
+					</h3>
+				</div>
+				<div class="modal-body">
+					<label>
+						I want to generate  
+					</label>
+					<sensum-select
+						ng-model="report.EVENT.constants.invoice"
+						data-options="report.REPORT_OPTIONS"
+						data-label="key"
+						data-value="value"
+					></sensum-select>
+					<label>
+						from the indicators:
+					</label>
+					<ul>
+						<li
+							ng-repeat="(k,v) in report.EVENT.datasource.group"
+						>
+							<span 
+								class="btn btn-primary btn-xs text-uppercase"
+								ng-click="report.updateKPIOptions(k)"
+							>
+								{{report.ITEM.schema_asset.attributes[k].label}}
+								<i class="fa fa-times"></i>
+							</span>
+						</li>
+					</ul>
+					<sensum-select
+						ng-model="report.selected_kpi"
+						data-options="report.KPI_OPTIONS"
+						data-label="key"
+						data-value="value"
+						ng-change="report.updateKPIOptions()"
+					></sensum-select>	
+					<label>
+						from
+					</label>
+					<sensum-interval
+						min="60"
+						ng-model="report.EVENT.datasource.start.time"
+					></sensum-interval> 
+					<label>
+						until
+					</label>
+					<sensum-interval
+						min="0"
+						ng-model="report.EVENT.datasource.end.time"
+					></sensum-interval> 
+					<label>
+						ago.
+					</label>
+				</div>
+				<div class="modal-footer">
+					<button
+						type="button"
+						lass="btn btn-primary btn-block"
+						ng-click="report.generateReport()"
+						data-dismiss="modal"
+					>
+						<i 
+							class="fa fa-magic fa-fw"
+						></i>
+						{{'REPORT_SUBMIT' | translate}}
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<style>
+@media print{
+	#sensum-item-bar{
+		display:none;
+	}
+	#sensum-report-bill{
+	width: initial;
+	height:initial;
+	padding: initial;
+	}
+}
+#sensum-report-bill {
+  all: initial; /* blocking inheritance for all properties */
+	width: 210mm;
+	height: 298mm;
+	background: white;
+	margin: 0px auto;
+	display: block;
+	padding: 2cm;
+	font-family: Arial;
+	font-size: 11pt;
+}
+#sensum-report-bill *{
+  all: unset; /* allowing inheritance within #mydiv */
+}
+#sensum-report-bill h1 {
+	font-size: 2em;
+	margin: .67em 0;
+}
+
+#sensum-report-bill h2 {
+	font-size: 1.5em;
+	margin: .75em 0;
+}
+
+#sensum-report-bill h3 {
+	font-size: 1.17em;
+	margin: .83em 0
+}
+
+#sensum-report-bill h5 {
+	font-size: .83em;
+	margin: 1.5em 0;
+}
+
+#sensum-report-bill h6 {
+	font-size: .75em;
+	margin: 1.67em 0;
+}
+
+#sensum-report-bill h1, #sensum-report-bill h2, #sensum-report-bill h3, #sensum-report-bill h4, #sensum-report-bill h5, #sensum-report-bill h6 {
+	font-weight: bolder;
+}
+

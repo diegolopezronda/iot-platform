@@ -1,0 +1,701 @@
+<div class="row">
+	<div class="col-md-12">
+		<form name="virtual_form">
+			<div class="box no-border">
+				<div class="box-header">
+					<h4 class="box-title">
+						<i class="fa fa-cog fa-fw"></i>
+						{{'SPECTRUM_VIRTUAL_FIELDS' | translate}}
+					</h4>
+					<div class="box-tools pull-right">
+						<a
+							type="button"
+							class="btn btn-default btn-sm" 
+							href="/dashboard/setup/{{spectrum.ID}}"
+						>
+							<i class="fa fa-arrow-left fa-fw"></i>
+							{{'SPECTRUM_HEADER' | translate}}&nbsp;
+						</a>
+					</div>
+				</div>
+			</div>
+			<!--LOOKUPS-->
+			<div class="box no-border">
+				<div class="box-header">
+					<h3 class="box-title">
+						<i class="fa fa-table fa-fw"></i>
+						{{'SPECTRUM_LOOKUPS' | translate}}
+					</h3>
+					<div class="box-tools pull-right">
+						<button 
+							type="button"
+							class="btn btn-success btn-sm"
+							ng-click="spectrum.addLookupTable()"
+						>
+							<i class="fa fa-fw fa-plus"></i>
+							{{'SPECTRUM_ADD_LOOKUP' | translate}}
+						</button>
+					</div>
+				</div>
+				<div class="box-body no-padding">
+						<table 
+							class="table table-striped"
+						>
+							<thead>
+								<tr>
+									<th>
+										Name
+									</th>
+									<th>
+										Test input
+									</th>
+									<th>
+										Test output
+									</th>
+									<th style="width:80px;">
+										Actions
+									</th>
+								</tr>
+							</thead>
+							<tbody
+							>
+								<tr
+									ng-repeat="(k,l) in spectrum.item.schema_item.lookups"
+								>
+									<td>
+										{{l.name}}
+										<span class="label label-default text-uppercase">{{l.interpolation}}</span>
+									</td>
+									<td class="no-padding">
+										<div class="form-group no-margin">
+											<div class="input-group">
+												<span class="input-group-addon text-bold">
+													F(x)
+												</span>
+												<input 
+													class="form-control"
+													type="number"
+													name="lookup_input_{{k}}"
+													ng-keyup="spectrum.testLookup(k)"
+													ng-model="spectrum.lookup_test[k].x"
+													ng-required="false"
+													novalidate
+												>
+											</div>
+										</div>
+									</td>
+									<td class="no-padding">
+										<div class="form-group no-margin">
+											<div class="input-group">
+												<div class="input-group-btn">
+													<button
+														type="button"
+														class="btn bg-maroon text-bold"
+														ng-click="spectrum.testLookup(k)"
+													>
+														=
+													</button>
+												</div>
+												<input 
+													class="form-control"
+													type="number"
+													name="lookup_output_{{k}}"
+													ng-model="spectrum.lookup_test[k].y"
+													ng-required="false"
+													novalidate
+													readonly
+												>
+											</div>
+										</div>
+									</td>
+									<td class="no-padding text-center" style="vertical-align:middle;">
+										<button
+											type="button"
+											class="btn btn-warning"
+											data-toggle="modal"
+											data-target="#sensum-spectrum-lookup-modal"
+											ng-click="spectrum.selected_lookup = k"	
+										>
+											<i class="fa fa-pencil"></i>
+										</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+				</div>
+			</div>
+			<!--VIRTUAL-->
+			<div class="box no-border">
+				<div class="box-header">
+					<h3 class="box-title">
+						<i class="fa fa-bolt fa-fw"></i>
+						{{'SPECTRUM_VIRTUAL' | translate}}
+					</h3>
+					<div class="box-tools pull-right">
+						<button 
+							type="button"
+							class="btn btn-success btn-sm"
+							ng-click="spectrum.addVirtualField()"
+						>
+							<i class="fa fa-fw fa-plus"></i>
+							{{'SPECTRUM_ADD_VIRTUAL_FIELD' | translate}}
+						</button>
+					</div>
+				</div>
+				<div 
+					class="box-body no-padding"
+				>
+					<table class="table table-solid table-striped">
+						<thead>
+							<tr>
+								<th>Color</th>
+								<th>Name</th>
+								<th class="hidden-sm hidden-xs">Function</th>
+								<th style="width:170px!important;">Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr
+								ng-repeat="(k,v) in spectrum.item.schema_item.virtuals"
+							>
+								<td 
+									style="vertical-align:middle!important;"
+									class="hidden-sm hidden-xs"
+								>
+									<i 
+										class="fa fa-circle"
+										style="color:{{v.color}}!important;"
+									></i>
+								</td>
+								<td style="vertical-align:middle">
+									{{v.label}}<sub>({{Utils.keys(v.fxparams).join(", ")}})</sub>
+								</td>
+								<td style="vertical-align:middle">
+									<span class="badge bg-gray text-uppercase">
+										Concat
+										<br class="hidden-lg hidden-md"/>
+										<span class="badge bg-teal text-uppercase">
+											Truncate
+											<br class="hidden-lg hidden-md"/>
+											<span class="badge bg-red">
+												<span class="badge {{v.lookup ? 'bg-orange' : 'bg-red'}}">
+													<i ng-show="v.lookup">
+														{{spectrum.item.schema_item.lookups[v.lookup].name}}
+													</i>
+													<span class="badge bg-blue text-uppercase">
+														<i>Fx</i>
+														<sub>({{Utils.keys(v.fxparams).join(", ")}})</sub>
+													</span>
+												</span>
+												<br class="hidden-lg hidden-md"/>
+												<span class="badge bg-red text-uppercase">
+													<span class="badge bg-red text-uppercase">
+														<i class="fa fa-times fa-fw"></i>{{v.factor}}
+														<i ng-show="v.offset >= 0" class="fa fa-plus fa-fw"></i>
+														<i ng-show="v.offset < 0" class="fa fa-minus fa-fw"></i>
+														{{v.offset}}
+													</span>
+												</span>
+											</span>
+											,
+											<br class="hidden-lg hidden-md"/>
+											<span class="badge bg-red">
+												<span class="badge bg-red">
+													<span class="badge bg-red">
+														{{v.decimals}}
+													</span>
+												</span>
+											</span>
+										</span>
+										,
+										<br class="hidden-lg hidden-md"/>
+										<span class="badge bg-teal text-uppercase">
+											<span class="badge bg-teal">
+												<span class="badge bg-teal">
+												{{v.unit}}
+												</span>
+											</span>
+										</span>
+									</span>
+								</td>
+								<td>
+									<div class="btn-group">
+										<button
+											type="button"
+											class="btn btn-default"
+											ng-disabled="spectrum.virtual_indexes[0] === k"
+											ng-click="spectrum.sortVirtualField(k,true)"
+										>
+											<i class="fa fa-arrow-up"></i>
+										</button>
+										<button
+											type="button"
+											class="btn btn-default"
+											ng-disabled="spectrum.virtual_indexes[spectrum.virtual_indexes.length-1] === k"
+											ng-click="spectrum.sortVirtualField(k,false)"
+										>
+											<i class="fa fa-arrow-down"></i>
+										</button>
+										<button
+											type="button"
+											class="btn btn-primary"
+											ng-click="spectrum.cloneVirtualField(k)"
+										>
+											<i class="fa fa-clone"></i>
+										</button>
+										<button
+											type="button"
+											class="btn btn-warning"
+											ng-click="spectrum.selected_virtual = k"
+											data-toggle="modal"
+											data-target="#sensum-spectrum-virtuals-modal"
+										>
+											<i class="fa fa-pencil"></i>
+										</button>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="box-footer">
+					<button 
+						class="btn btn-primary pull-right"
+						ng-disabled="virtual_form.$invalid"
+						ng-click="spectrum.submit()"
+					>
+						<i class="fa fa-fw fa-save"></i>
+						{{'SPECTRUM_SUBMIT' | translate}}
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<div id="sensum-spectrum-virtuals-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">
+					<i class="fa fa-times"></i>
+				</button>
+				<h4 class="modal-title">
+					<i class="fa fa-calculator fa-fw"></i>
+					Edit Virtual Field&nbsp;
+					<br class="hidden-lg hidden-md"/>
+					<b>{{spectrum.item.schema_item.virtuals[spectrum.selected_virtual].label}}</b>
+				</h4>
+      </div>
+      <div class="modal-body">	
+				<h4>General</h4>
+				<div class="form-group">
+					<label>
+						Name and color
+					</label>
+					<div class="input-group">
+						<div class="input-group-btn">
+        			<button 
+								type="button" 
+								class="btn btn-default dropdown-toggle" 
+								data-toggle="dropdown" 
+								aria-haspopup="true" 
+								aria-expanded="false"
+							>
+								<i class="fa fa-circle" 
+									style="color:{{spectrum.item.schema_item.virtuals[spectrum.selected_virtual].color}}!important;"
+								></i>&nbsp;
+								<i class="fa fa-caret-down"></i>
+							</button>
+							<ul class="dropdown-menu">
+								<li
+									ng-repeat="cr in spectrum.color_matrix"
+								>
+									<div>
+										<button
+											type="btn"
+											class="btn btn-xs btn-default btn-flat"
+											ng-repeat="cc in cr"
+											ng-click="spectrum.item.schema_item.virtuals[spectrum.selected_virtual].color = cc"
+										>
+											<i 
+												class="fa fa-circle fa" 
+												style="color:{{cc}}!important;"
+											></i>
+										</button>
+									</div>
+								</li>
+							</ul>
+						</div><!-- /btn-group -->
+						<input
+							name="{{spectrum.selected_virtual+'_label'}}"
+							class="form-control"
+							ng-model="spectrum.item.schema_item.virtuals[spectrum.selected_virtual].label"
+							ng-change="spectrum.updateKPIName(spectrum.selected_virtual)"
+							ng-required="true"
+							novalidate
+						/>
+					</div><!-- /input-group -->
+				</div>
+				<div class="form-group">
+					<label>
+						Unit
+					</label>
+					<input
+						name="{{spectrum.selected_virtual+'_unit'}}"
+						class="form-control"
+						ng-model="spectrum.item.schema_item.virtuals[spectrum.selected_virtual].unit"
+						ng-required="true"
+						novalidate
+					/>
+				</div>
+				<div class="form-group">
+					<label>
+						Decimals
+					</label>
+					<input
+						type="number"
+						name="{{spectrum.selected_virtual+'_decimals'}}"
+						class="form-control"
+						ng-model="spectrum.item.schema_item.virtuals[spectrum.selected_virtual].decimals"
+						ng-required="true"
+						novalidate
+					/>
+				</div>
+				<h4>Function</h4>
+				<div class="form-group">
+					<label>
+						Decimal
+					</label>
+					<select 
+						name="{{spectrum.selected_virtual+'_fxdecimal'}}"
+						class="form-control"
+						ng-model="spectrum.item.schema_item.virtuals[spectrum.selected_virtual].fxdecimal"
+						ng-options="
+							d 
+							disable when (d === spectrum.item.schema_item.virtuals[spectrum.selected_virtual].fxfield) 
+							for d in sensum.constants.DECIMAL_SEPARATORS
+						"
+						ng-required="true"
+						novalidate
+					></select>
+				</div>
+				<div class="form-group">
+					<label>
+						Delimiter
+					</label>
+					<select 
+						name="{{spectrum.selected_virtual+'_fxfield'}}"
+						class="form-control"
+						ng-model="spectrum.item.schema_item.virtuals[spectrum.selected_virtual].fxfield"
+						ng-options="
+							d 
+							disable when (d === spectrum.item.schema_item.virtuals[spectrum.selected_virtual].fxdecimal) 
+							for d in sensum.constants.FIELD_SEPARATORS
+						"
+						ng-required="true"
+						novalidate
+					></select>
+				</div>
+				<div class="form-group">
+					<label>
+						Function
+					</label>
+					<p>
+						<small>
+							Allowed operators: 
+							<br/> 
+							<span ng-repeat="f in sensum.constants.EXCEL_OPERATORS" class="text-uppercase">
+								{{f}}&nbsp;
+							</span>
+						</small>
+					</p>
+					<p>
+						<small>
+							Allowed functions:
+							<br/> 
+							<span ng-repeat="f in sensum.constants.EXCEL_FUNCTIONS_LIST" class="text-uppercase">
+								{{f}}&nbsp;
+							</span>
+						</small>
+					</p>
+					<div class="input-group" style="width:100%;">
+						<span class="input-group-addon">
+							<i>Fx</i>
+						</span>
+						<input
+							name="{{spectrum.selected_virtual+'_fxscript'}}"
+							class="form-control"
+							ng-model="spectrum.item.schema_item.virtuals[spectrum.selected_virtual].fxscript"
+							ng-required="true"
+							placeholder="{{ 'SPECTRUM_FXPLACEHOLDER' | translate }}"
+							novalidate
+						/>
+						<span class="input-group-btn">
+							<button
+								type="button"
+								class="btn btn-primary"
+								ng-click="spectrum.parseFXScript(spectrum.selected_virtual)"
+							>
+								<i class="fa fa-bolt fa-fw"></i>
+								Apply
+							</button>
+					</div>
+				</div>
+				<div class="form-group">
+					<label>
+						Parameters
+					</label>
+					<table 
+						class="table table-striped"
+					>
+						<thead>
+							<tr>
+								<th>
+									{{'SPECTRUM_VIRTUAL_KEY' | translate}}
+								</th>
+								<th>
+									{{'SPECTRUM_VIRTUAL_VALUE' | translate}}
+								</th>
+								<th>
+									{{'SPECTRUM_VIRTUAL_GROUP' | translate}}
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="(x,y) in spectrum.item.schema_item.virtuals[spectrum.selected_virtual].fxparams">
+								<th class="text-bold text-uppercase">{{x}}</th>
+								<td>
+									<select 
+										name="{{spectrum.selected_virtual+'_fxparams_'+x}}"
+										class="form-control"
+										ng-options="
+											a as 
+											b.label  
+											disable when (spectrum.virtual_indexes.indexOf(a) >= spectrum.virtual_indexes.indexOf(spectrum.selected_virtual)) 
+											for (a,b) 
+											in spectrum.item.schema_asset.attributes
+										"
+										ng-model="spectrum.item.schema_item.virtuals[spectrum.selected_virtual].fxparams[x].field"
+										ng-required="true"
+										novalidate
+									>
+									</select>
+								</td>
+								<td>
+									<select 
+										name="{{spectrum.selected_virtual+'_fxparams_'+x}}"
+										class="form-control"
+										ng-options="f as g.label[sensum.language] for (f,g) in sensum.constants.SENSUM_CORE_VIRTUAL_GROUPS"
+										ng-model="spectrum.item.schema_item.virtuals[spectrum.selected_virtual].fxparams[x].group"
+										ng-required="true"
+										novalidate
+									></select>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<h4>Lookup</h4>
+				<div class="form-group">
+					<label>
+						Lookup Table
+					</label>
+					<select 
+						name="{{spectrum.selected_virtual+'_lookup'}}"
+						class="form-control"
+						ng-options="f as g.name for (f,g) in spectrum.item.schema_item.lookups"
+						ng-model="spectrum.item.schema_item.virtuals[spectrum.selected_virtual].lookup"
+						novalidate
+					>
+						<option></option>
+					</select>
+				</div>
+				<h4>Factor and offset</h4>
+				<div class="form-group">
+					<label>
+						Factor
+					</label>
+					<input
+						type="number"
+						name="{{spectrum.selected_virtual+'_factor'}}"
+						class="form-control"
+						ng-model="spectrum.item.schema_item.virtuals[spectrum.selected_virtual].factor"
+						ng-required="true"
+						novalidate
+					/>
+				</div>
+				<div class="form-group">
+					<label>
+						Offset
+					</label>
+					<input
+						type="number"
+						name="{{spectrum.selected_virtual+'_offset'}}"
+						class="form-control"
+						ng-model="spectrum.item.schema_item.virtuals[spectrum.selected_virtual].offset"
+						ng-required="true"
+						novalidate
+					/>
+				</div>
+      </div>
+      <div class="modal-footer">
+        <button 
+					type="button" 
+					class="btn btn-danger pull-left"
+					data-dismiss="modal"
+					ng-click="spectrum.removeVirtualField(spectrum.selected_virtual)"
+				>
+					<i class="fa fa-trash fa-fw"></i>
+					{{'SPECTRUM_DELETE' | translate}}
+				</button>
+        <button 
+					type="button" 
+					class="btn btn-success pull-right"
+					data-dismiss="modal"
+				>
+					<i class="fa fa-check fa-fw"></i>
+					OK
+				</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--INTERPOLATION MODAL-->
+<div id="sensum-spectrum-lookup-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">
+					<i class="fa fa-times"></i>
+				</button>
+				<h4 class="modal-title">
+					<i class="fa fa-table fa-fw"></i>{{ 'SPECTRUM_LOOKUPS' | translate }}
+				</h4>
+			</div>
+			<div class="modal-body">
+				<h4>General</h4>
+				<div class="form-group">
+					<label>
+						Name
+					</label>
+					<input
+						name="lookup_table_name"
+						class="form-control"
+						ng-model="spectrum.item.schema_item.lookups[spectrum.selected_lookup].name"
+						ng-required="true"
+						novalidate
+					/>
+				</div>
+				<h4>Import</h4>
+				<div class="form-group">
+					<textarea
+							class="form-control"
+							ng-model="spectrum.lookup_import"
+							placeholder="Copy and paste 2 columns from your favorite spreadsheet software."
+					></textarea>
+				</div>
+				<div class="form-group text-right">
+					<button
+						type="button"
+						class="btn bg-maroon text-bold"
+						ng-click="spectrum.importLookup()"
+					>
+						Import
+					</button>
+				</div>
+				<table 
+					class="table table-striped table-hover"
+				>
+					<thead>
+						<tr>
+							<th>x</th>
+							<th><i>F<sub>(x)</sub></i></th>
+							<th style="width:50px;">{{'SPECTRUM_ACTIONS' | translate}}</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="no-padding">
+								<input 
+									class="form-control no-border"
+									type="number"
+									name="lookup-table-x"
+									ng-model="spectrum.lookup_table_x"
+									novalidate
+								>
+							</td>
+							<td class="no-padding">
+								<input 
+									class="form-control no-border"
+									type="number"
+									name="lookup-table-y"
+									ng-model="spectrum.lookup_table_y"
+									novalidate
+								>
+							</td>
+							<td class="no-padding text-center" style="vertical-align:middle;">
+								<button
+									type="button"
+									class="btn btn-xs btn-success"
+									ng-click="spectrum.addLookupTableRow(spectrum.lookup_table_x,spectrum.lookup_table_y)"
+									ng-disabled="isNaN(spectrum.lookup_table_x) || isNaN(spectrum.lookup_table_y)"
+								>
+									<i class="fa fa-plus fa-fw"></i>										
+								</button>
+							</td>
+						</tr>
+						<tr
+							ng-repeat="d in spectrum.item.schema_item.lookups[spectrum.selected_lookup].data track by $index"
+						>
+							<td>
+								{{d.x}}
+							</td>
+							<td>
+								{{d.y}}
+							</td>
+							<td class="no-padding text-center" style="vertical-align:middle;">
+								<button
+									type="button"
+									class="btn btn-xs btn-danger"
+									ng-click="spectrum.dropLookupTableRow($index)"
+								>
+									<i class="fa fa-trash fa-fw"></i>										
+								</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<h4>Interpolation</h4>
+				<select
+					class="form-control"
+					ng-model="spectrum.item.schema_item.lookups[spectrum.selected_lookup].interpolation"
+					ng-options="k as v.label[sensum.language] for (k,v) in sensum.constants.SENSUM_INTERPOLATION_METHODS"
+					ng-required="true"
+					novalidate
+				></select>
+			</div>
+      <div class="modal-footer">
+        <button 
+					type="button" 
+					class="btn btn-danger pull-left"
+					data-dismiss="modal"
+					ng-disabled="spectrum.item.schema_item.lookups[spectrum.selected_lookup].is_asset === true"
+					ng-click="spectrum.removeLookupTable(spectrum.selected_lookup)"
+				>
+					<i class="fa fa-trash fa-fw"></i>
+					{{'SPECTRUM_DELETE' | translate}}
+				</button>
+        <button 
+					type="button" 
+					class="btn btn-success pull-right"
+					data-dismiss="modal"
+				>
+					<i class="fa fa-check fa-fw"></i>
+					OK
+				</button>
+      </div>
+      </div>
+		</div>
+	</div>
+</div>

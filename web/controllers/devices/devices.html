@@ -1,0 +1,447 @@
+<form name="devices_form">
+	<div class="row">
+		<div class="col-lg-4 col-md-3"></div>
+		<div class="col-lg-4 col-md-6">
+			<div class="box no-border">
+				<div class="box-header with-border">
+					<h4 class="box-title" ng-show="!devices.ID">
+						<i class="fa fa-plus fa-fw"></i>
+						New Device
+					</h4>
+					<h4 class="box-title" ng-show="devices.ID">
+						<i class="fa fa-pencil fa-fw"></i>
+						Edit Device
+					</h4>
+					<div 
+						class="box-tools pull-right"
+					>
+							<a
+								ng-show="!devices.ID"
+								type="button"
+								class="btn btn-default btn-sm"
+								href="/dashboard/data/devices"
+							>
+								<i class="fa fa-wifi fa-fw"></i>
+								Devices
+							</a>
+							<a
+								ng-show="devices.ID"
+								type="button"
+								class="btn btn-default btn-sm"
+								href="/dashboard/setup/{{devices.ID}}"
+							>
+								<i class="fa fa-cog fa-fw"></i>
+								Configure
+							</a>
+					</div>
+				</div>
+				<div class="box-body">
+					<p>
+						{{'DEVICES_TITLE' | translate}}
+					</p>
+					<div 
+						class="form-group has-{{ devices_form.id_asset.$invalid ? 'error': 'success'}}"
+					>
+						<label>
+							{{'DEVICES_ASSET' | translate}}
+						</label>
+						<table 
+							class="table table-bordered table-striped no-margin" 
+							ng-show="devices.data.id_asset"
+						>
+							<tbody>
+								<tr>
+									<td class="success">
+										<b>{{devices.selected_asset.name_asset}}</b>
+										<br/>
+										<span>
+											<i class="fa fa-fw fa-building"></i>
+											{{devices.selected_asset.manufacturer_asset}}
+										</span>
+										<br/>
+										<span>
+											<i class="fa fa-fw fa-gamepad"></i>
+											{{devices.selected_asset.model_asset}}
+										</span>
+										<br/>
+										<span>
+											<i class="fa fa-fw fa-microchip"></i>
+											{{devices.selected_asset.name_carrier}}&nbsp;
+											{{'DEVICES_DEVICE' | translate}}
+										</span>
+										<br/>
+										<span
+											ng-show="devices.selected_asset.account_user"
+										>
+											<i class="fa fa-fw fa-user"></i>
+											{{devices.selected_asset.account_user}}
+											<br/>
+										</span>
+										<span class="text-green text-bold" ng-show="devices.selected_asset.is_trusted_asset === true">
+											<i class="fa fa-fw fa-check-circle"></i>
+											{{'DEVICES_TRUSTED' | translate}}
+										</span>
+										<span class="text-blue text-bold" ng-show="devices.selected_asset.is_trusted_asset === false">
+											<i class="fa fa-fw fa-warning"></i>
+											{{'DEVICES_UNTRUSTED' | translate}}
+										</span>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+							<input 
+								type="hidden"
+								class="form-control"
+								name="id_asset"
+								ng-model="devices.data.id_asset"
+								ng-required="true"
+								novalidate
+							/>
+						<button
+							type="button"
+							class="btn btn-block btn-primary"
+							data-target="#devices-driver-modal"
+							data-toggle="modal"
+						>
+							<i class="fa fa-fw fa-search"></i>
+							{{'DEVICES_CHANGE_DRIVER' | translate}}
+						</button>
+					</div>
+					<div ng-show="devices.data.id_asset">
+					<div 
+						class="form-group has-{{ devices_form.mac_item.$invalid ? 'error': 'success'}}"
+					>
+						<label for="mac_item">
+							{{devices.selected_asset.key_carrier}}
+						</label>
+						<p
+							class="form-control"
+							ng-show="devices.ID != null"
+						>
+							{{devices.data.key_item}}
+						</p>
+						<input 
+							type="text"
+							class="form-control"
+							name="mac_item"
+							ng-model="devices.data.key_item"
+							ng-required="!(devices.selected_asset.schema_asset.driver === 'sensum')"
+							ng-disabled="!(devices.ID === null)"
+							ng-show="(devices.ID === null)"
+							novalidate
+						/>
+					</div>
+					<div 
+						ng-repeat="(k,v) in devices.CONF.fields"
+						class="form-group has-{{ devices_form[k].$invalid ? 'error': 'success'}}"
+					>
+						<label for="{{k}}" ng-show="!v.hidden">
+							{{'DEVICES_'+k.toUpperCase() | translate}}
+						</label>
+						<input 
+							type="{{v.hidden === true ? 'hidden' : 'text'}}"
+							class="form-control"
+							name="{{k}}"
+							ng-model="devices.data[k]"
+							ng-required="true"
+							novalidate
+						/>
+					</div>
+					<div 
+						class="form-group has-{{ devices_form.is_motion_item.$invalid ? 'error': 'success'}}"
+					>
+						<label for="is_motion_item">
+							{{'DEVICES_MOTION' | translate}}
+						</label>
+						<sensum-select
+							ng-model="devices.data.is_motion_item"
+							data-options="devices.MOTION_OPTIONS"
+							data-value="value"
+							data-label="key"
+						></select-select>
+					</div>
+					<div 
+						class="form-group"
+					>
+						<label>
+							{{'DEVICES_POSITION' | translate}}
+						</label>
+						<sensum-map
+							style="width:100%;height:300px;"
+							ng-model="devices.MAP"
+						>
+						</sensum-map>
+					</div>
+					<div class="form-group">
+						<label>
+							<i class="fa fa-fw fa-search"></i>&nbsp;
+							{{'DEVICES_SEARCH' | translate}}
+						</label>
+						<input 
+							class="form-control" 
+							ng-model="devices.address"
+							placeholder="{{'DEVICES_SEARCH_PLACEHOLDER' | translate}}"
+						>
+						<table class="table table-bordered table-striped">
+							<tbody>
+								<tr ng-repeat="a in devices.addresses track by $index">
+									<td>{{a.formatted_address}}</td>
+									<td class="text-center">
+										<button 
+											type="button"
+											class="btn btn-sm btn-primary"
+											ng-click="devices.moveItem(a.geometry.location,true)"
+										>
+											<i 
+												class="fa fa-map-marker" 
+												data-toggle="tooltip" 
+												title="{{'DEVICES_SEARCH_MARKER' | translate}}"
+											></i>
+										</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<button 
+							type="button"
+							class="btn btn-block btn-primary"
+							ng-click="devices.findAddress()"
+							ng-disabled="!devices.address"
+						>
+							<i class="fa fa-search fa-fw"></i>&nbsp;
+							{{'DEVICES_SEARCH_SUBMIT' | translate}}
+						</button>
+					</div>
+					</div>
+				</div>
+				<div
+					class="box-footer text-center"
+					ng-show="user.is_system_user === true"
+				>
+					You cannot add or edit devices as super-suer                                                                                                                                                                                               
+				</div>
+				<div
+					class="box-footer"
+					ng-show="user.is_system_user === false"
+				>
+					<button
+						type="button"
+						class="btn btn-danger pull-left"
+						ng-show="devices.ID"
+						data-toggle="modal"
+						data-target="#devices-delete-modal"
+					>
+						<i class="fa fa-trash fa-fw"></i>
+						{{'DEVICES_DELETE' | translate}}
+					</button>
+					<button
+						type="button"
+						class="btn btn-success pull-right"
+						ng-disabled="devices_form.$invalid"
+						ng-click="devices.submit()"
+					>
+						<i class="fa fa-check fa-fw"></i>
+						{{'DEVICES_APPLY' | translate}}
+					</button>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-4 col-md-3"></div>
+	</div>
+</form>
+
+
+    <div id="devices-delete-modal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content bg-red">
+          <div class="modal-header">
+            <h4 class="modal-title">
+							<i class="fa fa-trash fa-fw"></i>&nbsp;
+							{{ 'DEVICES_DELETE' | translate}}
+						</h4>
+          </div>
+
+          <div class="modal-body text-center">
+            <p><b>{{ 'DEVICES_ARE_YOU_SURE' | translate}}</b></p>
+
+            <p>{{ 'DEVICES_DELETE_MODAL_MESSAGE' | translate}}</p>
+          </div>
+
+          <div class="modal-footer">
+            <button 
+							type="button" 
+							class="btn btn-default pull-left"
+            	data-dismiss="modal"
+						>
+							<i class="fa fa-times fa-fw"></i>&nbsp;
+							{{ 'DEVICES_CANCEL' | translate}}
+						</button>
+						<button 
+							type="button" 
+							class="btn btn-default text-uppercase"
+            	data-dismiss="modal" 
+							ng-click="devices.remove()"
+						>
+							<i class="fa fa-trash fa-fw"></i>&nbsp;
+							{{'DEVICES_DELETE' | translate}}
+						</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+<div id="devices-driver-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">
+					<i class="fa fa-search fa-fw"></i>&nbsp;
+					{{ 'DEVICES_CHANGE_DRIVER' | translate}}
+				</h4>
+			</div>
+			<div class="modal-body">
+				<div 
+					ng-show="devices.ID"
+					class="callout callout-warning"
+				>
+					<i class="fa fa-warning fa-fw"></i>
+					{{'DEVICES_ASSET_WARNING' | translate}}
+				</div>
+				<div class="form-group no-margin">
+					<div class="input-group">
+						<span class="input-group-addon">
+							<i class="fa fa-search"></i>
+						</span>
+						<input 
+							type="text"
+							class="form-control"
+							name="name_asset"
+							ng-model="devices.name_asset"
+							ng-required="false"
+							ng-change="devices.searchAsset()"
+							novalidate
+						/>
+					</div>
+				</div>
+				<div class="form-group no-margin">
+					<div class="input-group">
+						<span class="input-group-addon">
+							<input 
+								type="checkbox"
+								name="only_trusted"
+								ng-model="devices.only_trusted"
+								ng-true-value="true"
+								ng-false-value="false"
+								ng-required="false"
+								novalidate
+							/>
+						</span>
+						<span class="form-control">
+							{{'DEVICES_ONLY_TRUSTED' | translate}}
+						</span>
+					</div>
+				</div>
+				<div class="form-group no-margin">
+					<div class="input-group">
+						<span class="input-group-addon">
+							<input 
+								type="checkbox"
+								name="only_mine"
+								ng-true-value="true"
+								ng-false-value="false"
+								ng-model="devices.only_mine"
+								ng-required="false"
+								novalidate
+							/>
+						</span>
+						<span class="form-control">
+							{{'DEVICES_ONLY_MINE' | translate}}
+						</span>
+					</div>
+				</div>
+				<p 
+					class="callout callout-primary text-center"
+					ng-show="devices.searching_assets === true"
+				>
+					<i class="fa fa-cog fa-spin"></i>
+				</p>
+				<p 
+					class="callout callout-info"
+					ng-show="devices.name_asset.length > 0 && devices.searching_assets === false && devices.assets.length === 0"
+				>
+					<i class="fa fa-fw fa-info-circle"></i>
+					{{'DEVICES_NO_MATCHES' | translate}}
+				</p>
+				<table class="table table-bordered table-striped">
+					<tbody>
+						<tr ng-repeat="r in devices.assets track by $index">
+							<td class="text-left">
+								<b>{{r.name_asset}}</b>
+								<button 
+									type="button" 
+									class="btn btn-primary btn-xs pull-right"
+									ng-click="devices.selectAsset($index)"
+								>
+									<i class="fa fa-fw fa-mouse-pointer"></i>
+									{{'DEVICES_ASSET_SELECT' | translate}}
+								</button>
+								<br/>
+								<span>
+									<i class="fa fa-fw fa-building"></i>
+									{{r.manufacturer_asset}}
+								</span>
+								<br/>
+								<span>
+									<i class="fa fa-fw fa-gamepad"></i>
+									{{r.model_asset}}
+								</span>
+								<br/>
+								<span>
+									<i class="fa fa-fw fa-microchip"></i>
+									<img ng-src="/img/{{r.code_carrier}}.svg" style="height:25px!important"/>
+								</span>
+								<br/>
+								<span>
+									<i class="fa fa-fw fa-user"></i>
+									{{r.account_user}}
+								</span>
+								<br/>
+								<span>
+									<i class="fa fa-fw fa-calendar-o"></i>
+									{{r.date_asset | date : 'yyyy-MM-dd'}}
+								</span>
+								<br/>
+								<span class="text-green text-bold" ng-show="r.is_trusted_asset === true">
+									<i class="fa fa-fw fa-check-circle"></i>
+									{{'DEVICES_TRUSTED' | translate}}
+								</span>
+								<span class="text-blue text-bold" ng-show="r.is_trusted_asset === false">
+									<i class="fa fa-fw fa-warning"></i>
+									{{'DEVICES_UNTRUSTED' | translate}}
+								</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button 
+					type="button" 
+					class="btn btn-default pull-right"
+					data-dismiss="modal"	
+				>
+					<i class="fa fa-times fa-fw"></i>&nbsp;
+					{{ 'DEVICES_CLOSE' | translate}}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+#devices-map-container{
+	width:100%;
+	height:300px;
+}
+</style>

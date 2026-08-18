@@ -1,0 +1,334 @@
+<div class="row">
+	<div class="col-md-12">
+		<div class="box no-border no-border">
+			<div class="box-header">
+				<h3 class="box-title">
+					<i class="fa fa-fw fa-wifi"></i>
+					All Devices
+					<i 
+						class="fa fa-fw fa-info-circle"
+						data-toggle="modal"
+						data-target="#panel-legend-modal"
+					></i>
+				</h3>
+        <div class="pull-right">
+        	<div class="btn-group">
+	          <a 
+							href="/dashboard/data/sensum-market" 
+							class="btn btn-sm btn-success"
+						>
+							<i class="fa fa-shopping-bag fa-fw"></i>&nbsp;
+							Sensum Market
+						</a>
+	          <a 
+							href="/dashboard/map" 
+							class="btn btn-sm btn-primary"
+						>
+							<i class="fa fa-map fa-fw"></i>&nbsp;
+							Map
+						</a>
+        	</div>
+        </div>
+			</div>
+			<div class="box-body flat bg-gray">
+        <form>
+          <div class="form-group no-margin">
+            <div class="input-group">
+              <div class="input-group-addon">
+								<i class="fa fa-search fa-fw"></i>
+							</div>
+							<input 
+								type="text" 
+								class="form-control" 
+								ng-model="panel.search" 
+								placeholder="{{ 'PANEL_FILTER' | translate}}"
+							>
+            </div>
+          </div>
+        </form>
+				<input 
+					type="hidden" 
+        	ng-model="panel.sortType"
+				>
+				<input 
+					type="hidden"
+        	ng-model="panel.sortReverse"
+				>
+			</div>
+			<div class="box-body no-padding sensum-panel-table">
+				<table 
+					class="table table-striped no-margin sensum-table"
+				>
+					<thead>
+						<tr>
+							<th ng-repeat="h in panel.CONF.headers" ng-style="h.style">
+								<a 
+									href="#"
+									ng-click="panel.sortType=h.field;panel.sortReverse = !panel.sortReverse"
+								>
+									{{h.label}}
+									&nbsp;
+									<i
+										class="fa fa-sort"
+										ng-show="panel.sortType != h.field"									
+									></i>
+									<i
+										class="fa fa-caret-up"
+										ng-show="panel.sortReverse === false && panel.sortType === h.field"
+									></i>
+									<i
+										class="fa fa-caret-down"
+										ng-show="panel.sortReverse === true && panel.sortType === h.field"
+									></i>
+								</a>
+							</th>
+							<th>
+								<a 
+									href="#"
+									ng-click="panel.sortType='_date';panel.sortReverse = !panel.sortReverse"
+								>
+									Time flag
+									&nbsp;
+									<i
+										class="fa fa-sort"
+										ng-show="panel.sortType != '_date'"									
+									></i>
+									<i
+										class="fa fa-caret-up"
+										ng-show="panel.sortReverse === false && panel.sortType === '_date'"
+									></i>
+									<i
+										class="fa fa-caret-down"
+										ng-show="panel.sortReverse === true && panel.sortType === '_date'"
+									></i>
+								</a>
+							</th>
+							<th style="width:95px;">
+								Alerts
+							</th>
+							<th style="width:100px;">
+								Actions
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr							
+							ng-repeat="d in panel.DATA | filter:panel.search | orderBy:panel.sortType:panel.sortReverse track by $index"
+						>
+							<th>
+								{{d.name_item}}&nbsp;
+								<i 
+									class="fa fa-info-circle"
+									data-toggle="tooltip"
+									data-html="true"
+									title="
+										{{d.key_carrier}}: {{d.key_item}}
+										</br>
+										Driver: <span class='text-lowercase'>{{d.manufacturer_asset}}-{{d.model_asset}}-{{d.name_asset}}</span>
+										</br>
+										Carrier: <span class='label label-primary text-uppercase'>{{d.schema_asset.driver}}</span>
+									"
+								></i>
+							</th>
+							<td class="text-center" ng-switch="d.data._useful">
+								<div style="width:90px;">
+								<i 
+									class="fa fa-fw fa-warning text-yellow" 
+									ng-switch-when="0"
+								></i>
+								<i 
+									class="fa fa-fw fa-check-circle text-green" 
+									ng-switch-when="1"
+								></i>
+								<i 
+									class="fa fa-fw fa-question-circle text-purple" 
+									ng-switch-default
+								></i>
+								<div>
+							</td>
+							<td class="text-center">
+								<sensum-signal
+									data-indicator="lqi"
+									data-carrier="{{d.schema_asset.driver}}"
+									data-sf="{{d.data.sf}}"
+									ng-model="d.data.lqi"
+								></sensum-signal>
+							</td>
+							<td class="text-center">
+								<div style="width:105px;" ng-show="!d.data._date">
+									<i class="fa fa-calendar pull-left"></i>
+									<span class="pull-right">
+										<span class="label bg-purple text-uppercase">
+											Unknown
+										</span>
+									</span>
+									<br/>
+									<i class="fa fa-clock-o pull-left"></i>
+									<span class="pull-right">
+										<span class="label bg-purple text-uppercase">
+											Unknown
+										</span>
+									</span>
+								</div>
+								<div style="width:105px" ng-show="d.data._date">
+									<i class="fa fa-calendar pull-left"></i>
+									<span class="pull-right">
+									{{d.data._date | date : 'yyyy-MM-dd' }}
+									</span>
+									<br/>
+									<i class="fa fa-clock-o pull-left"></i>
+									<span class="pull-right">
+										<i 
+											class="fa fa-map-marker text-red"
+											ng-show="d.data._latlng === false"
+											title="Last known position."
+											data-toggle="tooltip"
+										></i>
+										{{d.data._date | date : 'HH:mm:ss' }}
+									</span>
+								</div>
+							</td>
+							<td 
+								class="text-center"
+								ng-switch="d.data._days"
+							>
+								<div style="width:110px;">
+									<i 
+										class="fa fa-flag text-{{panel.TIME_FLAGS[d._timeflag].color}}"
+									></i>
+								</div>
+							</td>
+							<td class="text-center">
+								<div style="width:65px;" class="btn-group">
+									<button
+										type="button"
+										class="btn btn-sm bg-{{d._subscriptions.email === true ? 'green' : 'gray' }}"
+										ng-click="panel.updateSubscription(d.mac_item,'email',!d._subscriptions.email)"
+									>
+										<i 
+											class="fa fa-envelope"
+										></i>
+									</button>
+									<button
+										type="button"
+										class="btn btn-sm bg-{{d._subscriptions.sms === true ? 'green' : 'gray' }}"
+										ng-click="panel.updateSubscription(d.mac_item,'sms',!d._subscriptions.sms)"
+									>
+										<i 
+											class="fa fa-phone"
+										></i>
+									</button>
+								</div>
+							</td>
+							<td class="text-center">
+								<div 
+									class="dropdown"
+								>
+                  <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
+										<i class="fa fa-cog fa-fw"></i>
+										Actions&nbsp;
+										<i class="fa fa-caret-down"></i>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-right" role="menu">
+										<li
+											ng-repeat="menu in sensum.constants.SENSUM_DEVICE_MENUS"
+										>
+											<a
+												ng-href="{{panel.sanitize(menu.link,d.id_item)}}"
+												ng-show="(
+													!menu.condition || 
+													d[menu.condition.key] === menu.condition.value 
+												)"
+											>
+												<i class="fa fa-{{menu.icon}} fa-fw"></i>
+												{{menu.label[sensum.language]}}
+											</a>
+										</li>
+                  </ul>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div 
+	id="panel-legend-modal" 
+	class="modal fade" 
+	role="dialog" 
+	data-backdrop="false"
+>
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					<i class="fa fa-fw fa-info-circle"></i>&nbsp;
+					{{'PANEL_INFO' | translate}}
+				</h4>
+			</div>
+			<div class="modal-body no-padding">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Icon</th>
+							<th>Status</th>
+							<th>Description</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><i class="fa fa-check-circle text-green"></i></td>
+							<th>Operational</th>
+							<td>Device is working fine.</td>
+						</tr>
+						<tr>
+							<td><i class="fa fa-warning text-yellow"></i></td>
+							<th>Service required</th>
+							<td>Device requires attention.</td>
+						</tr>
+						<tr>
+							<td><i class="fa fa-flag text-green"></i></td>
+							<th>On time</th>
+							<td>Device is sending data at least once a day.</td>
+						</tr>
+						<tr>
+							<td><i class="fa fa-flag text-yellow"></i></td>
+							<th>Delayed</th>
+							<td>Last data received 1-2 days ago.</td>
+						</tr>
+						<tr>
+							<td><i class="fa fa-flag text-orange"></i></td>
+							<th>Warning</th>
+							<td>Last data received 3-5 days ago.</td>
+						</tr>
+						<tr>
+							<td><i class="fa fa-flag text-red"></i></td>
+							<th>Fault</th>
+							<td>Last data received more than work week.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+.sensum-panel-bar{
+	overflow:hidden;
+}
+.sensum-table tbody tr td{
+	vertical-align:middle;
+}
+
+@media (max-width: 767px){
+	.sensum-panel-table{
+		overflow-x:auto;
+	}
+}
+</style>

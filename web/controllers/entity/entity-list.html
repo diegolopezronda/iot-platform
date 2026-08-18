@@ -1,0 +1,214 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="box no-border">
+      <div 
+				class="box-header"
+			>
+				<h3 class="box-title text-capitalize">
+					<i 
+						ng-show="!entity.CONFIG.layout.actions[entity.ACTION].icon"
+						class="fa fa-table fa-fw"
+					></i>
+					<i 
+						ng-show="entity.CONFIG.layout.actions[entity.ACTION].icon"
+						class="fa fa-fw fa-{{entity.CONFIG.layout.actions[entity.ACTION].icon}}"
+					></i>
+					<span ng-show="!entity.CONFIG.layout.actions[entity.ACTION].title">
+						{{ 'ENTITY_LIST' | translate}}
+					</span>
+					<span ng-show="entity.CONFIG.layout.actions[entity.ACTION].title">
+						{{entity.CONFIG.layout.actions[entity.ACTION].title[sensum.language]}}
+					</span>
+				</h3>
+        <div class="pull-right">
+					<div 
+						class="btn-group"
+						ng-switch="entity.CONFIG.layout.actions[entity.ACTION].default_top"
+					>
+						<a
+							ng-switch-when="true"
+							ng-href="/dashboard/data/{{entity.ENTITY}}/add"
+							class="btn btn-success btn-sm"
+						>
+							<i class="fa fa-plus fa-fw"></i>
+							{{ 'ENTITY_ADD' | translate }}
+						</a>
+						<a 	
+							ng-repeat="a in entity.CONFIG.layout.actions[entity.ACTION].top"
+							ng-href="{{a.href}}"
+							class="btn bg-{{a.color}} btn-sm"
+						>
+							<i class="fa fa-{{a.icon}} fa-fw"></i>
+							{{a.label[sensum.language]}}
+						</a>
+					</div>
+        </div>
+      </div>
+
+      <div class="box-body bg-gray flat">
+        <form>
+          <div class="form-group no-margin">
+            <div class="input-group">
+              <div class="input-group-addon">
+								<i class="fa fa-filter fa-fw"></i>
+							</div><input type="text" class=
+              "form-control" ng-model="entity.search" placeholder=
+              "{{ 'ENTITY_FILTER' | translate}}">
+            </div>
+          </div>
+        </form><input type="hidden" value="{{entity.CONFIG.display_field}}"
+        ng-model="entity.sortType"> <input type="hidden" value="false"
+        ng-model="entity.sortReverse">
+      </div>
+
+      <div class="box-body no-padding">
+        <div class="x-overflow-container">
+          <table class="no-margin table table-striped">
+            <thead>
+              <tr>
+								<th>
+									<i class="fa fa-hashtag"></i>
+								</th>
+                <th ng-repeat="column in entity.FIELDS">
+								
+								<i 
+									class="fa fa-question-circle fa-fw" 
+									title="{{column.comment}}"
+									data-toggle="tooltip"
+								></i>
+								<a href="#" ng-click=
+                "entity.sortType = column.field; ; entity.sortReverse = !entity.sortReverse">
+                {{ entity.CONFIG.aliases[column.field] ?
+                entity.CONFIG.aliases[column.field] :
+                column.label}}</a></th>
+
+                <th>{{ 'ENTITY_ACTIONS' | translate}}</th>
+              </tr>
+            </thead>
+
+            <tbody>
+							<tr>
+								<td>
+								</td>
+	              <td 
+									ng-repeat="column in entity.FIELDS"
+									ng-switch="column.type"
+								>
+									<input
+										type="{{column.type}}"
+										class="form-control"
+										ng-model="entity.data_search[column.field]"
+										ng-switch-when="number|text"
+										ng-switch-when-separator="|"
+										novalidate
+									/>
+								</td>	
+								<td class="text-center">
+									<button 	
+										type="button"
+										class="btn btn-primary btn-block"
+										ng-click="entity.searchData()"
+									>
+										<i class="fa fa-search fa-fw"></i>&nbsp;
+										{{'ENTITY_SEARCH' | translate}}
+									</button>
+								</td>
+							</tr>
+              <tr 
+								ng-repeat="row in entity.ROWS | filter:entity.search | orderBy:entity.sortType:entity.sortReverse"
+							>
+								<td>
+									<small>{{$index+1}}</small>
+								</td>
+	              <td ng-repeat="column in entity.FIELDS">
+									<img 
+										ng-show="column.profile_picture"
+										class="img-circle" 
+										style="max-width:25px;max-height:25px;" 
+										ng-src="'/img/database/'+column.profile_picture.table+'/'+entity.sanitizeURL(':id.jpg',row[column.profile_picture.key])"
+									>
+									<span ng-show="['date','binded','checkbox','i18n','json','icon'].indexOf(column.type) == -1">
+                		{{row[column.field]}}
+									</span> 
+									<span 
+										ng-show="column.type == 'checkbox' && row[column.field] == 0"
+                		class="label label-default text-uppercase"
+									>No</span>
+                	<span 
+										ng-show="column.type == 'checkbox' && row[column.field] == 1"
+                class="label label-primary text-uppercase">Yes</span>
+								<i 
+									ng-show="column.type === 'icon'" 
+									class="fa fa-{{row[column.field]}} fa-fw">
+								</i>
+                <span ng-show="column.type === 'i18n'">
+									<i class="fa fa-{{entity.TYPES.i18n.icon}} fa-fw"></i>&nbsp;
+  	              {{row[column.field][sensum.language]}}
+								</span> 
+								<a href=
+                	"/dashboard/data/{{entity.getAlias(column.foreign_table)}}/view/{{row[column.field]}}"
+                	ng-show="column.constraint === true"
+								>
+									{{row[column.foreign_alias]}}
+								</a>
+								<angular-jsoneditor 
+									ng-show="column.type === 'json'"
+									options="{mode:'view'}" 
+									ng-model="row[column.field]"
+								>
+								</angular-jsoneditor>
+                <span ng-show=
+                "column.type == 'date'">{{row[column.field]}}</span></td>
+
+                <td class="text-center">
+									<div 
+										class="dropdown"
+										ng-switch="entity.CONFIG.layout.actions[entity.ACTION].default_row"
+									>
+										<button
+											class="btn btn-sm btn-default dropdown-toggle"
+											data-toggle="dropdown"
+										>
+											<i class="fa fa-cog fa-fw"></i>
+											{{'ENTITY_ACTIONS'|translate}}&nbsp;
+											<i class="fa fa-caret-down"></i>
+										</button>
+										<ul class="dropdown-menu dropdown-menu-right" role="menu">
+											<li>
+												<a
+													ng-switch-when="true"
+													ng-href="/dashboard/data/{{entity.ENTITY}}/view/{{row[entity.PRIMARY]}}"
+												>
+													<i class="fa fa-eye fa-fw"></i>
+													{{ 'ENTITY_VIEW' | translate }}
+												</a>
+												<a 	
+													ng-repeat="a in entity.CONFIG.layout.actions[entity.ACTION].row"
+													ng-href="{{entity.sanitizeURL(a.href,row[entity.PRIMARY])}}"
+												>
+													<i class="fa fa-{{a.icon}} fa-fw"></i>
+													{{a.label[sensum.language]}}
+												</a>
+											</li>
+										</ul>
+									</div>
+								</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+			<div class="text-center box-footer">
+				<button
+					type="button"
+					class="btn btn-block btn-primary"
+					ng-click="entity.getNextPage()"
+					ng-disabled="entity.more === false"
+				>
+					<i class="fa fa-fw fa-arrow-down"></i>
+					More
+				</button>
+			</div>
+    </div>
+  </div>
+</div>

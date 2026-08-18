@@ -1,0 +1,18 @@
+{
+	"mongo":{
+		"host":"localhost",
+		"port":27017,
+		"database":"tracktor"
+	},
+	"mysql":{
+		"host":"localhost",
+		"user":"testing",
+		"database":"testing",
+		"password":"JICHM3YsZTq6LmpF",
+		"queries":{
+			"@":"UPDATE `item` SET latitude_item = ?, longitude_item = ?, device_data_item = '?', is_waiting_item = 1  WHERE mac_item = ?;",
+			"#":"UPDATE `item` SET user_data_item = '?', is_waiting_item = 1 WHERE mac_item = ?;",
+			"&":"UPDATE `item` SET device_data_item = '?', is_waiting_item = 1 WHERE mac_item = ?;"
+		}
+	}
+}

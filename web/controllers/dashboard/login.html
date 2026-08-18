@@ -1,0 +1,123 @@
+			<form name="login_form" ng-submit="dashboard.login()">
+				<div class="box-body">				
+					<p class="callout callout-default" ng-show="!dashboard.error && !dashboard.message">
+						<i class="fa fa-info"></i>&nbsp;
+						<span>{{'DASHBOARD_LOGIN_INFO' | translate}}</span>
+					</p>
+					<p class="callout callout-danger" ng-show="dashboard.error">
+						<i class="fa fa-times"></i>&nbsp;
+						{{ dashboard.error | translate}}
+					</p>
+					<p class="callout callout-success" ng-show="dashboard.message">
+						<i class="fa fa-check-circle"></i>&nbsp;
+						{{ dashboard.message | translate}}
+					</p>
+<!--FIELDS-->
+			<div 
+				class="
+					form-group has-feedback 
+					{{
+						login_form.username.$invalid && 
+						(login_form.username.$touched || login_form.username.$dirty) ? 
+						'has-error' : 
+						''
+					}}
+				"
+			>
+				<input 
+					id="username" 
+					name="username" 
+					type="text" 
+					class="form-control" 
+					placeholder="{{'DASHBOARD_USERNAME_FIELD' | translate}}"
+					ng-model="dashboard.username" 
+					ng-required="true" 
+					ng-pattern="/^[a-z,0-9]*$/"
+					ng-change="dashboard.missing_credentials = false;error = null"
+					autocomplete="off" 
+					autocorrect="off"
+					autocapitalize="off" 
+					spellcheck="false"
+				>
+				<span class="glyphicon glyphicon-user form-control-feedback"></span>
+				<span 
+					class="help-block text-right" 
+					ng-show="
+						login_form.username.$touched && 
+						login_form.username.$error.required
+					"
+				>
+					{{'DASHBOARD_REQUIRED_ERROR' | translate}}
+				</span>
+				<span 
+					class="help-block text-right" 
+					ng-show="
+						login_form.username.$dirty && 
+						login_form.username.$error.pattern
+					"
+				>
+					{{'DASHBOARD_ALPHA_LOWERCASE_ERROR' | translate}}
+				</span>				
+			</div>
+
+			<div 
+				class="
+					form-group has-feedback 
+					{{
+						(login_form.password.$invalid && login_form.password.$touched) ? 
+						'has-error' : 
+						''
+					}}
+				"
+			>
+				<input 
+					id="password" 
+					name="password" 
+					type="password" 
+					class="form-control" 
+					placeholder="{{'DASHBOARD_PASSWORD_FIELD' | translate}}"
+					ng-change="dashboard.missing_credentials = false;error = null"
+					ng-model="dashboard.password" 
+					ng-required="true"
+					autocomplete="off" 
+					autocorrect="off"
+					autocapitalize="off" 
+					spellcheck="false"
+				>
+				<span class="glyphicon glyphicon-lock form-control-feedback"></span>
+				<span 
+					class="help-block text-right"
+					ng-show="
+						login_form.password.$touched && 
+						login_form.password.$error.required
+					"
+				>
+					{{'DASHBOARD_REQUIRED_ERROR' | translate}}
+				</span>
+			</div>
+			<div class="pull-right">
+				<small>
+					<a href="/login/password/forgot">
+						{{'DASHBOARD_FORGOT_PASSWORD_LINK' | translate}}
+					</a>
+				</small>
+			</div>
+<!--FIELDS-->
+				</div>
+				<div class="box-footer">
+    			<input
+						class="btn btn-primary btn-block btn-flat" 
+						type="submit" 
+						ng-disabled="login_form.$invalid"
+						value="{{'DASHBOARD_SIGN_IN_BUTTON' | translate}}" 
+					/>
+    			<a
+						class="btn bg-purple btn-block btn-flat" 
+						ng-show="sensum.project.schema_project.signup_button === true"
+						href="/login/new-account"
+					>
+						{{'DASHBOARD_SIGNUP_BUTTON' | translate}}
+					</a>
+				</div>
+			</form>
+

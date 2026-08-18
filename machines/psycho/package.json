@@ -1,0 +1,19 @@
+{
+  "name": "sensum-ma-psycho",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm install;pm2 start app.js --name ma-psycho --merge-logs -o ./logs/out.log -e ./logs/error.log",
+    "restart": "pm2 restart ma-psycho;pm2 logs ma-psycho",
+    "log": "pm2 logs ma-psycho",
+    "prettier": "prettier --use-tabs --trailing-comma none --write app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "moment-timezone": "^0.5.14",
+    "mongodb": "^2.2.31",
+    "mqtt": "^2.11.0"
+  }
+}

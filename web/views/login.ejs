@@ -1,0 +1,158 @@
+<div 
+	class="sensum-login-loading hidden" 
+>
+	<i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
+</div>
+<div 
+	class="sensum-login-splash" 
+	ng-style="sensum.project.schema_project.splash_style"
+>
+	<div 
+		class="sensum-login-overlay" 
+		ng-style="sensum.project.schema_project.overlay_style"
+	>
+				<small class="text-gray" ng-show="sensum.project.schema_project.splash_author">
+					<i class="fa fa-camera fa-fw"></i> {{sensum.project.schema_project.splash_author}}
+				</small>
+	</div>
+</div>
+<div class="row sensum-login-row" style="display:none;" id="login-row">
+	<div 
+		ng-show="['left','right'].indexOf(sensum.project.schema_project.pan) != -1"
+		class="col-md-9 hidden-xs hidden-sm sensum-login-col 
+			pull-{{sensum.project.schema_project.pan}} 
+			text-{{sensum.project.schema_project.pan}} 
+			sensum-login-well-{{sensum.project.schema_project.pan}} 
+		"
+	>
+		<h1 class="sensum-login-well" style="text-align:inherit!important">
+			{{sensum.project.schema_project.well_title}}
+			<br/>
+			<small>
+				{{sensum.project.schema_project.well_message}}
+				<br/>				
+				<a 
+					ng-show="sensum.project.schema_project.well_button === true"
+					class="btn btn-info btn-lg" 
+					href="{{sensum.project.schema_project.well_button_link}}" 
+					target="_blank"
+				>
+					{{sensum.project.schema_project.well_button_label}}&nbsp;
+					<i class="fa fa-external-link"></i>
+				</a>
+			</small>
+		</h1>
+	</div>
+	<div 
+		class="col-md-4 hidden-xs hidden-sm"
+		ng-show="['left','right'].indexOf(sensum.project.schema_project.pan) === -1"
+	></div>
+	<div class="col-md-4 col-md-{{['left','right'].indexOf(sensum.project.schema_project.pan) === -1 ? '4' : '3'}} sensum-login-col">
+		<div class="box sensum-login-box">
+			<div class="box-header text-center with-border">
+				<img 
+					class="sensum-login-logo"
+					ng-src="/img/database/project/{{sensum.project.id_project}}.png" 
+					alt="logo"
+				/>
+			</div>
+			<ng-view></ng-view>
+			<div class="box-footer text-center">
+				<a href="http://sensum.co.nz" target="_blank">powered by Sensum</a>
+			</div>
+		</div>
+	</div>
+	<div 
+		class="col-md-4 hidden-xs hidden-sm"
+		ng-show="['left','right'].indexOf(sensum.project.schema_project.pan) === -1"
+	></div>
+</div>
+<script>
+/*
+	$(function(){
+		var pos = {
+			x:null,
+			y:null
+		};
+		var bg = {
+			x:0,
+			y:0
+		};
+		var factor = 0.1;
+		$('body').mousemove(function(e){
+			if(pos.x === null || pos.y === null){
+				pos.x = e.pageX;
+				pos.y = e.pageY;
+				return;
+			}
+			var dx = pos.x-e.pageX;
+			var dy = pos.y-e.pageY;
+			pos.x = e.pageX;
+			pos.y = e.pageY;
+			bg.x += (dx*factor);
+			bg.y += (dy*factor);
+			var position = 
+				bg.x.toString()+"px"+
+				" "+
+				bg.y.toString()+"px"
+			;
+			$('html').css('background-position',position);
+		});
+	});
+*/
+</script>
+<style>
+html{
+	background:#ecf0f5;
+	overflow-x:hidden;
+}
+.sensum-login-well-mobile{
+	position:relative;
+	left: 0;
+	top: 0;
+	transform:none;
+}
+</style>
+<!--RESPONSE MODALS-->
+<div id="sensum-login-access-modal" class="modal modal-default fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-body text-center">
+				<p>
+					<i class="fa fa-4x fa-lock"></i>
+				</p>
+					{{ 'DASHBOARD_WRONG_DOMAIN_ERROR' | translate}}
+				</p>
+				<p class="callout callout-success" ng-show="success">
+					{{success | translate}}
+				</p>
+			</div>
+			<div ng-show="success" class="modal-footer">
+				<button type="button" class="btn btn-default btn-block" data-dismiss="modal">
+					Close
+				</button>
+			</div>
+			<div ng-show="!success" class="modal-footer">
+    		<button
+					type="button" 
+					class="btn bg-blue btn-block"
+					ng-show="sensum.project.is_public_project === true"
+					ng-click="joinProject()"
+				>
+					{{'DASHBOARD_JOIN_BUTTON' | translate}}
+				</button>
+    		<button
+					type="button" 
+					class="btn bg-purple btn-block" 
+					ng-show="sensum.project.is_public_project === false"
+					ng-click="requestProjectAccess()"
+				>
+					{{'DASHBOARD_REQUEST_ACCESS_BUTTON' | translate}}
+				</button>
+				<button type="button" class="btn btn-default btn-block" data-dismiss="modal">
+					Cancel
+				</button>
+			</div>
+		</div>
+	</div>
+</div>

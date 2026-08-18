@@ -1,0 +1,21 @@
+{
+  "name": "sensum-mqtt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "pm2 start app.js --name al-flow --merge-logs -o logs/out.log -e logs/error.log",
+    "restart": "pm2 restart al-flow;pm2 logs al-flow",
+    "log": "pm2 logs al-flow",
+    "errors": "pm2 logs --err al-flow",
+    "prettier": "prettier --use-tabs --write app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "moment": "^2.18.1",
+    "mongodb": "^2.2.31",
+    "mqtt": "^2.11.0",
+    "mysql2": "^1.4.2"
+  }
+}

@@ -1,0 +1,15 @@
+ALTER TABLE user ADD COLUMN is_system_user TINYINT(1) NOT NULL DEFAULT 0 COMMENT "Defines whether the user needs membership.";
+ALTER TABLE item ADD COLUMN id_member INT NOT NULL DEFAULT 1 COMMENT "The owner of the device.";
+ALTER TABLE item ADD CONSTRAINT FOREIGN KEY (id_member) REFERENCES member (id_member) ON UPDATE CASCADE ON DELETE NO ACTION;
+ALTER TABLE asset ADD COLUMN is_public_asset TINYINT(1) NOT NULL DEFAULT 1 COMMENT "Define if everybody can create items from this asset.";
+ALTER TABLE asset ADD COLUMN id_user INT NOT NULL DEFAULT 1 COMMENT "The owner of the asset.";
+ALTER TABLE asset ADD CONSTRAINT FOREIGN KEY (id_user) REFERENCES user (id_user) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE project ADD COLUMN is_public_project TINYINT(1) NOT NULL DEFAULT 1 COMMENT "Define if everybody can access to this project.";
+ALTER TABLE route ADD COLUMN is_system_route TINYINT(1) NOT NULL DEFAULT 0 COMMENT "Restrict the route access to system users.";
+ALTER TABLE route ADD COLUMN is_editor_route TINYINT(1) NOT NULL DEFAULT 0 COMMENT "Define if the routes need edition privileges.";
+ALTER TABLE route ADD COLUMN is_creator_route TINYINT(1) NOT NULL DEFAULT 0 COMMENT "Define if the routes need creation privileges.";
+ALTER TABLE route ADD COLUMN is_destroyer_route TINYINT(1) NOT NULL DEFAULT 0 COMMENT "Define if the routes need destruction (yeah) privileges.";
+ALTER TABLE route ADD COLUMN id_role INT NOT NULL DEFAULT 1 COMMENT "Role.";
+ALTER TABLE route ADD CONSTRAINT FOREIGN KEY (id_role) REFERENCES role (id_role) ON UPDATE CASCADE ON DELETE NO ACTION;
+ALTER TABLE route ADD COLUMN id_project INT DEFAULT NULL COMMENT "Project.";
+ALTER TABLE route ADD CONSTRAINT FOREIGN KEY (id_project) REFERENCES project (id_project) ON UPDATE CASCADE ON DELETE CASCADE;

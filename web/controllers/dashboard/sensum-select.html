@@ -1,0 +1,53 @@
+<div 
+	class="input-group" 
+	style="width:100%"
+>
+	<ng-transclude></ng-transclude>	
+	<div 
+		class="input-group-btn"
+		style="width:100%"
+	>
+		<button 
+			type="button" 
+			class="form-control btn btn-default dropdown-toggle" 
+			data-toggle="dropdown" 
+			aria-expanded="false"
+		>
+			{{display_text || 'Select a value' }}
+			<!--span class="pull-right"-->
+				<i class="fa-fw fa fa-caret-down"></i>
+			<!--/span-->
+		</button>
+		<ul 
+			class="dropdown-menu no-margin no-padding" 
+			style="width:100%;max-height:200px;overflow-y:auto;"
+		>
+			<li>
+				<a href="#" class="no-padding">
+					<div class="form-group no-margin">
+						<div class="input-group" style="width:100%">
+							<span class="input-group-addon">
+								<i class="fa fa-search fa-fw"></i>
+							</span>
+							<input 
+								type="text" 
+								class="form-control"
+								ng-model="search"
+							/>
+						</div>
+					</div>
+				</a>
+			</li>
+			<li
+				ng-repeat="v in options | filter : search"
+			>
+				<a 
+					href="#"
+					ng-click="updateValue(v[label])"
+				>
+					{{v[label]}}
+				</a>
+			</li>
+		</ul>
+	</div>
+</div>

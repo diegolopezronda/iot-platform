@@ -1,0 +1,19 @@
+{
+  "name": "sensum-device-chat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm install;pm2 start app.js --name me-device-chat --merge-logs -o logs/out.log -e logs/error.log",
+    "restart": "pm2 restart me-device-chat;pm2 logs me-device-chat",
+    "log": "pm2 logs me-device-chat",
+    "errors": "pm2 logs --err me-device-chat",
+    "prettier": "prettier --use-tabs --write app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^2.2.34",
+    "mqtt": "^2.11.0"
+  }
+}

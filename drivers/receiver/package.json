@@ -1,0 +1,24 @@
+{
+  "name": "receiver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm install;pm2 start app.js --name dr-receiver --merge-logs -o logs/out.log -e logs/error.log",
+    "restart": "pm2 restart dr-receiver;pm2 logs dr-receiver",
+    "log": "pm2 logs dr-receiver",
+    "errors": "pm2 logs --err dr-receiver",
+    "clean-errors": "rm logs/err.log",
+    "prettier": "prettier --use-tabs --write --single-quote false --trailing-comma none app.js api/*.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "moment": "^2.22.2",
+    "mongodb": "^3.1.1",
+    "mqtt": "^2.18.3",
+    "mysql": "^2.16.0"
+  }
+}

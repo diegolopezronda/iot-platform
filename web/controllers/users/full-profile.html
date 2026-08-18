@@ -1,0 +1,540 @@
+<div class="row">
+	<div class="col-md-4">
+		<div class="box box-primary sensum-profile sensum-password collapse in">
+			<div class="box-header">
+				<h3 class="box-title">
+					<i class="fa fa-fw fa-user"></i>Me
+				</h3>
+			</div>
+			<div class="box-body box-profile text-center">
+				<img 
+					class="profile-user-img img-responsive img-circle" 
+					ng-src="/img/database/user/{{user.id_user}}.jpg?{{key}}" 
+					alt="User profile picture"
+				>
+				<h3 class="profile-username text-center">
+					{{user.first_name_user}}&nbsp;{{user.last_name_user}}
+				</h3>
+				<p class="text-muted text-center">
+					{{ 'USERS_AS' | translate}}&nbsp;<b>{{user.account_user}}</b>
+				</p>
+				<p class="text-muted text-center">{{user.name_role[sensum.language]}}</p>
+				<p class="text-muted text-center">{{user.email_user}}</p>
+				<ul class="list-group list-group-unbordered">
+					<li 
+						class="list-group-item text-left"
+						ng-show="users.data.cellphone_user"
+					>
+						<i class="fa fa-fw fa-phone"></i>
+						<a class="pull-right">
+							<img 
+								ng-src="/img/flags/flags/shiny/16/{{sensum.constants.COUNTRY_CALLING_CODES[users.prefix_index].country.replace(' ','-')}}.png" />
+							{{users.data.cellphone_user}}
+						</a>
+					</li>
+					<li class="list-group-item text-left">
+						<i class="fa fa-fw fa-envelope"></i>
+						<a class="pull-right">
+							{{users.data.email_user}}
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div class="box-footer">
+				<button
+					data-toggle="collapse" 
+					data-target=".sensum-profile"
+					class="btn btn-block btn-primary"
+				>
+					<i class="fa fa-pencil fa-fw"></i>
+					Edit profile
+				</button>
+				<button
+					data-toggle="collapse" 
+					data-target=".sensum-password"
+					class="btn btn-block bg-purple"
+				>
+					<i class="fa fa-key fa-fw"></i>
+					Update password
+				</button>
+			</div>
+		</div>
+<!--PROFILE-->
+		<div class="box box-primary collapse sensum-profile">
+			<div class="box-header">
+				<h3 class="box-title">
+					<i class="fa fa-fw fa-pencil"></i>
+					Edit profile
+				</h3>
+			</div>
+			<form name="users_form">
+			<div class="box-body">
+					<sensum-picture 
+						accept="image/jpg" 
+						data-entity="user" 
+						data-item="{{user.id_user}}" 
+						data-size="1"
+						data-extension="jpg"
+					></sensum-picture>
+					<div
+						class="form-group {{users_form[k].$invalid ? 'has-error' : ( users_form[k].$pristine ? '' : 'has-success')}}"
+						ng-repeat="(k,v) in users.FIELDS"
+					>
+						<label>
+							{{'USERS_'+k.toUpperCase() | translate}}<br/>
+						</label>
+						<input 					
+							class="form-control"
+							type="{{v.type}}"
+							ng-pattern="v.pattern"
+							inputmode="{{v.inputmode}}"
+							name="{{k}}"
+							autocomplete="off" 
+							autocorrect="off"
+							autocapitalize="off" 
+							spellcheck="false"
+							ng-model="users.data[k]"
+							ng-required="true"
+							ng-minlength="{{v.min}}"
+							ng-maxlength="{{v.max}}"
+							novalidate
+						/>
+						<div ng-switch="k">
+							<div ng-switch-when="cellphone_user">
+								<div class="input-group">
+									<span class="input-group-btn">
+										<button 
+											type="button"
+											class="btn btn-default dropdown-toggle" 
+											data-toggle="dropdown" 
+											aria-expanded="true"
+										>
+											<img 
+												ng-src="/img/flags/flags/shiny/16/{{sensum.constants.COUNTRY_CALLING_CODES[users.prefix_index].country.replace(' ','-')}}.png" />
+											{{users.prefix_cellphone_user}}
+                    	<span class="fa fa-caret-down"></span>
+										</button>
+										<ul 
+											class="dropdown-menu"
+										>
+											<li ng-repeat="v in sensum.constants.COUNTRY_CALLING_CODES track by $index">
+												<a 
+													href="#"
+													ng-click="users.updateCellphone($index)"
+												>
+													<img ng-src="/img/flags/flags/shiny/16/{{v.country.replace(' ','-')}}.png" />
+													{{v.calling_code}}
+													<br>
+													<small>{{v.country}}</small>
+												</a>
+											</li>
+										</ul>
+									</span>	
+									<input
+										class="form-control"
+										type="text"
+										ng-model="users.local_cellphone_user"
+										ng-required="false"
+										ng-change="users.updateCellphone()"
+										novalidate
+									>
+								</div>	
+							</div>
+						</div>
+						<p 
+							class="help-block text-right"
+							ng-show="users_form[k].$error.pattern || users_form[k].$error.required"
+						>
+							{{'USERS_'+k.toUpperCase()+'_PLACEHOLDER' | translate}}			
+						</p>
+						<p 
+							class="help-block text-right"
+							ng-show="users_form[k].$error.minlength"
+						>
+							Min {{v.min}}.
+						</p>
+						<p 
+							class="help-block text-right"
+							ng-show="users_form[k].$error.maxlength"
+						>
+							Max {{v.max}}.
+						</p>
+					</div>
+				<form>
+			</div>
+			<div class="box-footer">
+				<button
+					class="btn btn-default pull-left"
+					data-toggle="collapse" 
+					data-target=".sensum-profile"
+				>
+					<i class="fa fa-arrow-left fa-fw"></i>
+					{{'USERS_BACK'|translate}}
+				</button>
+				<button
+					class="pull-right btn btn-success"
+					ng-disabled="users_form.$invalid"
+					ng-click="users.submit()"
+				>
+					<i class="fa fa-plus fa-fw"></i>
+					{{'USERS_SUBMIT'|translate}}
+				</button>	
+			</div>
+			</form>
+		</div>
+<!--PASSWORD-->
+		<div class="box box-primary collapse sensum-password">
+			<div class="box-header">
+				<h3 class="box-title">
+					<i class="fa fa-fw fa-key"></i>
+					{{'USERS_UPDATE_PASSWORD' | translate}}	
+				</h3>
+			</div>
+			<div class="box-body">
+				<form name="password_form">
+      		<div 
+						class="
+							form-group 
+							has-feedback 
+							{{
+								(
+									password_form.old_password.$invalid && 
+									password_form.old_password.$touched
+								) ? 
+								'has-error' : 
+								''
+							}}
+						"
+					>
+						<label>
+							{{ 'USERS_OLD_PASSWORD_FIELD' | translate}}
+						</label>
+		        <input 
+							id="old_password" 
+							name="old_password" 
+							type="password" 
+							class="form-control" 
+							placeholder="{{'USERS_OLD_PASSWORD_FIELD' | translate}}"
+							ng-required="true"
+							ng-model="users.old_password" 
+						>
+						<span 
+							class="help-block text-right" 
+							ng-show="
+								password_form.old_password.$touched && 
+								password_form.old_password.$error.required
+							"
+						>
+							{{'USERS_REQUIRED_ERROR' | translate}}
+						</span>
+		      </div>
+      		<div 
+						class="
+							form-group 
+							has-feedback 
+							{{
+								(
+									password_form.new_password.$invalid && 
+									password_form.new_password.$touched
+								) ? 
+								'has-error' : 
+								''
+							}}
+						"
+					>
+						<label>
+							{{ 'USERS_NEW_PASSWORD_FIELD' | translate}}
+						</label>
+		        <input 
+							id="new_password" 
+							name="new_password" 
+							type="password" 
+							class="form-control" 
+							placeholder="{{'USERS_NEW_PASSWORD_FIELD' | translate}}"
+							ng-required="true"
+							ng-model="users.new_password" 
+							input-unmatch="old_password" 
+						>
+						<span 
+							class="help-block text-right" 
+							ng-show="
+								password_form.new_password.$touched && 
+								password_form.new_password.$error.required
+							"
+						>
+							{{'USERS_REQUIRED_ERROR' | translate}}
+						</span>
+						<span 
+							class="help-block text-right" 
+							ng-show="
+								password_form.new_password.$touched && 
+								password_form.new_password.$error.inputunmatch
+							"
+						>
+							{{'USERS_PASSWORD_MATCH_ERROR' | translate}}
+						</span>
+		      </div>
+      		<div 
+						class="
+							form-group 
+							has-feedback 
+							{{
+								(
+									password_form.repeat_password.$invalid && 
+									password_form.repeat_password.$touched
+								) ? 
+								'has-error' : 
+								''
+							}}
+						"
+					>
+						<label>
+							{{ 'USERS_REPEAT_PASSWORD_FIELD' | translate}}
+						</label>
+		        <input 
+							id="repeat_password" 
+							name="repeat_password" 
+							type="password" 
+							class="form-control" 
+							placeholder="{{'USERS_REPEAT_PASSWORD_FIELD' | translate}}"
+							ng-required="true"
+							ng-model="users.repeat_password" 
+							input-match="new_password" 
+						>
+						<span 
+							class="help-block text-right" 
+							ng-show="
+								password_form.repeat_password.$touched && 
+								password_form.repeat_password.$error.required
+							"
+						>
+							{{'USERS_REQUIRED_ERROR' | translate}}
+						</span>
+						<span 
+							class="help-block text-right" 
+							ng-show="
+								password_form.repeat_password.$touched && 
+								password_form.repeat_password.$error.inputmatch
+							"
+						>
+							{{'USERS_PASSWORD_MISMATCH_ERROR' | translate}}
+						</span>
+		      </div>
+				</form>
+			</div>
+			<div class="box-footer">
+				<button
+					class="btn btn-default pull-left"
+					data-toggle="collapse" 
+					data-target=".sensum-password"
+				>
+					<i class="fa fa-arrow-left fa-fw"></i>
+					{{'USERS_BACK'|translate}}
+				</button>
+				<button 
+					ng-click="users.updatePassword()" 
+					ng-disabled="password_form.$invalid" 
+					class="btn btn-success pull-right"
+				>
+					<i class="fa fa-fw fa-key"></i>&nbsp;
+					{{'USERS_UPDATE_PASSWORD' | translate}}
+				</button>
+			</div>
+		</div>
+<!--PROJECT LIST-->
+		<div class="box box-primary">
+			<div class="box-header">
+				<h3 class="box-title">
+					<i class="fa fa-cubes fa-fw"></i>
+					My Projects
+				</h3>
+			</div>
+			<div class="box-body">
+				<table class="table table-bordered table-striped">
+					<tbody>
+						<tr ng-repeat="(k,v) in users.USER_INFO">
+							<th>
+								<a href="http://{{v.url}}" target="_blank">
+									{{v.name}} <i class="fa fa-external-link"></i>
+								</a>
+							</th>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-8">
+		<div class="box box-primary" ng-repeat="(k,v) in users.USER_INFO">
+			<div class="box-header">
+				<h4 class="box-title">
+					<i class="fa fa-cube fa-fw"></i>
+					{{v.name}}
+				</h4>
+			</div>
+			<div class="box-body">
+			<div class="nav-tabs-custom">
+				<ul class="nav nav-tabs">
+					<li class="active">
+						<a href="#privileges-{{k}}" data-toggle="tab">
+							<i class="fa fa-fw fa-key"></i>
+								<span class="hidden-sm hidden-xs">
+								{{'USERS_PRIVILEGES' | translate}}
+							</span>
+						</a>
+					</li>
+					<li>
+						<a href="#devices-{{k}}" data-toggle="tab">
+							<i class="fa fa-fw fa-wifi"></i>
+							<span class="hidden-sm hidden-xs">
+								{{'USERS_DEVICES' | translate}}
+							</span>
+						</a>
+					</li>
+					<li>
+						<a href="#zones-{{k}}" data-toggle="tab">
+							<i class="fa fa-fw fa-map"></i>
+							<span class="hidden-sm hidden-xs">
+								{{'USERS_ZONES' | translate}}
+							</span>
+						</a>
+					</li>
+				</ul>
+				<div class="tab-content no-padding">
+					<div class="tab-pane active" id="privileges-{{k}}">
+						<p class="callout callout-info" ng-show="v.privileges.length === 0">
+							<i class="fa fa-info-circle fa-fw"></i>
+							{{ 'USERS_NO_PRIVILEGES' | translate }}
+						</p>
+						<table class="table table-bordered table-striped" ng-show="!(v.privileges.length === 0)">
+							<thead>
+								<tr>
+									<th>Role</th>
+									<th>Privileges</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="p in v.privileges">
+									<td>
+										{{p.name_level}}
+									</td>
+									<td class="text-right">
+										<i class="fa fa-fw fa-eye text-black"></i>
+										<i class="fa fa-fw fa-plus {{p.is_creator_privilege ? 'text-black' : 'text-gray'}}"></i>
+										<i class="fa fa-fw fa-pencil {{p.is_editor_privilege ? 'text-black' : 'text-gray' }}"></i>
+										<i class="fa fa-fw fa-trash {{p.is_destroyer_privilege ? 'text-black' : 'text-gray'}}"></i>
+										<i class="fa fa-fw fa-globe {{p.is_global_privilege ? 'text-black' : 'text-gray'}}"></i>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="tab-pane" id="devices-{{k}}">
+						<h4>My Devices</h4>
+						<p class="callout callout-info" ng-show="v.devices.length === 0">
+							<i class="fa fa-info-circle fa-fw"></i>
+							{{ 'USERS_NO_DEVICES' | translate }}
+						</p>
+						<table class="table table-bordered table-striped" ng-show="!(v.devices.length === 0)">
+							<thead>
+								<tr>
+									<th class="hidden-md hidden-lg">Device</th>
+									<th class="hidden-sm hidden-xs">ID</th>
+									<th class="hidden-sm hidden-xs">Name</th>
+									<th class="hidden-sm hidden-xs">Type</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="d in v.devices">
+									<td class="hidden-md hidden-lg">
+										<b>{{d.name_item}}</b><br>
+										{{d.mac_item}}<br>
+										<i>{{d.name_asset}}</i>
+									</td>
+									<td class="hidden-xs hidden-sm">
+										{{d.mac_item}}
+									</td>
+									<td class="hidden-xs hidden-sm">
+										{{d.name_item}}
+									</td>
+									<td class="hidden-xs hidden-sm">
+										{{d.name_asset}}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4>My Subscriptions</h4>
+						<p class="callout callout-info" ng-show="v.subscriptions.length === 0">
+							<i class="fa fa-info-circle fa-fw"></i>
+							{{ 'USERS_NO_SUBSCRIPTIONS' | translate }}
+						</p>
+						<table class="table table-bordered table-striped" ng-show="!(v.subscriptions.length === 0)">
+							<thead>
+								<tr>
+									<th>Device</th>
+									<th>Alert type</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="s in v.subscriptions">
+									<td>
+										{{s.name_item}}
+									</td>
+									<td class="text-right">
+										<i class="fa fa-fw fa-phone {{s.is_sms_subscriptor ? 'text-black' : 'text-gray'}}"></i>
+										<i class="fa fa-fw fa-envelope {{s.is_email_subscriptor ? 'text-black' : 'text-gray' }}"></i>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="tab-pane" id="zones-{{k}}">
+						<h4>My Zones</h4>
+						<p class="callout callout-info" ng-show="v.zones.length === 0">
+							<i class="fa fa-info-circle fa-fw"></i>
+							{{ 'USERS_NO_ZONES' | translate }}
+						</p>
+						<table class="table table-bordered table-striped" ng-show="!(v.zones.length === 0)">
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>Type</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="z in v.zones">
+									<td>
+										{{z.name_zone}}
+									</td>
+									<td>
+										{{z.name_metadata[sensum.language]}}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4>My Collaborations</h4>
+						<p class="callout callout-info" ng-show="v.collaborations.length === 0">
+							<i class="fa fa-info-circle fa-fw"></i>
+							{{ 'USERS_NO_COLLABORATIONS' | translate }}
+						</p>
+						<table class="table table-bordered table-striped" ng-show="!(v.collaborations.length === 0)">
+							<thead>
+								<tr>
+									<th>Zone</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="z in v.collaborations">
+									<td>
+										{{z.name_zone}}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+	</div>
+</div>

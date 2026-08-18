@@ -1,0 +1,50 @@
+<div class="row">
+	<div class="col-md-4">
+		<div class="box box-default">
+			<div class="box-header">
+				<h3 class="box-title">Question</h3>
+			</div>
+			<div class="box-body">
+				<h5>REST</h5>
+		  	<input 
+					class="form-control"
+					placeholder="REST" 
+					ng-model="dashboard.sigfox_rest" 
+				>
+				<h5>User</h5>
+				<select ng-model="dashboard.sigfox_user" class="form-control">
+					<option value="sensum">Sensum</option>
+					<option value="third">Third-Party</option>
+				</select>
+				<h5>Method</h5>
+				<select ng-model="dashboard.sigfox_method" class="form-control">
+					<option value="GET">GET</option>
+					<option value="POST">POST</option>
+				</select>
+				<h5>Data</h5>
+				<angular-jsoneditor ng-model="dashboard.sigfox_data">
+				</angular-jsoneditor>
+			</div>
+			<div class="box-footer">
+				<div 
+					class="btn btn-primary btn-block" 
+					ng-click="dashboard.sendSigfoxMessage()"
+				>
+					<i class="fa fa-fw fa-envelope-o"></i>&nbsp;SEND
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-8">
+		<div class="box box-default">
+			<div class="box-header">
+				<h3 class="box-title">Answer</h3>
+			</div>
+			<div class="box-body">
+				<angular-jsoneditor 
+					ng-model="dashboard.sigfox_response"
+				></angular-jsoneditor>
+			</div>
+		</div>
+	</div>
+</div>

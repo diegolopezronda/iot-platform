@@ -1,0 +1,776 @@
+<div class="row">
+	<div class="col-md-12">
+		<div class="box no-border no-print">
+			<div class="box-header with-border text-center"
+				style="
+	padding-left: 6px;
+	padding-right: 6px;
+"
+			>
+					<div 
+						class="btn-group"
+					>
+						<button 
+							class="
+								btn text-uppercase plotting-scope
+							"
+							data-scope="{{k.value}}"
+							ng-repeat="k in plotting.PLOTTING_KEYS track by $index"
+							ng-click="plotting.preparePlot(k.value)"
+							ng-switch="k.icon"
+						>
+							<span 
+								style="font-size:7pt;margin-top:-0.6em;"
+								class="fa-stack" ng-switch-when="calendar">
+								<i class="fa fa-stack-2x fa-calendar-o"></i>
+								<strong class="fa-stack-1x fa-fw" style="margin-top:0.25em;">{{k.letter}}</strong>
+							</span>
+							<i class="fa fa-{{k.icon}} " ng-switch-default></i>
+						</button>
+						<button 
+							class="btn btn-primary text-uppercase"
+							data-toggle="modal" 
+							data-target="#plotting-legend-modal" 
+						>
+							<i class="fa fa-info-circle"></i>
+						</button>					
+						<button 
+							class="
+								btn btn-primary text-uppercase  
+							"
+							data-toggle="modal"
+							data-target="#plotting-kpi-modal" 
+						>
+							<i class="fa fa-filter"></i>
+						</button>
+						<button 
+							class="btn btn-primary text-uppercase" 
+							data-toggle="modal"
+							data-target="#plotting-options-modal"
+						>
+							<i class="fa fa-cog"></i>
+						</button>
+					</div>	
+			</div>
+			<div class="box-body bg-teal" id="plotting-custom">
+				<div class="input-group margin">
+					<div class="input-group-addon">
+						<i class="fa fa-calendar"></i>
+					</div>
+					<input type="text" class="form-control pull-right" id="plotting-custom-interval">
+					<div class="input-group-btn">
+						<button 
+							ng-click="plotting.prepareCustomPlot()" 
+							class="btn btn-primary pull-right"
+						>
+							{{'PLOTTING_CUSTOM_SUBMIT' | translate}}
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="box-body">
+				<div 
+					id="plotting-chart"
+				>
+				</div>
+			</div>
+			<div class="box-footer text-center hidden">
+				<span class="label label-primary" ng-show="plotting.performance">
+			    <i class="fa fa-cube fa-fw"></i>{{plotting.performance.docs}}
+			    <i class="fa fa-clock-o fa-fw"></i>{{plotting.performance.seconds}}s
+				</span>
+				<div class="{{!plotting.SMALL ? 'btn-group pull-right' : 'text-center'}}">
+					<button 
+						class="btn btn-sm btn-primary" 
+						ng-click="plotting.PLOT.pan({left:-100})"
+					>
+						<i class="fa fa-fw fa-arrow-left"></i>
+					</button>
+					<button 
+						class="btn btn-sm btn-primary" 
+						ng-click="plotting.PLOT.zoomOut()"
+					>
+						<i class="fa fa-fw fa-minus"></i>
+					</button>
+					<button 
+						class="btn btn-sm btn-primary" 
+						ng-click="plotting.PLOT.zoom({center:{top:0,left:plotting.ZOOM_LEFT}})"
+					>
+						<i class="fa fa-fw fa-plus"></i>
+					</button>
+					<button 
+						class="btn btn-sm btn-primary" 
+						ng-click="plotting.PLOT.pan({left:100})"
+					>
+						<i class="fa fa-fw fa-arrow-right"></i>
+					</button>
+					<div class="hidden-md hidden-lg">&nbsp;<br></div>
+				</div>
+				<div 
+					class="pull-left" 
+					style="{{plotting.SMALL ? 'width:100%' : ''}}"
+				>
+					<button 
+						class="
+							btn btn-sm btn-primary text-uppercase  
+							{{plotting.SMALL ? 'btn-block' : ''}}
+						"
+						ng-click="plotting.startItemFilter()"
+						ng-show="!plotting.ID"
+						data-toggle="modal"
+						data-target="#plotting-items-modal" 
+					>
+						<i class="fa fa-fw fa-filter"></i>&nbsp;
+						{{ 'PLOTTING_ITEMS_BUTTON' | translate}}
+					</button>&nbsp;
+					<button 
+						class="
+							btn btn-sm btn-primary text-uppercase  
+							{{plotting.SMALL ? 'btn-block' : ''}}
+						"
+						ng-show="!plotting.ID"
+						data-toggle="modal"
+						data-target="#plotting-zones-modal" 
+					>
+						<i class="fa fa-fw fa-filter"></i>&nbsp;
+						{{ 'PLOTTING_ZONES_BUTTON' | translate}}
+					</button>&nbsp;
+				</div>
+			</div>
+			<div class="overlay" ng-show="plotting.filter_status">
+				<i class="fa fa-refresh fa-spin"></i>
+			</div>
+		</div>
+	</div>
+</div>
+<!--INTERACTIONS-->
+<div class="row" ng-show="plotting.show_table && plotting.pairs.length > 0">
+	<div class="col-md-12">
+		<div class="box no-border">
+			<div class="box-header with-border">
+				<h3 class="box-title">
+					<i class="fa fa-fw fa-table"></i>{{'PLOTTING_RAW'|translate}}&nbsp;
+					<b>{{plotting.date_filter_label}}</b>
+				</h3>
+				<div class="box-tools pull-right">
+					<button 
+						class="btn btn-success btn-sm"
+						ng-click="plotting.csv()"
+					>
+						<i class="fa fa-download fa-fw"></i>CSV
+					</button>
+					<button 
+						class="btn btn-primary btn-sm"
+						ng-click="plotting.resetDateFilters()"
+						ng-show="plotting.current_date_filter"
+					>
+						<i class="fa fa-table fa-fw"></i>Show all rows
+					</button>
+				</div>
+			</div>
+			<div 
+				class="box-body no-padding"
+				style="overflow-x:auto"
+			>
+				<input 
+					type="hidden" 
+					value="date" 
+					ng-model="plotting.sortType"
+				>
+				<input type="hidden" value="true" ng-model="plotting.sortReverse">
+				<table 
+					class="table  table-striped small"					
+				>
+					<thead>
+						<tr>
+							<th>
+								<i class="fa fa-cube"></i>
+							</th>
+							<th>
+								<a 
+									href="#" 
+									ng-click="
+										plotting.sortType = 'mac'; ;
+										plotting.sortReverse = !plotting.sortReverse
+									"
+								>
+									<i class="fa fa-wifi fa-fw"></i>&nbsp;
+									{{ 'PLOTTING_DEVICE' | translate}}
+									<i
+										class="fa fa-fw fa-caret-down"
+										ng-show="
+											plotting.sortType === 'mac' && !plotting.sortReverse
+										" 
+									></i>
+									<i
+										class="fa fa-fw fa-caret-up"
+										ng-show="
+											plotting.sortType === 'mac' && plotting.sortReverse
+										" 
+									></i>
+									<i
+										class="fa fa-fw fa-sort"
+										ng-show="
+											plotting.sortType != 'mac'
+										" 
+									></i>
+								</a>
+							</th>
+							<th>
+								<a 
+									href="#" 
+									ng-click="
+										plotting.sortType = 'date'; ;
+										plotting.sortReverse = !plotting.sortReverse
+									"
+								>
+									<i class="fa fa-calendar fa-fw"></i>&nbsp;
+									{{ 'PLOTTING_DATE' | translate}}
+									<i
+										class="fa fa-fw fa-caret-down"
+										ng-show="
+											plotting.sortType === 'date' && !plotting.sortReverse
+										" 
+									></i>
+									<i
+										class="fa fa-fw fa-caret-up"
+										ng-show="
+											plotting.sortType === 'date' && plotting.sortReverse
+										" 
+									></i>
+									<i
+										class="fa fa-fw fa-sort"
+										ng-show="
+											plotting.sortType != 'date'
+										" 
+									></i>
+								</a>
+							</th>
+							<th
+								ng-repeat="kpi in plotting.KPI track by $index"
+								ng-show="plotting.kpi_filters.indexOf(kpi.name) !== -1"
+							>
+								<a 
+									href="#" 
+									ng-click="
+										plotting.sortType = kpi.name; ;
+										plotting.sortReverse = !plotting.sortReverse
+									"
+								>
+									{{kpi.label}}
+									<br/>
+									<span ng-show="kpi.unit">{{kpi.unit}}</span>
+									<span 
+										style="color:white;background:{{kpi.color}}!important"
+										class="label label-default text-uppercase"
+									>
+										{{kpi.group}}
+										<i 
+											ng-show="kpi.incremental === true"
+											class="fa fa-arrow-up"
+										></i>
+									</span>
+									<i
+										class="fa fa-fw fa-caret-down"
+										ng-show="
+											plotting.sortType === kpi.name && !plotting.sortReverse
+										" 
+									></i>
+									<i
+										class="fa fa-fw fa-caret-up"
+										ng-show="
+											plotting.sortType === kpi.name && plotting.sortReverse
+										" 
+									></i>
+									<i
+										class="fa fa-fw fa-sort"
+										ng-show="
+											plotting.sortType != kpi.name
+										" 
+									></i>
+								</a>
+								<br/>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr
+							class="table  table-striped"
+							ng-repeat="
+								p in plotting.filtered_pairs | 
+								orderBy:plotting.sortType:plotting.sortReverse
+							"
+						>
+							<td class="text-mono">
+								{{$index+1}}
+							</td>
+							<td title="{{p.mac}}" class="text-mono">
+								{{plotting.getItemName(p.mac)}}
+							</td>
+							<td class="text-mono">
+								{{p.date | date:plotting.angular_title_format}}
+							</td>
+							<td
+								class="text-mono"
+								ng-repeat="kpi in plotting.KPI track by $index"
+								ng-show="plotting.kpi_filters.indexOf(kpi.name) !== -1"
+							>
+								<i 
+									class="fa fa-fw fa-circle hidden"  
+									style="color:{{kpi.color}}!important;"
+									ng-show="!p.synth[kpi.name]"
+								></i>
+								<i 
+									class="fa fa-fw fa-circle-o hidden"  
+									style="color:{{kpi.color}}!important;"
+									ng-show="p.synth[kpi.name]"
+								></i>
+								&nbsp;
+								{{p[kpi.name]}}
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>	
+</div>	
+<!-- ITEMS_MODAL -->
+<div id="plotting-items-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
+				<h4 class="modal-title">
+					<i class="fa fa-filter fa-fw"></i>{{ 'PLOTTING_ITEMS_MODAL' | translate}}
+				</h4>
+			</div>
+			<div class="modal-body">
+				<div class="hidden callout callout-info" ng-show="plotting.zone_lock === true">
+					<p>
+						<i class="fa fa-info fa-fw"></i>	
+						{{ "PLOTTING_ZONE_LOCKED" | translate }}
+					</p>
+				</div>
+				<form>
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-addon"><i class="fa fa-search"></i></div>
+             	<input 
+								type="text" 
+								class="form-control" 
+								ng-model="plotting.search"
+								ng-keyup="plotting.toggleItemFilter(null)"
+								placeholder="{{ 'PLOTTING_ITEMS_MODAL_FILTER' | translate}}"
+							>
+						</div>
+					</div>
+				</form>
+				<div class="row plotting-button-row">
+					<div 
+						class="col-xs-12 col-sm-12 col-md-4 col-lg-4 text-center no-padding no-margin plotting-button-col"
+						ng-repeat="item in plotting.search_items | filter:plotting.search"
+						ng-switch="plotting.item_filter_buffer.indexOf(item.mac)"
+						ng-show="plotting.zone_lock.indexOf(item.mac) === -1"
+					>	
+						<button 
+							class="btn btn-sm text-uppercase bg-default btn-block pull-left"
+							ng-click="plotting.toggleItemFilter(item.mac)"
+							ng-switch-when="-1"
+						>
+							<i class="fa fa-fw fa-filter"></i>&nbsp;{{item.name_item}}
+						</button>
+						<button 
+							class="btn btn-sm text-uppercase bg-teal btn-block pull-left"
+							ng-click="plotting.toggleItemFilter(item.mac)"
+							ng-switch-default
+						>
+							<i class="fa fa-fw fa-filter"></i>&nbsp;{{item.name_item}}
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button 
+					class="btn btn-default pull-left" 
+					ng-click="plotting.resetItemFilters()"
+				>					
+					{{ 'PLOTTING_RESET_FILTER' | translate}}
+				</button>
+				<button 
+					type="button" class="btn btn-primary" data-dismiss="modal" 
+					ng-click="plotting.applyItemFilter()"
+				>
+					<i class="fa fa-fw fa-filter"></i>&nbsp;
+					{{ 'PLOTTING_APPLY_FILTER' | translate}}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Zones  Modal -->
+<div id="plotting-zones-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
+				<h4 class="modal-title">
+					<i class="fa fa-filter fa-fw"></i>{{ 'PLOTTING_ZONES_MODAL' | translate}}
+				</h4>
+			</div>
+			<div class="modal-body text-center">
+				<div class="row plotting-button-row">
+					<div 
+						class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center no-padding no-margin plotting-button-col"
+						ng-repeat="(z,zone) in plotting.ZONES"
+						ng-switch="plotting.zone_filters.indexOf(z)"
+					>	
+						<button 
+							class="btn btn-sm text-uppercase bg-default btn-block pull-left"
+							ng-click="plotting.toggleZoneFilter(z)"
+							ng-switch-when="-1"
+						>
+							<i class="fa fa-fw fa-filter"></i>&nbsp;{{zone.name_zone}}
+						</button>
+						<button 
+							class="btn btn-sm text-uppercase bg-teal btn-block pull-left"
+							ng-click="plotting.toggleZoneFilter(z)"
+							ng-switch-default
+						>
+							<i class="fa fa-fw fa-filter"></i>&nbsp;{{zone.name_zone}}
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- KPI Modal -->
+<div id="plotting-kpi-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
+				<h4 class="modal-title">
+					<i class="fa fa-filter fa-fw"></i>{{ 'PLOTTING_METRICS_MODAL' | translate}}
+				</h4>
+			</div>
+			<div class="modal-body text-center">
+				<form>
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-addon"><i class="fa fa-search"></i></div>
+             	<input 
+								type="text" 
+								class="form-control" 
+								ng-model="plotting.search"
+								ng-keyup="plotting.toggleItemFilter(null)"
+								placeholder="{{ 'PLOTTING_METRICS_MODAL_FILTER' | translate}}"
+							>
+						</div>
+					</div>
+				</form>
+				<div class="row plotting-button-row">
+					<div 
+						class="col-xs-12 col-sm-12 col-md-4 col-lg-4 text-center no-padding no-margin plotting-button-col"
+						ng-repeat="kpi in plotting.KPI | filter:plotting.search"
+						ng-switch="plotting.kpi_filters.indexOf(kpi.name)"
+					>
+						<div class="input-group">	
+							<span 
+								class="input-group-addon"
+								style="color:{{kpi.color}};"
+							>
+								<i class="fa fa-fw fa-filter" 
+								></i>
+							</span>
+							<button 
+								class="btn text-uppercase bg-gray form-control"
+								ng-click="plotting.toggleKPIFilter(kpi.name)"
+								ng-switch-when="-1"
+							>
+								{{kpi.label}}
+							</button>
+							<button 
+								class="btn text-uppercase bg-teal form-control"
+								ng-click="plotting.toggleKPIFilter(kpi.name)"
+								ng-switch-default
+							>
+								{{kpi.label}}
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button 
+					class="btn btn-default pull-left" 
+					ng-click="plotting.resetKPIFilters()"
+				>					
+					{{ 'PLOTTING_RESET_FILTER' | translate}}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- LEGEND MODAL -->
+<div 
+	id="plotting-legend-modal" 
+	class="modal fade" 
+	role="dialog" 
+>
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
+				<h4 class="modal-title">
+					<i class="fa fa-fw fa-info-circle"></i>&nbsp;
+					{{'PLOTTING_INFO' | translate}}
+				</h4>
+			</div>
+			<div class="modal-body text-center">
+				<div class="row plotting-button-row">
+					<div 
+						ng-repeat="kpi in plotting.KPI track by $index"
+						class="col-xs-12 col-sm-12 col-md-4 col-lg-4 text-center {{plotting.kpi_filters.indexOf(kpi.name) === -1 ? 'hidden' : ''}}"
+						style="{{plotting.kpi_filters.indexOf(kpi.name) === -1 ? 'opacity:0.2' : ''}}"
+					>
+						<div class="pull-left">
+							<small>
+								<i 
+									class="fa fa-fw fa-circle" 
+									style="color:{{kpi.color}}!important" 
+								></i>
+								{{kpi.label}}&nbsp; 
+								<span ng-show="kpi.unit">({{kpi.unit}})&nbsp;</span>
+							</small>
+						</div>
+						<div class="pull-right">
+							<small>
+								<span class="text-uppercase label label-default">
+									{{kpi.group}}
+									<i 
+										ng-show="kpi.incremental === true"
+										class="fa fa-arrow-up"
+									></i>
+								</span>
+							</small>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- TOOLTIP MODAL -->
+<div 
+	id="plotting-tooltip-modal" 
+	class="modal fade" 
+	role="dialog" 
+>
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
+				<h4 class="modal-title">
+					<i class="fa fa-fw fa-calendar"></i>&nbsp;
+					{{plotting.TOOLTIP.date}}
+				</h4>
+			</div>
+			<div class="modal-body no-padding">
+				<table class="table table-hover  table-striped no-margin">
+					<tbody>
+						<tr>
+							<th>
+								<i 
+									class="fa fa-circle fa-fw"
+									style="color:{{plotting.TOOLTIP.color}}"
+								></i>
+							</th>
+							<th>
+								{{plotting.TOOLTIP.label}}
+							</th>
+							<td class="text-right">
+								{{plotting.TOOLTIP.value}}
+							</td>
+							<td class="text-left">
+								{{plotting.TOOLTIP.unit}}
+							</td>
+							<td class="text-center">
+								<span class="label label-default text-uppercase">
+									{{plotting.TOOLTIP.group}}
+								</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button 
+					class="btn bg-teal btn-block text-uppercase" 
+					ng-click="plotting.applyDateFilters(true)"
+					ng-show="plotting.pairs.length > 0"
+					type="button"
+					data-dismiss="modal"
+				>
+					<i class="fa fa-fw fa-filter"></i>&nbsp;
+					{{ 'PLOTTING_FILTER' | translate}}
+				</button>
+				<button 
+					class="btn bg-teal btn-block text-uppercase" 
+					ng-click="plotting.getDetails(plotting.tooltip_date)"
+					ng-show="(plotting.end_date-plotting.start_date) > MINUTE"
+					type="button"
+					data-dismiss="modal"
+				>
+					<i class="fa fa-fw fa-search-plus"></i>&nbsp;
+					{{ 'PLOTTING_DETAILS' | translate}}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- OPTIONS  MODAL -->
+<div 
+	id="plotting-options-modal" 
+	class="modal fade" 
+	role="dialog" 
+>
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
+				<h4 class="modal-title">
+					<i class="fa fa-fw fa-cog"></i>&nbsp;
+					{{'PLOTTING_OPTIONS' | translate}}
+				</h4>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<label>{{'PLOTTING_PLOTTING_TYPE' | translate}}</label>
+					<br>
+					<div class="btn-group" style="width:100%">
+						<button 
+							style="width:50%"
+							class="btn text-uppercase btn-{{plotting.BAR_GRAPH ? 'success' : 'default'}}" 
+							ng-click="plotting.toggleBarGraph(true)"
+						>						
+							{{ 'PLOTTING_BARS_BUTTON' | translate}}
+						</button>
+						<button 
+							style="width:50%"
+							class="btn text-uppercase btn-{{plotting.BAR_GRAPH ? 'default' : 'success'}}" 
+							ng-click="plotting.toggleBarGraph(false)"
+						>
+							{{ 'PLOTTING_LINES_BUTTON' | translate}}
+						</button>
+					</div>
+				</div>
+				<div class="form-group">
+					<label>{{'PLOTTING_AXES' | translate}}</label>
+					<div class="btn-group" style="width:100%">
+						<button 
+							style="width:50%"
+							class="btn text-uppercase btn-{{plotting.MULTI_AXES ? 'default' : 'success'}}" 
+							ng-click="plotting.toggleMultiAxes(false)"
+						>
+							{{ 'PLOTTING_SIMPLE_AXES' | translate}}
+						</button>
+						<button 
+							style="width:50%"
+							class="btn text-uppercase btn-{{plotting.MULTI_AXES ? 'success' : 'default'}}" 
+							ng-click="plotting.toggleMultiAxes(true)"
+						>						
+							{{ 'PLOTTING_MULTI_AXES ' | translate}}
+						</button>
+					</div>
+				</div>
+				<div class="form-group">
+					<label>{{'PLOTTING_POINTS' | translate}}</label>
+					<div class="btn-group" style="width:100%">
+						<button 
+							style="width:50%"
+							class="btn text-uppercase btn-{{plotting.POINTS ? 'default' : 'success'}}" 
+							ng-click="plotting.togglePoints(false)"
+						>						
+							{{ 'PLOTTING_NO' | translate}}
+						</button>
+						<button 
+							style="width:50%"
+							class="btn text-uppercase btn-{{plotting.POINTS ? 'success' : 'default'}}" 
+							ng-click="plotting.togglePoints(true)"
+						>
+							{{ 'PLOTTING_YES' | translate}}
+						</button>
+					</div>
+				</div>
+				<div class="form-group">
+					<label>{{'PLOTTING_FILL' | translate}}</label>
+					<div class="btn-group" style="width:100%">
+						<button 
+							style="width:50%"
+							class="btn text-uppercase btn-{{plotting.FILL ? 'default' : 'success'}}" 
+							ng-click="plotting.toggleFill(false)"
+						>						
+							{{ 'PLOTTING_NO' | translate}}
+						</button>
+						<button 
+							style="width:50%"
+							class="btn text-uppercase btn-{{plotting.FILL ? 'success' : 'default'}}" 
+							ng-click="plotting.toggleFill(true)"
+						>
+							{{ 'PLOTTING_YES' | translate}}
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button 
+					class="btn btn-success btn-block text-uppercase" 
+					type="button"
+					data-dismiss="modal"
+				>
+					<i class="fa fa-fw fa-check"></i>&nbsp;
+					OK
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<style>
+	#plotting-tooltip{
+		width:250px!important;
+		position:absolute;
+		display:none;
+	}
+	#plotting-chart,#plotting-chart *{
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+	}
+	tbody td, tbody th{
+		font-size:10pt;
+	}
+	tbody tr:hover, tbody tr:hover{
+		background: #DEF!important;
+	}
+	tbody tr:hover td:hover, tbody tr:hover th:hover{
+		background: #CDE;
+	}
+	.plotting-button-row{
+		padding:14px!important;
+		padding-bottom:0px!important;
+		padding-top:0px!important;
+	}
+	.plotting-button-col{
+		padding:1px!important;
+	}
+	#plotting-chart{
+		width:100%!important;
+		height:calc(100vh - 415px)!important;
+		min-height:300px!important;
+	}
+</style>

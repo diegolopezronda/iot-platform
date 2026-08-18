@@ -1,0 +1,86 @@
+{
+	"@":{
+		"channel":"???",
+		"mac":"ID code of item.",
+		"rssi":"Received Signal Strength Indicator.",
+		"type":"Type of item (id_asset).",
+		"latitude":"Latitude of item.",
+		"longitude":"Longitude of ttem.",
+		"speed":"Speed of item.",
+		"zone":"Zone or area where the item is working.",
+		"flag":"???",
+		"software_version":"Software version.",
+		"mode":"Status mode (operational, service required, etc).",
+		"stage":"???",
+		"bit":"BIT flag",
+		"cbit":"CBIT flag",
+		"crc": "CRC Code"
+	},
+	"&":{
+		"mac":"ID code of gateway.",
+		"software_version":"Software version.",
+		"hardware_version":"Hardware version.",
+		"uptime":"Time in minutes from gateway wake up.",
+		"crc":"CRC code"
+	},
+	"#":{
+		"mac":"Item code.",
+		"vehicle":"Hit vehicle.",
+		"vehicle_proximity_alerts":"Times that Vehicle-On-Vehicle (VOV) alert has been triggered.",
+		"crc":"CRC Code"
+	},
+	"%":{
+		"vehicle":"Item code.",
+		"mac":"Item code",
+		"pos":"???",
+		"warning_calls":"Times that warning alert has been triggered.",
+		"stop_calls":"Times that stop alert been triggered.",
+		"panic_calls":"Times that panic button was pressed.",
+		"crc":"CRC Code"
+	},
+	"OLD_HASH":{
+		"channel":"???",
+		"mac":"Item code.",
+		"rssi":"Received Signal Strength Indicator.",
+		"frame_id":"Frame ID (greater than 0 means PDU data frame).",
+		"day":"Date",
+		"month":"Month",
+		"year":"Year",
+		"uptime":"Time in minutes from item wake up.",
+		"panic_calls":"Times that panic button was pressed.",
+		"stop_calls":"Times that stop alert been triggered.",
+		"warning_calls":"Times that warning alert has been triggered.",
+		"vehicle_proximity_alerts":"Times that Vehicle-On-Vehicle (VOV) alert has been triggered.",
+		"crc":"CRC Code"
+	},
+	"PDU13":{
+		"channel":"???",
+		"mac":"Item code.",
+		"rssi":"Received Signal Strength Indicator.",
+		"frame_id":"Frame ID (greater than 0 means PDU data frame).",
+		"pdu1_id":"ID of current PDU.",
+		"pdu1_distance":"distance of PDU from vehicle",
+		"pdu2_id":"ID of current PDU.",
+		"pdu2_distance":"distance of PDU from vehicle",
+		"pdu3_id":"ID of current PDU.",
+		"pdu3_distance":"distance of PDU from vehicle",
+		"pdu4_id":"ID of current PDU.",
+		"pdu4_distance":"distance of PDU from vehicle",
+		"pdu5_id":"ID of current PDU.",
+		"pdu5_distance":"distance of PDU from vehicle",
+		"pdu6_id":"ID of current PDU.",
+		"pdu6_distance":"distance of PDU from vehicle",
+		"crc":"CRC Code"
+	},
+	"PDU4":{
+		"channel":"???",
+		"mac":"Item code.",
+		"rssi":"Received Signal Strength Indicator.",
+		"frame_id":"Frame ID (greater than 0 means PDU data frame).",
+		"pdu1_id":"ID of current PDU.",
+		"pdu1_distance":"distance of PDU from vehicle",
+		"pdu2_id":"ID of current PDU.",
+		"pdu2_distance":"distance of PDU from vehicle",
+		"crc":"CRC Code"
+	}
+}

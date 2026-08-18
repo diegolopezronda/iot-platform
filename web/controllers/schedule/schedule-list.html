@@ -1,0 +1,43 @@
+<div class="row">
+	<div class="col-md-12">
+		<div class="box">
+			<div class="box-body no-padding">
+				<table class="table table-striped table-bordered">
+					<tbody>
+						<tr ng-repeat="e in schedule.EVENTS">
+							<th>
+							</th>
+							<td>
+								<i class="fa fa-fw fa-calendar"></i>
+								{{e.start_date_event | date:'yyyy-MM-dd'}}
+								<i class="fa fa-fw fa-clock-o"></i>
+								{{e.start_date_event | date:'hh:mm'}}
+							</td>
+							<td ng-switch="e.is_repeat_event">
+								<span ng-switch-when="false">
+									<i class="fa fa-fw fa-calendar"></i>
+									{{e.start_date_event | date:'yyyy-MM-dd'}}
+									<i class="fa fa-fw fa-clock-o"></i>
+									{{e.start_date_event | date:'hh:mm'}}
+								</span>
+								<span ng-switch-when="true">
+									<span ng-switch="e.is_forever_event">
+										<span class="label bg-purple text-uppercase" ng-switch-when="true">
+											Forever
+										</span>
+										<span ng-switch-when="false">
+											<i class="fa fa-fw fa-calendar"></i>
+											{{e.end_date_event | date:'yyyy-MM-dd'}}
+											<i class="fa fa-fw fa-clock-o"></i>
+											{{e.end_date_event | date:'hh:mm'}}
+										</span>
+									</span>
+								</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

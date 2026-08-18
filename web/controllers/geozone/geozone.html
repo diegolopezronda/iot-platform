@@ -1,0 +1,987 @@
+<form name="geozone_form" id="geozone_form">
+<div class="row">
+	<div class="col-md-3">
+	</div>
+	<div class="col-md-6">
+<!--STEP ONE-->
+		<div class="box no-border geozone-step-one collapse in">
+			<div class="box-header with-border">
+				<h4 class="box-title">
+					<span ng-show="!geozone.ID">
+						<i class="fa fa-plus fa-fw"></i>
+						{{'GEOZONE_ADD_ZONE'|translate}}
+					</span>
+					<span ng-show="geozone.ID">
+						<i class="fa fa-pencil fa-fw"></i>
+						{{'GEOZONE_EDIT_ZONE'|translate}}
+					</span>
+				</h4>
+			</div>
+			<div class="box-body">
+				<p>
+					<span ng-show="!geozone.ID">{{'GEOZONE_STEP_ONE'|translate}}</span>
+					<span ng-show="geozone.ID">{{'GEOZONE_STEP_ONE_HALF'|translate:geozone.data}}</span>
+			</p> 
+       <div class="form-group text-center">
+					<img 
+						src="/img/parent_zone.svg" 
+						class="profile-user-img img-responsive img-circle"
+					>
+				</div>
+        <div class="form-group">
+					<select 
+						class="form-control" 
+						ng-options="zone._label for (k,zone) in geozone.ZONES"
+						ng-model="geozone.data.parent_zone"
+						ng-change="geozone.drawParentZone()"
+						name="color_zone"
+						ng-required="false"
+						required="false"
+						novalidate
+					>
+						<option value="">{{'GEOZONE_NO_PARENT_ZONE'|translate}}</option>
+					</select>
+				</div>
+			</div>
+			<div class="box-footer">
+				<button
+					type="button"
+					ng-show="geozone.ID"
+					class="pull-left btn btn-danger"
+					data-target="#geozone-modal"
+					data-toggle="modal"
+				>
+					<i class="fa fa-trash"></i>
+					{{'GEOZONE_DELETE'|translate}}
+				</button>
+				<button
+					type="button"
+					class="pull-right btn btn-primary"
+					data-target=".geozone-step-one"
+					data-toggle="collapse"
+				>
+					{{'GEOZONE_NEXT'|translate}}&nbsp;<i class="fa fa-arrow-right"></i>
+				</button>
+			</div>
+			<div 
+				class="overlay"
+				ng-show="
+					geozone.transaction === true ||
+					geozone.success === true ||
+					geozone.error === true
+				"
+			>
+				<i 
+					class="fa fa-check-circle text-green fa-4x"
+					ng-show="geozone.success === true"
+				></i>
+				<i 
+					class="fa fa-times-circle text-red fa-4x"
+					ng-show="geozone.error === true"
+				></i>
+				<i 
+					class="fa fa-spin fa-cog fa-4x"
+					ng-show="geozone.transaction === true"
+				></i>
+			</div>
+		</div>
+<!--STEP TWO-->
+		<div class="box no-border geozone-step-one geozone-step-two collapse ">
+			<div class="box-header with-border">
+				<h4 class="box-title">
+					<span ng-show="!geozone.ID">
+						<i class="fa fa-plus fa-fw"></i>
+						{{'GEOZONE_ADD_ZONE'|translate}}
+					</span>
+					<span ng-show="geozone.ID">
+						<i class="fa fa-pencil fa-fw"></i>
+						{{'GEOZONE_EDIT_ZONE'|translate}}
+					</span>
+				</h4>
+			</div>
+			<div class="box-body">
+				<p>{{'GEOZONE_STEP_TWO'|translate}}</p>
+				<div 
+					class="col-md-4 text-center" 
+					ng-repeat="m in geozone.APPLICATIONS"
+				>
+					<img 
+						src="/img/database/application/default.svg" 
+						class="profile-user-img img-responsive img-circle"
+						style="{{geozone.data.id_application === null ? 'border-color:#00a65a!important':''}}"
+						ng-click="geozone.data.id_application = null"
+					>
+					<h4 class="text-bold">
+						Default
+					</h4>
+				</div>
+				<div 
+					class="col-md-4 text-center" 
+					ng-repeat="m in geozone.APPLICATIONS"
+				>
+					<img 
+						src="/img/database/application/{{m.id_application}}.svg" 
+						class="profile-user-img img-responsive img-circle"
+						style="{{m.id_application === geozone.data.id_application ? 'border-color:#00a65a!important':''}}"
+						ng-click="geozone.data.id_application = m.id_application"
+					>
+					<h4 class="text-bold">
+						{{m.name_application}}
+					</h4>
+				</div>
+			</div>
+			<div class="box-footer">
+				<button
+					type="button"
+					class="pull-left btn btn-primary"
+					data-target=".geozone-step-one"
+					data-toggle="collapse"
+				>
+					<i class="fa fa-arrow-left"></i>&nbsp;
+					{{'GEOZONE_PREVIOUS'|translate}}
+				</button>
+				<button
+					type="button"
+					class="pull-right btn btn-primary"
+					data-target=".geozone-step-two"
+					data-toggle="collapse"
+				>
+					{{'GEOZONE_NEXT'|translate}}&nbsp;
+					<i class="fa fa-arrow-right"></i>
+				</button>
+			</div>
+		</div>
+<!--STEP TWO-->
+		<div class="box no-border geozone-step-two geozone-step-three collapse ">
+			<div class="box-header with-border">
+				<h4 class="box-title">
+					<span ng-show="!geozone.ID">
+						<i class="fa fa-plus fa-fw"></i>
+						{{'GEOZONE_ADD_ZONE'|translate}}
+					</span>
+					<span ng-show="geozone.ID">
+						<i class="fa fa-pencil fa-fw"></i>
+						{{'GEOZONE_EDIT_ZONE'|translate}}
+					</span>
+				</h4>
+			</div>
+			<div class="box-body">
+				<p>{{'GEOZONE_STEP_TWO'|translate}}</p>
+				<div 
+					class="col-md-4 text-center" 
+					ng-repeat="m in geozone.METADATA"
+				>
+					<img 
+						src="/img/database/metadata/{{m.id_metadata}}.svg" 
+						class="profile-user-img img-responsive img-circle"
+						style="{{m.id_metadata === geozone.data.id_metadata ? 'border-color:#00a65a!important':''}}"
+						ng-click="geozone.data.id_metadata = m.id_metadata"
+					>
+					<h4 class="text-bold">
+						{{m.name_metadata[sensum.language]}}
+					</h4>
+				</div>
+			</div>
+			<div class="box-footer">
+				<button
+					type="button"
+					class="pull-left btn btn-primary"
+					data-target=".geozone-step-two"
+					data-toggle="collapse"
+				>
+					<i class="fa fa-arrow-left"></i>&nbsp;
+					{{'GEOZONE_PREVIOUS'|translate}}
+				</button>
+				<button
+					type="button"
+					ng-disabled="!geozone.data.id_metadata"
+					class="pull-right btn btn-primary"
+					data-target=".geozone-step-three"
+					data-toggle="collapse"
+				>
+					{{'GEOZONE_NEXT'|translate}}&nbsp;
+					<i class="fa fa-arrow-right"></i>
+				</button>
+			</div>
+		</div>
+<!--STEP THREE-->
+		<div class="box no-border geozone-step-three geozone-step-four collapse">
+			<div class="box-header with-border">
+				<h4 class="box-title">
+					<span ng-show="!geozone.ID">
+						<i class="fa fa-plus fa-fw"></i>
+						{{'GEOZONE_ADD_ZONE'|translate}}
+					</span>
+					<span ng-show="geozone.ID">
+						<i class="fa fa-pencil fa-fw"></i>
+						{{'GEOZONE_EDIT_ZONE'|translate}}
+					</span>
+				</h4>
+			</div>
+			<div 
+				class="box-body"
+				ng-switch="geozone.data.id_application != null"
+			>
+				<p>{{'GEOZONE_STEP_THREE'|translate:geozone.data}}</p>
+        <div class="form-group">
+					<label>{{'GEOZONE_NAME' | translate}}</label>
+					<div class="input-group">
+						<div class="input-group-btn">
+        			<button 
+								type="button" 
+								class="btn btn-default dropdown-toggle" 
+								data-toggle="dropdown" 
+								aria-haspopup="true" 
+								aria-expanded="false"
+							>
+								<i class="fa fa-circle" 
+									style="color:{{geozone.data.color_zone}}!important;"
+								></i>&nbsp;
+								<i class="fa fa-caret-down"></i>
+							</button>
+							<ul class="dropdown-menu">
+								<li
+									ng-repeat="cr in geozone.color_matrix"
+								>
+									<div>
+										<button
+											type="button"
+											class="btn btn-xs btn-default btn-flat"
+											ng-repeat="cc in cr"
+											ng-click="geozone.data.color_zone = cc"
+										>
+											<i 
+												class="fa fa-circle fa" 
+												style="color:{{cc}}!important;"
+											></i>
+										</button>
+									</div>
+								</li>
+							</ul>
+						</div>
+						<input 
+							class="form-control" 
+							ng-model="geozone.data.name_zone"
+							ng-change="geozone.updateZoneName()"
+							name="name_zone"
+							ng-required="true"
+							novalidate
+						>
+					</div>
+				</div>
+        <div 
+					class="form-group"
+					ng-repeat="(k,v) in geozone.APPLICATIONS[geozone.data.id_application.toString()].schema_application.params"
+				>
+					<label>{{v.label[sensum.language]}}</label>
+					<div class="input-group" style="width:100%;">
+						<input style="display:none">
+						<input type="password" style="display:none">
+						<input
+							type="{{v.type}}" 
+							class="form-control" 
+							ng-model="geozone.data.metadata_zone._application[k]"
+							name="application-{{k}}098987"
+							ng-required="true"
+							novalidate
+						/>										
+					</div>
+				</div>
+				<div 
+					ng-switch-when="true"
+					class="form-group"
+				>
+					<label>Synchronized data</label>
+					<angular-jsoneditor                                        
+          	options="{mode:'view'}"                                  
+            ng-model="geozone.data.metadata_zone._remote"                      
+         	></angular-jsoneditor>  
+					<button 
+						type="button"
+						class="btn-block btn btn-primary"
+						type="button"
+						ng-click="geozone.getWebServiceDevices()"
+						ng-disabled="geozone_form.$invalid"
+						data-toggle="modal"
+						data-target="#sensum-geozone-synchro-modal"
+					>
+						<i class="fa fa-arrow-down"></i>
+						{{'GEOZONE_SYNCHRONIZE'|translate}}
+					</button>
+				</div>
+        <div 
+					class="form-group"
+					ng-repeat="(k,v) in geozone.METADATA[geozone.data.id_metadata].schema_metadata"
+				>
+					<label>{{v.label[sensum.language]}}</label>
+					<div class="input-group" style="width:100%;">
+						<input
+							type="text" 
+							class="form-control" 
+							ng-readonly="{{v.readonly === true}}"
+							ng-model="geozone.data.metadata_zone[k]"
+							name="metadata-{{k}}"
+							ng-required="false"
+							novalidate
+						/>										
+						<span 
+							class="input-group-addon"
+							ng-show="v.unit"
+						>
+							<b>{{v.unit}}</b>
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="box-footer">
+				<button
+					type="button"
+					class="pull-left btn btn-primary"
+					data-target=".geozone-step-three"
+					data-toggle="collapse"
+				>
+					<i class="fa fa-arrow-left"></i>&nbsp;
+					{{'GEOZONE_PREVIOUS'|translate}}
+				</button>
+				<button
+					type="button"
+					ng-disabled="geozone_form.$invalid"
+					class="pull-right btn btn-primary"
+					data-target=".geozone-step-four"
+					data-toggle="collapse"
+				>
+					{{'GEOZONE_NEXT'|translate}}&nbsp;
+					<i class="fa fa-arrow-right"></i>
+				</button>
+			</div>
+		</div>
+<!--STEP FOUR-->
+		<div class="box no-border geozone-step-four geozone-step-five collapse">
+			<div class="box-header with-border">
+				<h4 class="box-title">
+					<span ng-show="!geozone.ID">
+						<i class="fa fa-plus fa-fw"></i>
+						{{'GEOZONE_ADD_ZONE'|translate}}
+					</span>
+					<span ng-show="geozone.ID">
+						<i class="fa fa-pencil fa-fw"></i>
+						{{'GEOZONE_EDIT_ZONE'|translate}}
+					</span>
+				</h4>
+			</div>
+			<div class="box-body">
+				<p>{{'GEOZONE_STEP_FOUR'|translate:geozone.data}}</p>
+				<div class="form-group">
+					<label>{{'GEOZONE_AVAILABLE_ITEMS' | translate}}</label>
+					<select
+						class="form-control"
+						ng-model="geozone.selected_item"
+						ng-options="v.name_item for (k,v) in geozone.available_items"
+						ng-change="geozone.addItem()"
+					></select>				
+				</div>
+				<div class="form-group">
+					<label>{{'GEOZONE_SELECTED_ITEMS' | translate:geozone.data}}</label>
+					<div 
+						class="callout callout-info text-center"
+						ng-show="geozone.selected_items_count === 0"
+					>
+						<i class="fa fa-info-circle fa-fw"></i>
+						{{'GEOZONE_NO_ITEMS'|translate}}
+					</div>
+					<div>
+						<span 
+							ng-repeat="(k,item) in geozone.selected_items track by $index"
+						>
+							<span ng-switch="item.metadata">
+								<div 
+									class="btn-group"
+									ng-switch-when="false"
+								>
+									<button 
+										type="button"
+										class="btn btn-xs btn-danger"
+										ng-click="geozone.removeItem(k)"
+									>
+										<i class="fa fa-times fa-fw"></i>
+									</button>
+									<button 
+										type="button"
+										class="btn btn-xs btn-primary"
+										ng-click="geozone.selected_item = k"
+										data-target="#sensum-geozone-device-modal"
+										data-toggle="modal"
+									>
+										{{item.name_item}}
+										<i class="fa fa-cog fa-fw"></i>
+									</button>
+								</div>
+								<span 
+									ng-switch-when="true"
+									class="label text-uppercase bg-primary"
+								>
+									{{item.name_item}}
+								</span>
+							</span>
+							&nbsp;
+						</span>
+					</div>
+				</div>	
+				<div
+					ng-show="geozone.data.id_application != null"
+				>
+					<button 
+						type="button"
+						class="btn-block btn btn-primary"
+						type="button"
+						ng-disabled="geozone_form.$invalid"
+						data-toggle="modal"
+						data-target="#sensum-geozone-push-modal"
+					>
+						<i class="fa fa-arrow-up"></i>
+						{{'GEOZONE_PUSH'|translate}}
+					</button>
+				</div>
+			</div>
+			<div class="box-footer">
+				<button
+					type="button"
+					class="pull-left btn btn-primary"
+					data-target=".geozone-step-four"
+					data-toggle="collapse"
+				>
+					<i class="fa fa-arrow-left"></i>&nbsp;
+					{{'GEOZONE_PREVIOUS'|translate}}
+				</button>
+				<button
+					type="button"
+					ng-show="geozone.METADATA[geozone.data.id_metadata].is_visible_metadata === true"
+					class="pull-right btn btn-primary"
+					data-target=".geozone-step-five"
+					data-toggle="collapse"
+				>
+					{{'GEOZONE_NEXT'|translate}}&nbsp;
+					<i class="fa fa-arrow-right"></i>
+				</button>
+				<button
+					type="button"
+					ng-show="geozone.METADATA[geozone.data.id_metadata].is_visible_metadata === false"
+					ng-click="geozone.submit()"
+					class="pull-right btn btn-success"
+				>
+					<i class="fa fa-check"></i>&nbsp;
+					{{'GEOZONE_APPLY'|translate}}
+				</button>
+			</div>
+			<div 
+				class="overlay"
+				ng-show="
+					geozone.transaction === true ||
+					geozone.success === true ||
+					geozone.error === true
+				"
+			>
+				<i 
+					class="fa fa-check-circle text-green fa-4x"
+					ng-show="geozone.success === true"
+				></i>
+				<i 
+					class="fa fa-times-circle text-red fa-4x"
+					ng-show="geozone.error === true"
+				></i>
+				<i 
+					class="fa fa-spin fa-cog fa-4x"
+					ng-show="geozone.transaction === true"
+				></i>
+			</div>
+		</div>
+<!--STEP FIVE-->
+		<div 
+			id="geozone-map-container-box" 
+			class="box no-border geozone-step-five geozone-step-six collapse"
+		>
+			<div class="box-header with-border">
+				<h4 class="box-title">
+					<span ng-show="!geozone.ID">
+						<i class="fa fa-plus fa-fw"></i>
+						{{'GEOZONE_ADD_ZONE'|translate}}
+					</span>
+					<span ng-show="geozone.ID">
+						<i class="fa fa-pencil fa-fw"></i>
+						{{'GEOZONE_EDIT_ZONE'|translate}}
+					</span>
+				</h4>
+				<div class="pull-right box-tools">
+					<button
+					type="button"
+						class="btn btn-default btn-sm"
+						data-target=".geozone-step-six"
+						data-toggle="collapse"
+					>
+						<i class="fa fa-wrench"></i>&nbsp;
+						{{'GEOZONE_EXPERT_MODE'|translate}}
+					</button>
+				</div>
+			</div>
+			<div class="box-body">
+				<p>{{'GEOZONE_STEP_FIVE'|translate:geozone.data}}</p>
+				<div class="form-group">
+					<div id="geozone-map-container" style="width:100%">					
+					</div>
+					<button
+					type="button"
+						class="btn btn-primary btn-block"
+						ng-click="geozone.panParentZone()"
+						ng-show="geozone.data.parent_zone || geozone.data.polygon_zone"
+					>
+						<i class="fa fa-map-marker"></i>
+					</button>
+					<button 
+					type="button"
+						class="btn bg-maroon btn-block"
+						ng-click="geozone.clearMarkers()"
+					>
+						<i class="fa fa-trash fa-fw"></i>
+						{{'GEOZONE_CLEAR_MARKERS' | translate}}
+					</button>
+				</div>
+				<div class="form-group">
+					<label>
+						<i class="fa fa-fw fa-search"></i>&nbsp;
+						{{'GEOZONE_SEARCH' | translate}}
+					</label>
+					<input 
+						class="form-control" 
+						ng-model="geozone.address"
+						placeholder="{{'GEOZONE_SEARCH_PLACEHOLDER' | translate}}"
+					>
+					<table class="table table-bordered table-striped">
+						<tbody>
+							<tr ng-repeat="a in geozone.addresses track by $index">
+								<td>{{a.formatted_address}}</td>
+								<td class="text-center">
+									<button 
+					type="button"
+										class="btn btn-sm btn-primary"
+										ng-click="geozone.centerMap(a.geometry.location)"
+									>
+										<i 
+											class="fa fa-map-marker" 
+											data-toggle="tooltip" 
+											title="{{'GEOZONE_SEARCH_MARKER' | translate}}"
+										></i>
+									</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<button 
+					type="button"
+						class="btn btn-block btn-primary"
+						ng-click="geozone.findAddress()"
+					>
+						<i class="fa fa-search fa-fw"></i>&nbsp;
+						{{'GEOZONE_SEARCH_SUBMIT' | translate}}
+					</button>
+				</div>
+			</div>
+			<div class="box-footer">
+				<button
+					type="button"
+					class="pull-left btn btn-primary"
+					data-target=".geozone-step-five"
+					data-toggle="collapse"
+				>
+					<i class="fa fa-arrow-left"></i>&nbsp;
+					{{'GEOZONE_PREVIOUS'|translate}}
+				</button>
+				<button
+					type="button"
+					ng-disabled="geozone.is_polygon === false"
+					ng-click="geozone.submit()"
+					class="pull-right btn btn-success"
+				>
+					<i class="fa fa-check"></i>&nbsp;
+					{{'GEOZONE_APPLY'|translate}}
+				</button>
+			</div>	
+			<div 
+				class="overlay"
+				ng-show="
+					geozone.transaction === true ||
+					geozone.success === true ||
+					geozone.error === true
+				"
+			>
+				<i 
+					class="fa fa-check-circle text-green fa-4x"
+					ng-show="geozone.success === true"
+				></i>
+				<i 
+					class="fa fa-times-circle text-red fa-4x"
+					ng-show="geozone.error === true"
+				></i>
+				<i 
+					class="fa fa-spin fa-cog fa-4x"
+					ng-show="geozone.transaction === true"
+				></i>
+			</div>
+		</div>
+<!--STEP SIX-->
+		<div class="box no-border geozone-step-six collapse">
+			<div class="box-header with-border">
+				<h4 class="box-title">
+					<span ng-show="!geozone.ID">
+						<i class="fa fa-plus fa-fw"></i>
+						{{'GEOZONE_ADD_ZONE'|translate}}
+					</span>
+					<span ng-show="geozone.ID">
+						<i class="fa fa-pencil fa-fw"></i>
+						{{'GEOZONE_EDIT_ZONE'|translate}}
+					</span>
+				</h4>
+				<div class="pull-right box-tools">
+					<button
+					type="button"
+						class="btn btn-default btn-sm"
+						data-target=".geozone-step-six"
+						data-toggle="collapse"
+					>
+						<i class="fa fa-arrow-left"></i>&nbsp;
+						{{'GEOZONE_PREVIOUS'|translate}}
+					</button>
+				</div>
+			</div>
+			<div class="box-body">
+					<p>{{'GEOZONE_STEP_SIX'|translate:geozone.data}}</p>
+        <div class="form-group">
+					<label>{{'GEOZONE_POLYGON' | translate}}</label>
+					<button 
+					type="button"
+						class="btn btn-sm btn-primary btn-block"
+						ng-show="geozone.tree_view === false"
+						ng-click="geozone.setTreeView(true)"
+					>
+						{{'GEOZONE_TREE' | translate}}
+					</button>
+					<button 
+					type="button"
+						class="btn btn-sm btn-default btn-block"
+						ng-show="geozone.tree_view === true"
+						ng-click="geozone.setTreeView(false)"
+					>
+						{{'GEOZONE_RAW' | translate}}
+					</button>
+					<textarea 
+						class="form-control"
+						name="polygon_text"
+						ng-required="false"
+						ng-show="geozone.tree_view === false"
+						ng-model="geozone.polygon_text"
+						ng-change="geozone.updatePolygonJSON()"
+					></textarea>
+					<angular-jsoneditor 
+						name="polygon_zone"
+						ng-required="false"
+						ng-model="geozone.data.polygon_zone"
+						ng-show="geozone.tree_view === true"
+						ng-change="geozone.updatePolygonText()"
+					></angular-jsoneditor>
+				</div>
+			</div>
+		</div>
+<!--Last options-->
+		<a
+			class="btn btn-default pull-left"
+			href="/dashboard/"
+			ng-show="geozone.success === true || geozone.error === true"
+		>
+			<i class="fa fa-home fa-fw"></i>
+			{{'GEOZONE_HOME'|translate}}
+		</a>
+		<a
+			class="btn btn-primary pull-right"
+			type="button"
+			href="/dashboard/zones/add"
+			ng-show="geozone.success === true || geozone.error === true"
+		>
+			<i class="fa fa-plus"></i>
+			{{'GEOZONE_ADD_ANOTHER'|translate}}
+		</a>
+<!--CLOSING COL-ROW-->
+	</div>
+	<div class="col-md-3">
+	</div>
+</div>
+</form>
+<!--MODAL-->
+		<div id="geozone-modal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">
+							<i class="fa fa-trash fa-fw"></i>&nbsp;
+							{{ 'ENTITY_DELETE_MODAL_TITLE' | translate}}
+						</h4>
+          </div>
+
+          <div class="modal-body text-center">
+            <p><b>{{ 'GEOZONE_ARE_YOU_SURE' | translate}}</b></p>
+
+            <p>{{ 'GEOZONE_DELETE_MODAL_MESSAGE' | translate}}</p>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left"
+            data-dismiss="modal">
+						<i class="fa fa-times fa-fw"></i>&nbsp;
+						{{ 'GEOZONE_CANCEL' |
+            translate}}</button>
+						<button 
+							type="button" 
+							class="btn btn-default"
+            data-dismiss="modal" ng-click="geozone.remove()">
+						<i class="fa fa-trash fa-fw"></i>&nbsp;
+						{{'GEOZONE_DELETE' | translate}}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+<!--MODAL DEVICE-->
+		<div id="sensum-geozone-device-modal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">
+							<i class="fa fa-cog fa-fw"></i>&nbsp;
+							{{ 'GEOZONE_DEVICE_MODAL_TITLE' | translate}}
+						</h4>
+          </div>
+          <div class="modal-body no-padding" ng-switch="geozone.data.id_application != null">
+						<table
+							ng-switch-when="true"
+							class="table table-bordered table-striped no-margin"
+						>
+							<thead>
+								<tr>
+									<th>
+										Local field
+									</th>
+									<th>
+										Remote device
+									</th>
+									<th>
+										Remote field
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="(k,v) in geozone.ITEMS[geozone.selected_item].schema_asset.attributes">
+									<th>
+										{{v.label}}
+									</th>
+									<td>
+										<div class="form-group">
+											<select
+												class="form-control"
+												ng-model="geozone.selected_items[geozone.selected_item.toString()].schema_stock.remote[k].item"
+												ng-options="k as v[geozone.APPLICATIONS[geozone.data.id_application.toString()].schema_application.rest.items.label] for (k,v) in geozone.data.metadata_zone._remote"
+												ng-required="false"
+											>
+												<option></option>
+											</select>
+										</div>
+									</td>
+									<td>
+										<select
+											class="form-control"
+											ng-model="geozone.selected_items[geozone.selected_item.toString()].schema_stock.remote[k].attribute"
+											ng-options="k as v[geozone.APPLICATIONS[geozone.data.id_application.toString()].schema_application.rest.attributes.label] for (k,v) in geozone.data.metadata_zone._remote[geozone.selected_items[geozone.selected_item.toString()].schema_stock.remote[k].item]._attributes"
+												ng-required="false"
+										>
+											<option></option>
+										</select>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<div 
+							class="callout callout-info"
+							style="margin:15px;"
+							ng-switch-default
+						>
+							<i class="fa fa-fw fa-info"></i>
+							{{'GEOZONE_NOTHING_CONFIG' | translate}}
+						</div>
+          </div>
+          <div class="modal-footer">
+						<button 
+							type="button" 
+							class="btn btn-success"
+            	data-dismiss="modal" 
+						>
+							<i class="fa fa-check fa-fw"></i>
+							{{'GEOZONE_OK' | translate}}
+						</button>
+          </div>
+        </div>
+      </div>
+    </div>
+<!--LOADING DEVICE-->
+		<div id="sensum-geozone-loading-modal" class="modal fade" role="dialog">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-body">
+						<div class="progress active no-margin">
+							<div 
+								class="progress-bar progress-bar-success progress-bar-striped" 
+								role="progressbar" 
+								aria-valuenow="100" 
+								aria-valuemin="0" 
+								aria-valuemax="100" 
+								style="width:100%"
+							>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+<!--SYNCHRO DEVICE-->
+		<div id="sensum-geozone-synchro-modal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">
+							<i class="fa fa-arrow-down fa-fw"></i>&nbsp;
+							{{ 'GEOZONE_SYNCHRONIZE' | translate}}
+						</h4>
+          </div>
+          <div class="modal-body">
+						<p>
+							{{geozone.synchro_message}}
+						</p>
+						<div class="progress active">
+							<div 
+								class="progress-bar progress-bar-primary progress-bar-striped" 
+								role="progressbar" 
+								aria-valuenow="{{geozone.synchro_progress}}" 
+								aria-valuemin="0" 
+								aria-valuemax="100" 
+								style="width: {{geozone.synchro_progress}}%"
+							>
+								<span class="sr-only">{{geozone.synchro_progress}}% Complete</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+<!--PUSH DEVICE-->
+		<div id="sensum-geozone-push-modal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">
+							<i class="fa fa-arrow-up fa-fw"></i>&nbsp;
+							{{ 'GEOZONE_PUSH' | translate}}
+						</h4>
+          </div>
+          <div class="modal-body">
+          	<div class="form-group">
+							<label>
+								Remote Device
+							</label>
+							<select
+								class="form-control"
+								ng-model="geozone.push_attribute.remote"
+								ng-options="k as v[geozone.APPLICATIONS[geozone.data.id_application.toString()].schema_application.rest.items.label] for (k,v) in geozone.data.metadata_zone._remote"
+								ng-required="false"
+							>
+								<option></option>
+							</select>
+						</div>
+          	<div class="form-group">
+							<label>
+								Local Device
+							</label>
+							<select
+								class="form-control"
+								ng-model="geozone.push_attribute.id_item"
+								ng-options="v.id_item as v.name_item for (i,v) in geozone.selected_items"
+								ng-required="false"
+							>
+								<option></option>
+							</select>
+						</div>
+          	<div class="form-group">
+							<label>
+								Local Attribute
+							</label>
+							<select
+								class="form-control"
+								ng-model="geozone.push_attribute.attribute"
+								ng-change="geozone.updatePushFields()"
+								ng-options="k as v.label for (k,v) in geozone.ITEMS[geozone.push_attribute.id_item.toString()].schema_asset.attributes"
+								ng-required="false"
+							>
+								<option></option>
+							</select>
+						</div>
+          	<div 
+							class="form-group"
+						>
+							<label>
+							 Fields
+							</label>
+							<table class="table table-striped table-bordered">
+								<thead>
+									<tr>
+										<th>Attribute field</th>
+										<th>Sensum value</th>
+										<th>Push value</th>
+									<tr>
+								</thead>
+								<tbody>
+									<tr
+										ng-repeat="k in geozone.APPLICATIONS[geozone.data.id_application.toString()].schema_application.rest.push.fields"
+									>
+										<th>{{k}}</th>
+										<td>
+											{{geozone.ITEMS[geozone.push_attribute.id_item.toString()].schema_asset.attributes[geozone.push_attribute.attribute][k]}}
+										</td>
+										<td>
+											<input
+												type="text"
+												class="form-control"
+												ng-model="geozone.push_attribute.fields[k]"
+											/>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+          <div class="modal-footer">
+						<button 
+							type="button" 
+							class="btn btn-primary"
+							ng-click="geozone.pushField()"
+						>
+							<i class="fa fa-arrow-up fa-fw"></i>
+							{{'GEOZONE_PUSH' | translate}}
+						</button>
+          </div>
+				</div>
+			</div>
+		</div>
+<style>
+textarea{
+	resize:vertical;
+	min-height:300px;
+	font-family:'Roboto Mono';
+	font-size:8pt!important;
+	background-color:#DEF!important;
+	font-weight:bold;
+}
+</style>

@@ -1,0 +1,49 @@
+{
+	"development":{
+    "mysql": {
+        "host": "backend.sensum.co.nz",
+        "port": "3306",
+        "database": "sensum",
+        "user": "sensum",
+        "password": "sensum.s"
+    },
+    "mongodb": {
+        "host": "backend.sensum.co.nz",
+        "port": 27017,
+        "database": "sensum",
+        "user": "sensumreader",
+        "password": "sensum.s" 
+    }
+	},
+    "mysql": {
+        "host": "localhost",
+        "port": "3306",
+        "database": "sensum",
+        "user": "sensum",
+        "password": "sensum.s"
+    },
+    "mongodb": {
+        "host": "localhost",
+        "port": 27017,
+        "database": "sensum",
+        "user": "sensum",
+        "password": "sensum.s" 
+    },
+    "auth": {
+        "table": "user",
+        "id": "id_user",
+        "username": "account_user",
+        "password": "password_user",
+        "encrypt": "MD5",
+        "messages": {
+            "login": "LOGIN_SUCCESS",
+            "password_update": "PASSWORD_UPDATE_SUCCESS"
+        },
+        "errors": {
+            "connection": "CONNECTION_ERROR",
+            "invalid_credentials": "INVALID_FIELDS_ERROR",
+            "password_unmatch": "OLD_PASSWORD_MISMATCH_ERROR",
+            "wrong_domain": "WRONG_DOMAIN_ERROR"
+        }
+    }
+}

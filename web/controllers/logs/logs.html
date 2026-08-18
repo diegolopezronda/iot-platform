@@ -1,0 +1,154 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="box no-border">
+      <div class="box-header with-border">
+        <h3 class="box-title">
+					<i class="fa fa-fw fa-list"></i>
+					{{ 'LOGS_DATA_LOG' | translate }}
+				</h3>
+        <div class="box-tools pull-right">
+          <button 
+						class="btn btn-success btn-sm" ng-click=
+          "logs.download();">
+						<i class="fa fa-fw fa-download"></i>
+						{{ 'LOGS_DOWNLOAD_CSV' | translate}}
+					</button>
+        </div>
+      </div>
+      <div class="box-body flat bg-gray" ng-show="logs.ID">
+				<div class="form-group no-margin">
+					<div class="input-group">
+						<span class="input-group-addon">
+							<i class="fa fa-fw fa-calendar"></i>
+						</span>
+						<input
+							class="form-control"
+							type="text"
+							id="sensum-logs-datetimerangepicker"
+							style="background:white!important"
+							placeholder="{{'LOGS_PLACEHOLDER' | translate}}"
+							ng-model="logs.search_range"
+							novalidate
+							readonly
+						/>
+						<span class="input-group-addon">
+							<input
+								type="checkbox"
+								ng-model="logs.search_all"
+								novalidate
+							/>
+							{{ 'LOGS_ALL' | translate}}
+						</span>
+						<span class="input-group-btn">
+          		<button 
+								class="btn btn-primary" 
+								ng-click="logs.search()"
+								ng-disabled="!logs.search_range"
+							>
+								<i class="fa fa-fw fa-search"></i>
+							</button>
+						</span>
+					</div>
+				</div>
+				<div class="form-group hidden">
+					<small>
+						<i class="fa fa-cubes fa-fw"></i>
+						{{logs.rows.length}}
+						&nbsp;
+						<i class="fa fa-clock-o fa-fw"></i>
+						{{logs.result_time}}s
+					</small>
+				</div>
+      </div>
+      <div class="box-body no-padding" style="overflow-x:auto;">
+          <table class="table table-hover table-striped">
+            <thead>
+              <tr>
+                <th title="{{'LOGS_HASH_TOOLTIP' | translate}}" data-toggle="tooltip">
+                  <i class="fa fa-fw fa-hashtag"></i>
+                </th>
+                <th>
+									<i class="fa fa-fw fa-info"></i>
+								</th>
+								<th>Device</th>
+                <th>Date</th>
+                <th class="text-uppercase" ng-repeat="spi in logs.SPI">{{spi}}</th>
+                <th 
+									ng-repeat="(k,v) in logs.DISPLAY" 
+									title="{{logs.KPI[k].description}}"
+                	data-toggle="tooltip"
+								>
+									{{logs.KPI[k].label}}
+								</th>
+								<th>Latitude</th>
+								<th>Longitude</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="row in logs.rows">
+                <td class="text-center">{{$index+1}}</td>
+                <td>
+									<i class="fa fa-{{row._flag_icon}} text-{{row._flag_color}}"></i>
+								</td>
+								<td>
+									<a href="/dashboard/logs/{{row._id_item}}">
+										<i class="fa fa-filter fa-fw"></i>
+										{{row._name}}</br>
+										<small>{{row.key_mac}}</small>
+									</a>
+								</td>
+                <td>
+                	{{row._timestamp}}
+                </td>
+								<td class="text-center" ng-repeat="spi in logs.SPI">
+									<sensum-signal
+										data-indicator="{{spi}}"
+										data-carrier="{{row._carrier}}"
+										data-sf="{{row.sf}}"
+										ng-model="row[spi]"
+									></sensum-signal>
+								</td>
+                <td 
+									ng-repeat="(k,v) in logs.DISPLAY" 
+								>
+									{{row[k]}}
+									<i class="fa fa-warning text-{{row._flags[k].color}}"></i>
+								</td>
+								<td>
+									{{row.latitude}}
+									<i class="fa fa-map-marker text-{{row._flags.latitude.color}}"></i>
+								</td>
+								<td>
+									{{row.longitude}}
+									<i class="fa fa-map-marker text-{{row._flags.longitude.color}}"></i>
+								</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="box-footer text-center">
+          <div class="button-group">
+						<button 
+							class="btn btn-primary btn-block" 
+							ng-disabled="logs.has_next_page === false"
+							ng-click="logs.getNextPage()"
+						>
+							{{'LOGS_NEXT' | translate}}
+							<i class="fa fa-fw fa-arrow-down"></i>
+						</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <style>
+  td,
+  th {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+</style>

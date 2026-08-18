@@ -1,0 +1,325 @@
+<form name="parasite_form">
+<div class="row hidden-xs hidden-sm" ng-show="parasite.components.length >0">		
+	<div class="col-md-12">		
+		<div class="box">		
+			<div class="box-header with-border">
+				<h3 class="box-title">
+<<<<<<< HEAD
+					<i class="fa fa-fw fa-bug"></i>
+					{{'PARASITE_HEADER' | translate}}&nbsp;
+					{{'PARASITE_'+parasite.PARAMS.entity.toUpperCase() | translate:"{n:'one'}" }}
+=======
+					<i class="fa fa-fw fa-handshake-o"></i>
+					{{'OWNERSHIP_HEADER' | translate}}&nbsp;
+					{{'OWNERSHIP_'+parasite.PARAMS.entity.toUpperCase() | translate:"{n:'one'}" }}
+>>>>>>> origin/master
+				</h3>
+				<div class="pull-right box-tools">
+				</div>
+			</div>		
+			<div class="box-body no-padding">
+				<table class="table">
+					<tbody>
+						<tr>
+							<td width="30%">
+								<div class="form-group text-center">
+									<img 
+										class="profile-user-img img-responsive img-circle" 
+<<<<<<< HEAD
+										ng-src="/img/{{parasite.params.entity}}.svg?{{key}}" 
+=======
+										ng-src="/img/database/user/{{parasite.component.id_user}}.jpg?{{key}}" 
+>>>>>>> origin/master
+										alt="{{parasite.component.account_user}}"
+									>
+								</div>
+								<div class="form-group no-margin">
+									<div class="input-group">
+										<span class="input-group-addon">
+<<<<<<< HEAD
+											<i class="fa fa-wifi"></i>
+										</span>
+										<select 
+											class="form-control"
+											ng-options="c['id_'+parasite.params.entity] as c['name_'+parasite.params.entity] for c in parasite.components"
+											ng-model="parasite.ID"
+											ng-required="true"
+											novalidate
+											required
+										></select>
+=======
+											<i class="fa fa-user"></i>
+										</span>
+										<input							
+											class="form-control"
+											type="text"
+											value="{{parasite.component.account_user}}"
+											readonly
+										/>
+>>>>>>> origin/master
+									</div>
+								</div>
+							</td>
+							<td style="vertical-align:middle" class="text-center">
+<<<<<<< HEAD
+								<i class="fa fa-arrow-left fa-2x"></i>
+=======
+								<i class="fa fa-arrow-right fa-2x"></i>
+>>>>>>> origin/master
+							</td>
+							<td width="30%">
+								<div class="form-group text-center">
+									<img 
+										class="profile-user-img img-responsive img-circle" 
+										ng-src="/img/{{parasite.params.entity}}.svg?{{key}}" 
+										alt="{{parasite.singular_entity}}"
+									>
+								</div>
+<<<<<<< HEAD
+								<div class="form-group no-margin" ng-show="user.is_system_user === true">
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="fa fa-globe"></i>
+										</span>
+										<select 
+											class="form-control"
+											ng-options="p.id_project as p.name_project for p in parasite.projects"
+											ng-model="parasite.project"
+											ng-change="parasite.getHosts()"
+=======
+								<div class="form-group">
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="fa fa-cube"></i>
+										</span>
+										<select 
+											class="form-control"
+											ng-options="c['id_'+parasite.params.entity] as c['name_'+parasite.params.entity] for c in parasite.components"
+											ng-change="parasite.updateCurrentOwner()"
+											ng-model="parasite.ID"
+>>>>>>> origin/master
+											ng-required="true"
+											novalidate
+											required
+										></select>
+									</div>
+								</div>
+							</td>
+							<td style="vertical-align:middle" class="text-center">
+<<<<<<< HEAD
+								<i class="fa fa-arrow-left fa-2x"></i>
+=======
+								<i class="fa fa-arrow-right fa-2x"></i>
+>>>>>>> origin/master
+							</td>
+							<td width="30%">
+								<div class="form-group text-center">
+									<img 
+										class="profile-user-img img-responsive img-circle" 
+<<<<<<< HEAD
+										ng-src="/img/{{parasite.params.entity}}.svg?{{key}}" 
+										alt="{{user.account_user}}"
+									>
+								</div>
+=======
+										ng-src="/img/database/user/{{parasite.member.id_user}}.jpg?{{key}}" 
+										alt="{{user.account_user}}"
+									>
+								</div>
+								<div class="form-group no-margin" ng-show="user.is_system_user === true">
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="fa fa-globe"></i>
+										</span>
+										<select 
+											class="form-control"
+											ng-options="p.id_project as p.name_project for p in parasite.projects"
+											ng-model="parasite.project"
+											ng-change="parasite.getMembers()"
+											ng-required="true"
+											novalidate
+											required
+										></select>
+									</div>
+								</div>
+>>>>>>> origin/master
+								<div class="form-group no-margin">
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="fa fa-user"></i>
+										</span>
+										<select 
+											class="form-control"
+<<<<<<< HEAD
+											ng-options="c['name_'+parasite.params.entity] for c in parasite.hosts"
+											ng-model="parasite.host"
+=======
+											ng-options="member.account_user for member in parasite.available_members"
+											ng-model="parasite.member"
+>>>>>>> origin/master
+											ng-required="true"
+											novalidate
+											required
+										></select>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="box-footer">
+				<button
+					type="button"
+					class="btn btn-primary pull-right"
+					ng-disabled="parasite_form.$invalid"
+<<<<<<< HEAD
+					ng-click="parasite.submit()"
+				>
+					<i class="fa fa-handshake-o"></i>
+					{{'PARASITE_SUBMIT' | translate}}&nbsp;
+=======
+					data-toggle="modal"
+					data-target="#parasite-modal"
+				>
+					<i class="fa fa-handshake-o"></i>
+					{{'OWNERSHIP_SUBMIT' | translate}}&nbsp;
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row hidden-md hidden-lg">		
+	<div class="col-md-12">		
+		<div class="box">		
+			<div class="box-body">
+				<div class="form-group">
+					<label>
+						{{'OWNERSHIP_'+parasite.PARAMS.entity.toUpperCase() | translate:"{QUANTITY:'one'}" }}
+					</label>
+					<div class="input-group">
+						<span class="input-group-addon">
+							<i class="fa fa-cube"></i>
+						</span>
+						<input							
+							class="form-control"
+							type="text"
+							value="{{parasite.component['name_'+parasite.params.entity]}}"
+							readonly
+						/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label>
+						{{'OWNERSHIP_FROM' | translate}}
+					</label>
+					<div class="input-group">
+						<span class="input-group-addon">
+							<i class="fa fa-user"></i>
+						</span>
+						<input							
+							class="form-control"
+							type="text"
+							value="{{user.account_user}}"
+							readonly
+						/>
+					</div>
+				</div>
+				<div class="form-group" ng-show="user.is_system_user === true">
+					<label>
+						{{'OWNERSHIP_PROJECT' | translate }}
+					</label>
+					<div class="input-group">
+						<span class="input-group-addon">
+							<i class="fa fa-cubes"></i>
+						</span>
+						<select 
+							class="form-control"
+							ng-options="c['id_'+parasite.params.entity] as c['name_'+parasite.params.entity] for c in parasite.components"
+							ng-change="parasite.updateCurrentOwner()"
+							ng-model="parasite.ID"
+							ng-required="true"
+							novalidate
+							required
+						></select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label>
+						{{'OWNERSHIP_TO' | translate}}
+					</label>
+					<div class="input-group">
+						<span class="input-group-addon">
+							<i class="fa fa-user"></i>
+						</span>
+						<select 
+							class="form-control"
+							ng-options="c['id_'+parasite.params.entity] as c['name_'+parasite.params.entity] for c in parasite.components"
+							ng-model="parasite.ID"
+							ng-required="true"
+							novalidate
+							required
+						></select>
+					</div>
+				</div>
+			</div>
+			<div class="box-footer">
+				<button
+					type="button"
+					ng-disabled="parasite_form.$invalid"
+					data-toggle="modal"
+					data-target="#parasite-modal"
+					class="btn btn-primary btn-block"
+				>
+					<i class="fa fa-handshake-o"></i>
+					{{'OWNERSHIP_SUBMIT' | translate}}&nbsp;
+>>>>>>> origin/master
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+</form>
+<<<<<<< HEAD
+=======
+    <div id="parasite-modal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content bg-red">
+          <div class="modal-header">
+            <h4 class="modal-title">
+							<i class="fa fa-handshake-o fa-fw"></i>&nbsp;
+							{{ 'OWNERSHIP_TRANSFER' | translate}}
+						</h4>
+          </div>
+
+          <div class="modal-body text-center">
+            <p><b>{{ 'OWNERSHIP_ARE_YOU_SURE' | translate}}</b></p>
+
+            <p>{{ 'OWNERSHIP_MODAL_MESSAGE' | translate}}</p>
+          </div>
+
+          <div class="modal-footer">
+            <button 
+							type="button" 
+							class="btn btn-default pull-left"
+            	data-dismiss="modal"
+						>
+							<i class="fa fa-times fa-fw"></i>&nbsp;
+							{{ 'OWNERSHIP_CANCEL' | translate}}
+						</button>
+						<button 
+							type="button" 
+							class="btn btn-default text-uppercase"
+            	data-dismiss="modal" 
+							ng-click="parasite.submit()"
+						>
+							<i class="fa fa-handshake-o fa-fw"></i>&nbsp;
+							{{'OWNERSHIP_TRANSFER' | translate}}
+						</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+>>>>>>> origin/master

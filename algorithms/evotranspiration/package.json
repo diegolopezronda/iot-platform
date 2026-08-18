@@ -1,0 +1,22 @@
+{
+  "name": "sensum-mqtt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "pm2 start app.js --name al-evotranspiration --merge-logs -o logs/out.log -e logs/error.log",
+    "restart": "pm2 restart al-evotranspiration;pm2 logs al-evotranspiration",
+    "log": "pm2 logs al-evotranspiration",
+    "errors": "pm2 logs --err al-evotranspiration",
+    "prettier": "prettier --use-tabs --write app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "moment": "^2.19.1",
+    "moment-timezone": "^0.5.14",
+    "mongodb": "^2.2.33",
+    "mqtt": "^2.11.0",
+    "mysql2": "^1.4.2"
+  }
+}

@@ -1,0 +1,10 @@
+{
+	"publish":{
+		"host":"m.sensum.co.nz",
+		"port":8883
+	},
+	"subscribe":[
+		"mqtt://dashboard.sonasafe.co.nz",
+		"mqtt://13.55.198.202"
+	]
+}

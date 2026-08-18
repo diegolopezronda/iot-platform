@@ -1,0 +1,310 @@
+<div 
+	class="row" 
+	style="
+		background-image:url('/img/database/project/splash/{{user.id_project}}.jpg?{{key}}');
+		background-size:cover;
+		background-repeat:no-repeat;
+		height:calc(100vh - 180px)
+	"
+>
+	<div class="col-md-4">
+	</div>
+	<div class="col-md-4">
+		<div class="box no-border">
+			<div class="box-body">
+				<form>
+					<h3>Logo</h3>
+					<sensum-picture 
+						id="sensum-profile-logo"
+						accept="image/png" 
+						data-entity="project" 
+						data-item="{{user.id_project}}" 
+						data-size="1"
+						data-extension="png"
+					></sensum-picture>
+					<h3>Splash Screen</h3>
+					<sensum-picture 
+						id="sensum-profile-splash"
+						accept="image/jpg" 
+						data-entity="project/splash" 
+						data-item="{{user.id_project}}" 
+						data-size="2"
+						data-extension="jpg"
+					></sensum-picture>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-4">
+	</div>
+</div>
+<div class="row hidden">
+	<div class="col-md-4">
+		<div class="box box-default">
+			<div class="box-header">
+				<h3 class="box-title">&nbsp;</h3>
+			</div>
+			<div class="box-body box-profile text-center">
+				<img 
+					class="profile-user-img img-responsive img-circle" 
+					ng-src="/img/database/user/{{user.id_user}}.jpg?{{key}}" 
+					alt="User profile picture"
+				>
+				<h3 class="profile-username text-center">
+					{{user.first_name_user}}&nbsp;{{user.last_name_user}}
+				</h3>
+				<p class="text-muted text-center">
+					{{ 'DASHBOARD_AS' | translate}}&nbsp;<b>{{user.account_user}}</b>
+				</p>
+				<p class="text-muted text-center">{{user.name_role[sensum.language]}}</p>
+				<p class="text-muted text-center">{{user.email_user}}</p>
+				<p class="text-muted text-center">{{user.company_name}}</p>
+			</div>
+			<div class="box-footer">
+			<form>
+				<div 
+					class="btn btn-primary btn-block" 
+					name="profile_picture" 
+					ng-model="dashboard.profile_picture" 
+					ngf-pattern="'image/jpeg'" 
+					ngf-accept="'image/jpeg'" 
+					ngf-max-size="2MB" 
+					ngf-min-height="100"
+					ngf-min-width="100"
+    			ngf-resize="{width: 100,height:100}"
+					ngf-select="dashboard.updatePicture($file,'user/'+{{user.id_user}}+'.jpg')"
+				>
+					<i class="fa fa-fw fa-camera"></i>&nbsp;
+					{{'DASHBOARD_UPDATE_PROFILE_PICTURE' | translate}}
+				</div>
+			</form>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-8">
+		<div class="nav-tabs-custom">
+			<ul class="nav nav-tabs">
+				<li><a href="#tab_2" data-toggle="tab">
+					{{'DASHBOARD_UPDATE_PASSWORD' | translate}}	
+				</a></li>
+				<li><a href="#tab_3" data-toggle="tab">
+					{{'DASHBOARD_ABOUT' | translate}}	
+				</a></li>
+			</ul>
+			<div class="tab-content no-padding">
+				<div class="tab-pane" id="tab_2">
+		<div class="box box-default no-border">
+			<div class="box-header">
+				<h3 class="box-title">
+					{{'DASHBOARD_UPDATE_PASSWORD' | translate}}	
+				</h3>
+			</div>
+			<div class="box-body" style="height:250px!important;">
+				<form name="password_form">
+      		<div 
+						class="
+							form-group 
+							has-feedback 
+							{{
+								(
+									password_form.old_password.$invalid && 
+									password_form.old_password.$touched
+								) ? 
+								'has-error' : 
+								''
+							}}
+						"
+					>
+		        <input 
+							id="old_password" 
+							name="old_password" 
+							type="password" 
+							class="form-control" 
+							placeholder="{{'DASHBOARD_OLD_PASSWORD_FIELD' | translate}}"
+							ng-required="true"
+							ng-model="dashboard.old_password" 
+						>
+						<span 
+							class="help-block text-right" 
+							ng-show="
+								password_form.old_password.$touched && 
+								password_form.old_password.$error.required
+							"
+						>
+							{{'DASHBOARD_REQUIRED_ERROR' | translate}}
+						</span>
+		      </div>
+      		<div 
+						class="
+							form-group 
+							has-feedback 
+							{{
+								(
+									password_form.new_password.$invalid && 
+									password_form.new_password.$touched
+								) ? 
+								'has-error' : 
+								''
+							}}
+						"
+					>
+		        <input 
+							id="new_password" 
+							name="new_password" 
+							type="password" 
+							class="form-control" 
+							placeholder="{{'DASHBOARD_NEW_PASSWORD_FIELD' | translate}}"
+							ng-required="true"
+							ng-model="dashboard.new_password" 
+							input-unmatch="old_password" 
+						>
+						<span 
+							class="help-block text-right" 
+							ng-show="
+								password_form.new_password.$touched && 
+								password_form.new_password.$error.required
+							"
+						>
+							{{'DASHBOARD_REQUIRED_ERROR' | translate}}
+						</span>
+						<span 
+							class="help-block text-right" 
+							ng-show="
+								password_form.new_password.$touched && 
+								password_form.new_password.$error.inputunmatch
+							"
+						>
+							{{'DASHBOARD_PASSWORD_MATCH_ERROR' | translate}}
+						</span>
+		      </div>
+      		<div 
+						class="
+							form-group 
+							has-feedback 
+							{{
+								(
+									password_form.repeat_password.$invalid && 
+									password_form.repeat_password.$touched
+								) ? 
+								'has-error' : 
+								''
+							}}
+						"
+					>
+		        <input 
+							id="repeat_password" 
+							name="repeat_password" 
+							type="password" 
+							class="form-control" 
+							placeholder="{{'DASHBOARD_REPEAT_PASSWORD_FIELD' | translate}}"
+							ng-required="true"
+							ng-model="dashboard.repeat_password" 
+							input-match="new_password" 
+						>
+						<span 
+							class="help-block text-right" 
+							ng-show="
+								password_form.repeat_password.$touched && 
+								password_form.repeat_password.$error.required
+							"
+						>
+							{{'DASHBOARD_REQUIRED_ERROR' | translate}}
+						</span>
+						<span 
+							class="help-block text-right" 
+							ng-show="
+								password_form.repeat_password.$touched && 
+								password_form.repeat_password.$error.inputmatch
+							"
+						>
+							{{'DASHBOARD_PASSWORD_MISMATCH_ERROR' | translate}}
+						</span>
+		      </div>
+				</form>
+			</div>
+			<div class="box-footer">
+				<button 
+					ng-click="dashboard.updatePassword()" 
+					ng-disabled="password_form.$invalid" 
+					class="btn btn-primary btn-block"
+				>
+					<i class="fa fa-fw fa-key"></i>&nbsp;
+					{{'DASHBOARD_UPDATE_PASSWORD' | translate}}
+				</button>
+			</div>
+		</div>
+				</div>
+				<div class="tab-pane" id="tab_3">
+		<div class="box box-default no-border">
+			<div class="box-header">
+				<img 
+					ng-src="/img/database/project/{{sensum.project.id_project}}.png?{{key}}" 
+					alt="User profile picture"
+					height="40"
+				>
+			</div>
+			<div class="box-body"
+				style="
+					background-image:url(/img/database/project/splash/{{sensum.project.id_project}}.jpg?{{key}});
+					background-repeat:no-repeat;
+					background-size:cover;
+					background-position:center;
+					height:200px;
+				" 
+			>
+			</div>
+			<div class="box-body bg-white">
+				<h3 class="profile-username text-right text-bold">
+					{{sensum.project.name_project}}
+				</h3>
+				<p class="text-right">
+					{{'DASHBOARD_BY' | translate}}
+					<a target="_blank" ng-href="{{sensum.project.url_company}}">
+						{{sensum.project.name_company}}
+					</a>
+				</p>
+				<p class="text-right">
+					{{'DASHBOARD_SINCE' | translate}}&nbsp;{{sensum.project.month}}
+				</p>
+				<p class="text-right">{{sensum.project.company_email}}</p>
+			</div>
+			<div class="box-footer">
+			<form>
+				<div 
+					class="btn btn-primary pull-left" 
+					ng-model="dashboard.splashscreen" 
+					name="splashscreen" 
+					ngf-pattern="'image/jpeg'" 
+					ngf-accept="'image/jpeg'" 
+					ngf-select="dashboard.updatePicture($file,'project/splash/'+{{sensum.project.id_project}}+'.jpg')"
+				>
+					<i class="fa fa-fw fa-camera"></i>&nbsp;
+					{{'DASHBOARD_UPDATE_SPLASHSCREEN' | translate}}
+				</div>
+			</form>
+			<form>
+				<div 
+					class="btn btn-primary pull-right" 
+					ng-model="dashboard.logo" 
+					name="logo" 
+					ngf-pattern="'image/png'" 
+					ngf-accept="'image/png'" 
+					ngf-max-size="2MB" 
+					ngf-min-height="40"
+					ngf-min-width="100"
+					ngf-select="dashboard.updatePicture($file,'project/'+{{sensum.project.id_project}}+'.png')"
+				>
+					<i class="fa fa-fw fa-camera"></i>&nbsp;
+					{{'DASHBOARD_UPDATE_LOGO' | translate}}
+				</div>
+			</form>
+			</div>
+		</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-4">
+	</div>
+	<div class="clearfix visible-md"></div>
+</div>

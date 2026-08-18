@@ -1,0 +1,24 @@
+{
+	"vehicle_report_interval":1,
+	"apt_report_interval":5,
+	"transport":{
+		"host": "sonasafe.co.nz",
+		"auth":{
+			"user": "dashboard@sonasafe.co.nz",
+			"pass": "Iog5!e57"
+		},
+		"port": 25,
+		"secure":false,
+		"tls": {
+			"rejectUnauthorized":false
+    }
+	},
+	"faults_key":"Kx7c0d&2",
+	"message":{
+    "from": "dashboard@sonasafe.co.nz",
+    "to": "faults@sonasafe.co.nz",
+    "subject": "? #? (?) MODE:? BIT:? CBIT:? UPDATE:? VERBOSE:?",
+    "html": "? #? (?) MODE:? BIT:? CBIT:? UPDATE:? VERBOSE:?",
+    "text": "? #? (?) MODE:? BIT:? CBIT:? UPDATE:? VERBOSE:?"
+	}
+}

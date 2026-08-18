@@ -1,0 +1,198 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="box">
+      <div class="box-header with-border">
+        <h3 class="box-title text-capitalize">&nbsp; {{entity.ACTION}}&nbsp;
+        <b>{{entity.ID ? entity.ROWS[0][entity.CONFIG.display_field] :
+        entity.ROUTE_PARAMS.entity}}</b></h3>
+
+        <div class="pull-right">
+          <a ng-show="entity.ACTION == 'list' && user.id_role > 1"
+          href="/dashboard/data/{{entity.ROUTE_PARAMS.entity}}add" class=
+          "btn btn-sm btn-success">&nbsp;Add</a> <a ng-show=
+          "entity.ACTION == 'view' && ( (entity.ROUTE_PARAMS.entity != 'users' && user.id_role > 1) || (entity.ROUTE_PARAMS.entity == 'users' && user.id_role == 3))"
+          href=
+          "/dashboard/data/{{entity.ROUTE_PARAMS.entity}}/edit/{{entity.ID}}"
+          class="btn btn-sm btn-warning">&nbsp;Edit</a> <a ng-show=
+          "entity.ACTION == 'edit' && ( (entity.ROUTE_PARAMS.entity != 'users' && user.id_role > 1) || (entity.ROUTE_PARAMS.entity == 'users' && user.id_role == 3))"
+          href=
+          "/dashboard/data/{{entity.ROUTE_PARAMS.entity}}/delete/{{entity.ID}}"
+          class="btn btn-sm btn-danger">&nbsp;Delete</a>
+        </div>
+      </div>
+
+      <div class="box-body">
+        <form>
+          <div class="form-group">
+            <div class="input-group">
+              <div class="input-group-addon"></div><input type="text" class=
+              "form-control" ng-model="entity.search" placeholder=
+              "Filter results by typing...">
+            </div>
+          </div>
+        </form><input type="hidden" value="{{entity.CONFIG.display_field}}"
+        ng-model="entity.sortType"> <input type="hidden" value="false"
+        ng-model="entity.sortReverse">
+
+        <table ng-show="entity.ACTION == 'list'" class=
+        "table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th ng-repeat="column in entity.FIELDS" ng-show=
+              "entity.CONFIG.hidden[entity.ACTION].indexOf(column.field) == -1">
+              <a href="#" ng-click=
+              "entity.sortType = column.field; ; entity.sortReverse = !entity.sortReverse">
+              {{entity.CONFIG.aliases[column.field] ?
+              entity.CONFIG.aliases[column.field] : column.field }}</a></th>
+
+              <th width="100">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr ng-repeat=
+            "row in entity.ROWS | filter:entity.search | orderBy:entity.sortType:entity.sortReverse">
+            <td ng-repeat="column in entity.FIELDS" ng-show=
+            "entity.CONFIG.hidden[entity.ACTION].indexOf(column.field) == -1">
+              <span ng-show=
+              "!entity.CONSTRAINTS[column.field] && column.type != 'checkbox'">
+              {{row[column.field]}}</span> <span ng-show=
+              "!entity.CONSTRAINTS[column.field] && column.type == 'checkbox' && row[column.field] == 0"
+              class="label label-default text-uppercase">No</span>
+              <span ng-show=
+              "!entity.CONSTRAINTS[column.field] && column.type == 'checkbox' && row[column.field] == 1"
+              class="label label-primary text-uppercase">Yes</span> <a href=
+              "/dashboard/data/{{entity.CONSTRAINTS[column.field].foreign_table}}/view/{{row[column.field]}}"
+              ng-show=
+              "entity.CONSTRAINTS[column.field]">{{row[entity.CONSTRAINTS[column.field].alias]}}</a></td>
+
+              <td class="text-center"><a ng-href=
+              "/dashboard/data/{{entity.ROUTE_PARAMS.entity}}/view/{{row[entity.PRIMARY]}}"
+              class="btn btn-primary">&nbsp;View</a></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <form id="entity-form" name="entity_form">
+          <table ng-show="entity.ACTION != 'list'" class=
+          "table table-bordered table-striped">
+            <tbody>
+              <tr ng-repeat="column in entity.FIELDS" ng-show=
+              "!entity.CONFIG.hidden[entity.ACTION] || entity.CONFIG.hidden[entity.ACTION].indexOf(column.field) == -1">
+              <th style="max-width:34%!important;">
+              {{entity.CONFIG.aliases[column.field] ?
+              entity.CONFIG.aliases[column.field] : column.field }}</th>
+
+                <td ng-show=
+                "entity.ACTION == 'view' || entity.ACTION == 'delete'">
+                <span ng-show=
+                "!entity.CONSTRAINTS[column.field] && column.type != 'checkbox' && column.type != 'date' && column.type != 'json'">
+                {{entity.ROWS[0][column.field]}}</span> <span ng-show=
+                "column.type == 'checkbox' && entity.ROWS[0][column.field] == 0"
+                class="label label-default text-uppercase">No</span>
+                <span ng-show=
+                "column.type == 'checkbox' && entity.ROWS[0][column.field] == 1"
+                class="label label-primary text-uppercase">Yes</span>
+                <span ng-show=
+                "column.type == 'date'">&nbsp;{{entity.ROWS[0][column.field].split('T')[0]}}&nbsp;
+                &nbsp;{{entity.ROWS[0][column.field].split('T')[1].split('.')[0]}}</span>
+                <span ng-show="column.type == 'json'"><span ng-repeat=
+                "(key,value) in entity.ROWS[0][column.field] track by $index"><span class="label label-info">
+                <b class="text-uppercase">{{key}}:</b>&nbsp;{{value}}</span>
+                &nbsp;</span></span> <span ng-show=
+                "entity.CONSTRAINTS[column.field] && !entity.CONSTRAINTS[column.field].foreign_table_alias">
+                {{entity.ROWS[0][entity.CONSTRAINTS[column.field].alias]}}</span>
+                <a href=
+                "/dashboard/data/{{entity.CONSTRAINTS[column.field].foreign_table_alias}}/view/{{entity.ROWS[0][column.field]}}"
+                ng-show=
+                "entity.CONSTRAINTS[column.field].foreign_table_alias">{{entity.ROWS[0][entity.CONSTRAINTS[column.field].alias]}}</a></td>
+
+                <td ng-show=
+                "entity.ACTION == 'edit' || entity.ACTION == 'add'">
+                  <div class=
+                  "form-group {{entity_form[column.field].$invalid ? 'has-error' : ''}}">
+                  <div class="input-group">
+                      <input class="form-control" name="{{column.field}}" type=
+                      "{{(entity.action != 'add' && entity.action != 'edit') || column.type == 'checkbox' || column.type == 'textarea' || column.type == 'binded' ? '' : column.type }}"
+                      ng-model="entity.ROWS[0][column.field]" ng-required=
+                      "column.required" ng-show=
+                      "{{column.type != 'checkbox' && column.type != 'textarea' && column.type != 'binded'}}"
+                      novalidate=""> <select class="form-control" name=
+                      "{{column.field}}" ng-model=
+                      "entity.ROWS[0][column.field]" ng-required=
+                      "column.required" ng-show="{{column.type == 'checkbox'}}"
+                      ng-options=
+                      "bind.key for bind in entity.BOOLEAN track by bind.value"
+                      novalidate="">
+                        </select> 
+                      <textarea rows="5" style="resize:none!important;" class=
+                      "form-control" name="{{column.field}}" ng-model=
+                      "entity.ROWS[0][column.field]" ng-required=
+                      "column.required" ng-show="{{column.type == 'textarea'}}"
+                      novalidate="">
+</textarea> <select class="form-control" name="{{column.field}}"
+                      ng-model="entity.ROWS[0][column.field]" ng-required=
+                      "column.required" ng-show="{{column.type == 'binded' }}"
+                      ng-init="entity.bind(column.field)" ng-options=
+                      "bind.key for bind in entity.BINDINGS[column.field] track by bind.value"
+                      novalidate="">
+                        </select>
+                    </div><span ng-show=
+                    "entity_form[column.field].$error.unique" class=
+                    "help-block pull-right">This field value can't be repeated
+                    in the rows of this table.</span> <span ng-show=
+                    "entity_form[column.field].$error.required" class=
+                    "help-block pull-right">This field can't be empty.</span>
+                  </div>
+                </td>
+              </tr>
+
+              <tr ng-show="entity.ACTION == 'edit' || entity.ACTION == 'add'">
+                <td colspan="100"><span class=
+                "pull-left">&nbsp;Mandatory</span> <span class=
+                "pull-right">&nbsp;Accepts duplicates</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+
+        <div>
+          <div class="box-footer">
+            <a class="btn btn-default pull-left" onclick=
+            "window.history.back()">&nbsp;Go back</a> <button ng-disabled=
+            "entity_form.$invalid" ng-show=
+            "entity.ACTION == 'add' || entity.ACTION == 'edit'" ng-click=
+            "entity.submit()" class=
+            "btn btn-primary pull-right">&nbsp;Apply</button> <button ng-show=
+            "entity.ACTION == 'delete'" class="btn btn-primary pull-right"
+            data-target="#entity-modal" data-toggle=
+            "modal">&nbsp;Apply</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="entity-modal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">&nbsp;Delete a row</h4>
+          </div>
+
+          <div class="modal-body">
+            <p><b>Are You sure?</b></p>
+
+            <p>You can't rollback this action.</p>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left"
+            data-dismiss="modal">&nbsp;Cancel</button> <button type="button"
+            class="btn btn-default" data-dismiss="modal" ng-click=
+            "entity.submit()">&nbsp;Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

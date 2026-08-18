@@ -1,0 +1,19 @@
+{
+  "name": "sensum-ma-web-services",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm install;pm2 start app.js --name ma-web-services --merge-logs -o ./logs/out.log -e ./logs/error.log",
+    "restart": "pm2 restart ma-web-services;pm2 logs ma-web-services",
+    "logs": "pm2 logs ma-web-services",
+    "prettier": "prettier --trailing-comma none --use-tabs --write app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mqtt": "^2.18.7",
+    "mysql2": "^1.5.3",
+    "request": "^2.88.0"
+  }
+}

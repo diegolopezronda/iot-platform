@@ -1,0 +1,128 @@
+<div class="row" ng-show="projects.project">
+	<div class="col-md-4">
+		<form name="project_form">
+		<div class="box no-border">
+			<div class="box-header">
+				<h4 class="box-title">
+					<i class="fa fa-pencil fa-fw"></i>
+					{{'PROJECTS_PROJECT_SETTINGS' | translate}}
+				</h4>
+			</div>
+			<div class="box-body">
+				<div 
+					ng-repeat="h in projects.CONF.headers track by $index"
+					ng-switch="h.type"
+					class="form-group"
+				>
+					<label>
+						{{h.label[sensum.language]}}
+					</label>					
+					<select 
+						class="form-control"
+						ng-model="projects.project[h.key]"
+						ng-options="r.value as r.key[sensum.language] for r in projects.BOOLEAN"
+						ng-switch-when="checkbox"
+						ng-required="true"
+					></select>
+					<div
+						class="input-group"
+						ng-switch-when="url"
+					>
+						<span class="input-group-addon text-bold">
+							http://
+						</span>
+						<input 
+							type="text"
+							class="form-control"
+							ng-model="projects.project[h.key]"
+							ng-required="true"
+						/>
+					</div>
+					<input 
+						type="text"
+						class="form-control"
+						ng-model="projects.project[h.key]"
+						ng-switch-default
+						ng-required="true"
+					/>
+					<select 
+						class="form-control"
+						ng-model="projects.project[h.key]"
+						ng-options="r[h.value] as r[h.display] for r in projects[h.source]"
+						ng-switch-when="select"
+						ng-required="true"
+					></select>
+				</div>
+			</div>
+			<div class="box-footer">
+				<button
+					class="btn btn-primary btn-block"
+					ng-click="projects.saveProject()"
+					ng-disabled="project_form.$invalid"
+				>
+					<i class="fa fa-save fa-fw"></i>
+					{{'PROJECTS_SAVE_PROJECT' | translate}}
+				</button>
+			</div>
+		</div>
+		</form>
+	</div>
+	<div class="col-md-4">
+		<div class="box no-border">
+			<div class="box-header">
+				<h3 class="box-title">
+					<i class="fa fa-pencil fa-fw"></i>
+					Logo
+				</h3>
+			</div>
+			<div 
+				class="box-body text-center"
+			>
+				<img 
+					style="height:60px;"
+					src="/img/database/project/{{projects.ID}}.png?{{key}}"
+				/>
+			</div>
+			<div class="box-footer">
+				<sensum-picture 
+					id="sensum-profile-logo"
+					accept="image/png" 
+					data-entity="project" 
+					data-item="{{projects.ID}}" 
+					data-size="1"
+					data-extension="png"
+				></sensum-picture>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-4">
+		<div class="box no-border">
+			<div class="box-header">
+				<h3 class="box-title">
+					<i class="fa fa-pencil fa-fw"></i>
+					Splash Screen
+				</h3>
+			</div>
+			<div 
+				class="box-body"
+				style="
+					background-image:url('/img/database/project/splash/{{projects.ID}}.jpg?{{key}}');
+					background-size:cover;
+					background-repeat:no-repeat;
+					height:300px
+				"
+			>
+			</div>
+			<div class="box-footer">
+				<sensum-picture 
+					id="sensum-profile-splash"
+					accept="image/jpg" 
+					data-entity="project/splash" 
+					data-item="{{projects.ID}}" 
+					data-size="2"
+					data-extension="jpg"
+				></sensum-picture>
+			</div>
+		</div>
+	</div>
+</div>

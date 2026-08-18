@@ -1,0 +1,20 @@
+{
+  "name": "sensum-email",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm install;pm2 start app.js --name me-email --merge-logs -o logs/out.log -e logs/error.log",
+    "restart": "pm2 restart me-email;pm2 logs me-email",
+    "log": "pm2 logs me-email",
+    "errors": "pm2 logs --err me-email",
+    "prettier": "prettier --use-tabs --write app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^3.1.0-beta4",
+    "mqtt": "^2.18.0",
+    "nodemailer-smtp-transport": "^2.7.4"
+  }
+}

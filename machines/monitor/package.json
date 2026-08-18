@@ -1,0 +1,21 @@
+{
+  "name": "sensum-ma-monitor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm install;pm2 start app.js --name ma-monitor --merge-logs -o logs/out.log -e logs/error.log",
+    "restart": "pm2 restart ma-monitor;pm2 logs ma-monitor",
+    "log": "pm2 logs ma-monitor",
+    "prettier": "prettier --use-tabs --trailing-comma none --single-quote false --write app.js app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "esendex": "^0.1.8",
+    "moment-timezone": "^0.5.14",
+    "mqtt": "^2.15.2",
+    "nodemailer": "^4.4.2",
+    "pm2": "^2.9.3"
+  }
+}

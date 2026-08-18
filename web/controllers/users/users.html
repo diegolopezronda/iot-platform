@@ -1,0 +1,131 @@
+<form name="users_form">
+<div class="row">
+	<div class="col-md-4">
+	</div>
+	<div class="col-md-4">
+<!--STEP ONE-->
+		<div class="box users-step-one collapse in">
+			<div class="box-header">
+				<h4 class="box-title text-center">
+					<span ng-show="!users.ID">{{'USERS_STEP_ONE'|translate}}</span>
+					<span ng-show="users.ID">{{'USERS_STEP_ONE_HALF'|translate:users.data}}</span>
+				</h4>
+			</div>
+			<div class="box-body">
+				<div
+					class="form-group {{users_form[k].$invalid ? 'has-error' : 'has-success'}}"
+					ng-repeat="(k,v) in users.FIELDS"
+				>
+					<label>
+						{{'USERS_'+k.toUpperCase() | translate}}<br/>
+					</label>
+					<input 					
+						class="form-control"
+						type="{{v.type}}"
+						ng-pattern="v.pattern"
+						inputmode="{{v.inputmode}}"
+						name="{{k}}"
+						autocomplete="off" 
+						autocorrect="off"
+						autocapitalize="off" 
+						spellcheck="false"
+						ng-model="users.data[k]"
+						ng-required="true"
+						ng-minlength="{{v.min}}"
+						ng-maxlength="{{v.max}}"
+						novalidate
+					/>
+					<p 
+						class="help-block text-right"
+						ng-show="users_form[k].$error.pattern || users_form[k].$error.required"
+					>
+						{{'USERS_'+k.toUpperCase()+'_PLACEHOLDER' | translate}}			
+					</p>
+					<p 
+						class="help-block text-right"
+						ng-show="users_form[k].$error.minlength"
+					>
+						Min {{v.min}}.
+					</p>
+					<p 
+						class="help-block text-right"
+						ng-show="users_form[k].$error.maxlength"
+					>
+						Max {{v.max}}.
+					</p>
+				</div>
+			</div>
+			<div class="box-footer">
+				<button
+					class="pull-right btn btn-success"
+					ng-click="users.submit()"
+				>
+					<i class="fa fa-plus fa-fw"></i>
+					{{'USERS_SUBMIT'|translate}}
+				</button>	
+			</div>	
+			<div 
+				class="overlay"
+				ng-show="
+					users.transaction === true ||
+					users.success === true ||
+					users.error === true
+				"
+			>
+				<i 
+					class="fa fa-check-circle text-green fa-4x"
+					ng-show="users.success === true"
+				></i>
+				<i 
+					class="fa fa-times-circle text-red fa-4x"
+					ng-show="users.error === true"
+				></i>
+				<i 
+					class="fa fa-spin fa-cog fa-4x"
+					ng-show="users.transaction === true"
+				></i>
+			</div>
+		</div>
+<!--COL AND ROW END -->
+	</div>
+	<div class="col-md-4">
+	</div>
+</div>
+</form>
+<style>
+	#users-map{
+		width:100%;
+		height:400px;
+	}
+</style>
+<!--- MODAL -->
+    <div id="users-modal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">
+							<i class="fa fa-trash fa-fw"></i>&nbsp;
+							{{ 'USERS_DELETE_MODAL_TITLE' | translate}}
+						</h4>
+          </div>
+
+          <div class="modal-body text-center">
+            <p><b>{{ 'USERS_ARE_YOU_SURE' | translate}}</b></p>
+
+            <p>{{ 'USERS_DELETE_MODAL_MESSAGE' | translate}}</p>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left"
+            data-dismiss="modal">
+						<i class="fa fa-times fa-fw"></i>&nbsp;
+						{{ 'USERS_CANCEL' |
+            translate}}</button> 
+						<button type="button" class="btn btn-danger"
+            data-dismiss="modal" ng-click="users.remove()">
+						<i class="fa fa-trash fa-fw"></i>&nbsp;
+						{{'USERS_DELETE' | translate}}</button>
+          </div>
+        </div>
+      </div>
+    </div>
